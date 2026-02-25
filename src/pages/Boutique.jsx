@@ -22,10 +22,9 @@ const CollectionImage = ({ src, className, style }) => (
 )
 
 const steps = [
-  { num: '01', title: 'On se contacte', text: "Tu m'envoies un message avec ton idée, tes envies, le contexte. On échange pour bien cerner ce que tu veux.", color: '#E87040' },
-  { num: '02', title: 'Devis + croquis', text: "Je te prépare un devis et un premier croquis de ta pièce. On affine ensemble jusqu'à ce que ce soit parfait.", color: '#9BBF90' },
-  { num: '03', title: 'Création', text: "Je façonne ta pièce à la main, je la cuis au four. Chaque étape est faite avec soin, ça prend un peu de temps, mais ça vaut le coup.", color: '#F2A0A8' },
-  { num: '04', title: 'Livraison', text: "Ta pièce unique arrive chez toi, prête à être utilisée et chérie.", color: '#F5D060' },
+  { num: '01', title: 'Contact moi', text: "Raconte-moi ton idée et tes envies, tu peux aussi me faire un croquis et m’envoyer des inspirations. Ensuite je te recontacte pour qu’on puisse échanger ensemble et bien cerner ce que tu souhaites.", color: '#E87040' },
+  { num: '02', title: 'Devis et croquis', text: "Je te prépare un devis et un premier croquis de ta pièce. On affine ensemble jusqu'à ce que ce soit parfait. Sur certains projets, un acompte peut être demandé.", color: '#9BBF90' },
+  { num: '03', title: 'Création', text: "Une fois le devis validé, je façonne ta pièce à la main, la colore si besoin puis la cuit et l’émail. Chaque étape est faite avec soin, ça prend un peu de temps, mais ça vaut le coup !", color: '#F2A0A8' },
 ]
 
 export default function Boutique() {
@@ -42,23 +41,33 @@ export default function Boutique() {
         <Asterisk size={24} color="#E87040" className="absolute top-24 right-8 opacity-25 rotate-12" />
         <Reveal><p className="font-ui text-xs uppercase tracking-[0.3em] text-[#E87040] mb-4">Boutique</p></Reveal>
         <Reveal delay={0.1}>
-          <h1 className="font-display font-black leading-[0.9] mb-10" style={{ fontSize: 'clamp(4rem, 12vw, 10rem)' }}>
-            Mes pièces<span className="text-[#E87040]">.</span>
+          <h1 className="font-display font-black leading-[0.9] mb-10" style={{ fontSize: 'clamp(4rem, 12vw, 8rem)' }}>
+            Ce que je<br /><span className="text-[#E87040]">propose.</span>
           </h1>
         </Reveal>
         <Reveal delay={0.2}>
-          <p className="font-body text-[#2A1506]/60 text-xl max-w-xl leading-relaxed">
-            Des objets faits à la main, en grès, uniques par nature. Chaque pièce est différente, c'est ça qui en fait le charme.
+          <p className="font-body text-[#2A1506]/60 text-xl max-w-xl leading-relaxed mb-8">
+            Venez découvrir mes créations ou bien faites moi part de vos idées les plus folles pour créer des objets sur mesures répondant à vos gouts et besoins !
           </p>
+          <div className="flex gap-4 flex-wrap">
+            <a href="#mes-pieces" className={btn.orange}>Mes pièces</a>
+            <a href="#sur-mesure" className={btn.dark}>Création sur mesure</a>
+          </div>
         </Reveal>
       </section>
 
       {/* COLLECTION COMING SOON */}
-      <section className="px-6 md:px-16 lg:px-24 py-16 max-w-7xl mx-auto">
+      <section id="mes-pieces" className="px-6 md:px-16 lg:px-24 py-16 max-w-7xl mx-auto scroll-mt-24">
         <Reveal>
-          <div className="flex items-center justify-between mb-10 flex-wrap gap-4">
-            <h2 className="font-display font-bold text-3xl md:text-4xl">Ma collection</h2>
-            <span className="font-ui text-xs font-semibold bg-[#F5D060] text-[#2A1506] px-4 py-2 rounded-lg uppercase tracking-widest">Coming soon</span>
+          <div className="mb-10">
+            <div className="flex items-center justify-between flex-wrap gap-4 mb-4">
+              <h2 className="font-display font-bold text-3xl md:text-4xl">Mes pièces</h2>
+              <span className="font-ui text-xs font-semibold bg-[#F5D060] text-[#2A1506] px-4 py-2 rounded-lg uppercase tracking-widest">Coming soon</span>
+            </div>
+            <p className="font-body text-[#2A1506]/70 text-lg max-w-2xl">
+              Des créations faites à la main en grès, des pièces uniques ou en petites séries !
+              N’hésitez pas à suivre leur fabrication sur mes réseaux sociaux ! : )
+            </p>
           </div>
         </Reveal>
         <Reveal direction="scale" delay={0.1}>
@@ -96,7 +105,7 @@ export default function Boutique() {
               Une pièce<br /><span className="italic">rien que pour toi</span>
             </h2>
           </Reveal>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
             {steps.map(({ num, title, text, color }, i) => (
               <Reveal key={num} delay={i * 0.08} direction="up">
                 <div className="bg-[#FBF5E9] rounded-3xl p-6 flex flex-col gap-4 h-full">

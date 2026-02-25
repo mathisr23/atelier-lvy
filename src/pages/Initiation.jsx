@@ -26,11 +26,11 @@ const evenements = [
 
 // Mars 2026 — à mettre à jour avec les vrais créneaux
 const creneaux = [
-  { jour: 'Mardi',  day: 3,  date: '3 mars',  heure: '19h – 21h30', places: 4, dispo: true },
-  { jour: 'Samedi', day: 7,  date: '7 mars',  heure: '10h – 12h30', places: 6, dispo: true },
-  { jour: 'Mardi',  day: 10, date: '10 mars', heure: '19h – 21h30', places: 2, dispo: true },
+  { jour: 'Mardi', day: 3, date: '3 mars', heure: '19h – 21h30', places: 4, dispo: true },
+  { jour: 'Samedi', day: 7, date: '7 mars', heure: '10h – 12h30', places: 6, dispo: true },
+  { jour: 'Mardi', day: 10, date: '10 mars', heure: '19h – 21h30', places: 2, dispo: true },
   { jour: 'Samedi', day: 14, date: '14 mars', heure: '14h – 16h30', places: 0, dispo: false },
-  { jour: 'Mardi',  day: 17, date: '17 mars', heure: '19h – 21h30', places: 5, dispo: true },
+  { jour: 'Mardi', day: 17, date: '17 mars', heure: '19h – 21h30', places: 5, dispo: true },
   { jour: 'Samedi', day: 21, date: '21 mars', heure: '10h – 12h30', places: 6, dispo: true },
 ]
 
@@ -54,12 +54,12 @@ export default function Initiation() {
         <Reveal><p className="font-ui text-xs uppercase tracking-[0.3em] text-[#E87040] mb-4">Initiation</p></Reveal>
         <Reveal delay={0.1}>
           <h1 className="font-display font-black leading-[0.9] mb-8" style={{ fontSize: 'clamp(3.5rem, 10vw, 9rem)' }}>
-            Les mains<br />dans l'argile<span className="text-[#9BBF90]">.</span>
+            Les mains<br />dans la terre<span className="text-[#9BBF90]">.</span>
           </h1>
         </Reveal>
         <Reveal delay={0.2}>
           <p className="font-ui text-[#2A1506]/60 text-lg max-w-xl leading-relaxed">
-            Pas besoin d'expérience, pas besoin de talent, juste envie de créer quelque chose avec ses mains. Je m'occupe du reste.
+            Pas besoin d'expérience ou de talent particulier, juste besoin de curiosité et d’une envie de créer quelque chose avec ses mains ! Je m'occupe du reste.
           </p>
         </Reveal>
       </section>
@@ -68,19 +68,19 @@ export default function Initiation() {
       <section className="px-6 md:px-16 lg:px-24 pb-8 max-w-7xl mx-auto">
         <Reveal>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <a href="#domicile" className="group flex items-center gap-4 bg-[#F5D060] text-[#2A1506] border-2 border-[#2A1506] rounded-xl px-8 py-5 shadow-[3px_3px_0px_rgba(42,21,6,0.25)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] transition-all duration-150">
+            <a href="#domicile" className="group flex items-center gap-4 bg-[#F5D060] text-[#2A1506] border-2 border-[#2A1506] rounded-xl px-4 md:px-8 py-5 shadow-[3px_3px_0px_rgba(42,21,6,0.25)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] transition-all duration-150">
               <span className="font-display font-black text-3xl">①</span>
               <div>
                 <p className="font-ui font-semibold text-base">À domicile</p>
-                <p className="font-ui text-xs opacity-60">Je viens chez vous</p>
+                <p className="font-ui text-xs opacity-60">Vous souhaitez organiser une initiation directement chez vous pour un évènement ? Je viens à vous !</p>
               </div>
               <span className="ml-auto font-ui text-xl">→</span>
             </a>
-            <a href="#atelier" className="group flex items-center gap-4 bg-[#F2A0A8] text-[#2A1506] border-2 border-[#2A1506] rounded-xl px-8 py-5 shadow-[3px_3px_0px_rgba(42,21,6,0.25)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] transition-all duration-150">
+            <a href="#atelier" className="group flex items-center gap-4 bg-[#F2A0A8] text-[#2A1506] border-2 border-[#2A1506] rounded-xl px-4 md:px-8 py-5 shadow-[3px_3px_0px_rgba(42,21,6,0.25)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] transition-all duration-150">
               <span className="font-display font-black text-3xl">②</span>
               <div>
                 <p className="font-ui font-semibold text-base">Dans mon atelier</p>
-                <p className="font-ui text-xs opacity-60">Venez me rejoindre</p>
+                <p className="font-ui text-xs opacity-60">Venez pour une initiation au modelage</p>
               </div>
               <span className="ml-auto font-ui text-xl">→</span>
             </a>
@@ -107,7 +107,7 @@ export default function Initiation() {
               </Reveal>
               <Reveal delay={0.2}>
                 <p className="font-body text-[#2A1506]/70 text-lg leading-relaxed mb-8 max-w-md">
-                  Je viens animer un atelier de modelage chez vous. Une heure et demie de création, de rires et de céramique, idéal pour une occasion un peu spéciale.
+                  Je viens animer un atelier de modelage chez vous. 2 heures de création, de rires et de céramique, idéal pour une occasion un peu spéciale. Faites moi part de vos inspirations pour que j’adapte le matériel à vos besoins !
                 </p>
                 <div className="flex flex-wrap gap-2 mb-10">
                   {evenements.map(({ icon: Icon, label }) => (
@@ -119,14 +119,14 @@ export default function Initiation() {
                 <div className="bg-[#2A1506] rounded-3xl p-6 mb-6">
                   <p className="font-ui text-xs uppercase tracking-widest text-[#FBF5E9]/40 mb-3">Ce que ça comprend</p>
                   <ul className="space-y-2">
-                    {['Matériel et argile fournis', "Encadrement tout au long de l'atelier", 'Cuisson des pièces incluse', 'Récupération des créations 2–3 semaines après'].map((item) => (
+                    {['Matériel/Argile/Engobe fournis', "Encadrement tout au long de l'atelier", 'Cuisson des pièces incluse (première cuisson, émaillage + deuxième cuisson)', 'Récupération des créations 1 mois minimum après l’initiation (livraison possible sur devis)'].map((item) => (
                       <li key={item} className="flex items-start gap-2 text-[#FBF5E9]/80 font-ui text-sm">
                         <span className="text-[#F5D060] mt-0.5">✓</span>{item}
                       </li>
                     ))}
                   </ul>
                 </div>
-                <p className="font-ui text-xs text-[#2A1506]/50 mb-6">Tarif calculé selon le nombre de participants et la durée, je t'envoie un devis après contact.</p>
+                <p className="font-ui text-xs text-[#2A1506]/60 mb-6">Tarif calculé selon le nombre de participants, la durée et les projets souhaités, je t'envoie un devis après contact. Ces initiations peuvent être personnalisées davantage qu’une initiation classique en atelier.</p>
                 <Link to="/contact?type=initiation" className={btn.dark}>Faire une demande →</Link>
               </Reveal>
             </div>
@@ -158,12 +158,17 @@ export default function Initiation() {
           <Reveal>
             <p className="font-ui text-xs uppercase tracking-[0.3em] text-[#2A1506]/50 mb-4">Format ②</p>
             <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-12">
-              <h2 className="font-display font-black text-5xl md:text-6xl text-[#2A1506] leading-tight">
+              <h2 className="font-display font-black text-5xl md:text-6xl text-[#2A1506] leading-tight flex-shrink-0">
                 Dans<br /><span className="italic">mon atelier</span>
               </h2>
-              <p className="font-ui text-[#2A1506]/70 text-base leading-relaxed max-w-sm">
-                Venez seul·e ou accompagné·e créer votre pièce en grès. Je vous guide, vous modelez, et je m'occupe de la cuisson. Vous revenez chercher votre création quelques semaines après.
-              </p>
+              <div className="font-ui text-[#2A1506]/70 text-base leading-relaxed max-w-xl">
+                <p className="mb-3">
+                  Venez seul·e ou accompagné·e pour découvrir la céramique pendant une initiation au modelage de 2h. Créez une à deux pièces en grès selon la forme, la grandeur et les couleurs que vous souhaitez utiliser. Je vous guide tout au long du processus de création !
+                </p>
+                <p>
+                  Une fois vos créations finies, il faut encore être un peu patient. Le séchage des pièces et les cuissons peuvent prendre du temps. Dès que vos pièces sortent du four, je vous envoie un message pour venir récupérer vos créations (délai d’un mois minimum).
+                </p>
+              </div>
             </div>
           </Reveal>
 
@@ -185,9 +190,12 @@ export default function Initiation() {
 
           <Reveal delay={0.1}>
             <div className="bg-[#FBF5E9] rounded-3xl p-8 md:p-10">
-              <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
+              <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
                 <h3 className="font-display font-bold text-2xl text-[#2A1506]">Créneaux disponibles</h3>
-                <span className="font-ui text-xs text-[#2A1506]/50 bg-[#2A1506]/10 px-3 py-1 rounded-lg">Mars 2025</span>
+                <div className="flex items-center gap-3">
+                  <span className="font-ui text-sm font-semibold bg-[#E87040] text-white px-4 py-1.5 rounded-lg shadow-sm">Initiation 2h = 50€ / pers</span>
+                  <span className="font-ui text-xs text-[#2A1506]/50 bg-[#2A1506]/10 px-3 py-1.5 rounded-lg">Mars 2025</span>
+                </div>
               </div>
               {/* Calendrier */}
               <div className="mb-6">

@@ -4,7 +4,7 @@ import useSEO from '../hooks/useSEO'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Asterisk, Squiggle, patterns } from '../components/Deco'
 import Reveal from '../components/Reveal'
-import imgLea from '../assets/lea.jpg'
+import imgLea from '../assets/lea.png'
 import img3 from '../assets/3.jpg'
 import img4 from '../assets/4.jpg'
 import imgFSR22 from '../assets/FullSizeRender-22.jpg'
@@ -130,7 +130,7 @@ export default function Apropos() {
               className="font-ui text-sm uppercase tracking-[0.3em] text-[#E87040] mb-4"
               initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
             >
-              Céramiste
+              Artiste céramiste
             </motion.p>
             <motion.h1
               className="font-display font-black leading-[0.9] mb-6 flex"
@@ -161,7 +161,7 @@ export default function Apropos() {
               className="font-display italic text-[#2A1506]/60 text-xl md:text-2xl leading-relaxed max-w-md mb-10"
               initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
             >
-              Je façonne des pièces uniques en argile, entre création personnelle et ateliers partagés.
+              Avec l’atelier LVY, prenez un moment dans votre quotidien pour partager une passion, apprendre un savoir-faire et vivre une expérience conviviale !
             </motion.p>
             <motion.div className="flex flex-wrap gap-4" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55 }}>
               <Link to="/boutique" className={btn.orange}>Voir mes créations</Link>
@@ -202,15 +202,17 @@ export default function Apropos() {
             </Reveal>
             <Reveal delay={0.2}>
               <div className="space-y-4 text-[#FBF5E9]/70 leading-relaxed font-body text-lg">
-                <p>Basée dans ma région, je crée des pièces en grès tourné et modelé à la main. Chaque objet porte les traces de ses doigts, une imperfection qui en fait toute la beauté.</p>
-                <p>En dehors de mes propres créations, j'adore partager ma passion en proposant des initiations, que ce soit dans mon atelier ou en venant animer une soirée chez vous.</p>
+                <p>J’ai découvert ma passion pour le modelage au sein de l’école Boulle en apprenant le savoir faire de gravure en modelé, basé principalement sur la création de bas-reliefs. Je me suis de fil en aiguille intéressée à la céramique pour donner vie à des créations avec plus de volume, telles que des tasses, des sculptures et autres objets.</p>
+                <p>J’ai appris ce savoir-faire en effectuant de nombreux stages auprès de différents ateliers, puis j’ai développé mon activité d’auto-entrepreneur pour réaliser des productions pour des ateliers travaillant pour de grandes maisons. Ces expériences m'ont permis de maîtriser les techniques de modelage, de coulage, mais aussi de tournage, avec de grandes attentes dans les finitions.</p>
+                <p>À présent, je souhaite créer mes propres productions et partager ma passion en animant des ateliers découverte mais aussi des cours hebdomadaires. L'organisation d'initiations avec les femmes battues via la ville de Rambouillet, ainsi que ma victoire au concours <em>Yes You Can</em> qui m'a aidé à financer mon atelier, ont conforté mon envie de transmission et d'aide.</p>
+                <p>J’ai toujours été fascinée par la nature, ses formes organiques mais aussi sa richesse de couleurs. Les problèmes sociétaux et environnementaux sont des sujets importants que je souhaite inclure dans mes créations. C’est pourquoi, je souhaite créer des pièces variées dans leurs formes mais aussi dans la pluralité des matières utilisées. Je perçois mon atelier comme une sorte de laboratoire d’idées, mêlant différents savoir-faire et matériaux tels que des matières nobles mais aussi ces « déchets ».</p>
               </div>
             </Reveal>
           </div>
 
           <Reveal direction="left" delay={0.15}>
             <div className="relative h-105 md:h-130">
-              <img src={imgLea} alt="Léa céramiste" className="absolute inset-0 w-full h-full object-cover object-top rounded-3xl" />
+              <img src={imgLea} alt="Léa céramiste" className="absolute inset-0 w-full h-full object-cover object-center rounded-3xl" />
               <div className="absolute -bottom-6 -right-4 bg-[#F5D060] text-[#2A1506] rounded-2xl p-4 max-w-[160px] shadow-xl">
                 <p className="font-display font-bold text-2xl">+3 ans</p>
                 <p className="font-ui text-xs">de pratique céramique</p>
@@ -283,9 +285,9 @@ export default function Apropos() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
-              { color: '#E87040', title: 'Collaboration avec Mel', text: 'Je crée les objets, Mel les peint. Ensemble on propose des ateliers pour les peindre avec vous.', tag: 'Collab' },
-              { color: '#9BBF90', title: 'Cours enfants', text: 'Des séances adaptées aux petits, pour leur faire découvrir le plaisir de l\'argile entre leurs mains.', tag: 'Futur' },
-              { color: '#F5D060', title: 'Partenariats mairies', text: 'Proposer des cours réguliers dans des espaces culturels locaux, pour toucher un public plus large.', tag: 'Futur' },
+              { color: '#E87040', title: 'Un lieu de partage et de rencontre', text: 'De nos jours, il est difficile de faire de nouvelles rencontres. C’est pourquoi, à travers ces initiations, je souhaite créer un espace d’échange, permettant de rencontrer d’autres personnes partageant les mêmes passions.', tag: 'Ateliers' },
+              { color: '#9BBF90', title: 'Cours enfants', text: 'Des séances adaptées aux petits, pour leur faire découvrir le plaisir de l\'argile entre leurs mains. Laisser parler leur imagination pour stimuler leur confiance en eux et leur créativité !', tag: 'Futur' },
+              { color: '#F5D060', title: 'Prochainement : l\'art thérapie', text: 'Mettre l’art au service de la personne est un de mes objectifs futurs ! Me former à cette pratique me permettrait de créer une bulle pour ceux qui ont besoin d’aide pour mieux se comprendre et s’exprimer.', tag: 'Futur' },
             ].map(({ color, title, text, tag }, i) => (
               <Reveal key={title} delay={i * 0.1} direction="up">
                 <div className="bg-[#FBF5E9] rounded-3xl p-8 border border-[#2A1506]/10 hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
@@ -402,7 +404,7 @@ export default function Apropos() {
                   className="w-10 h-10 rounded-full bg-[#2A1506]/10 hover:bg-[#2A1506]/20 flex items-center justify-center transition-colors"
                 >
                   <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                    <path d="M1 1l12 12M13 1L1 13" stroke="#2A1506" strokeWidth="2" strokeLinecap="round"/>
+                    <path d="M1 1l12 12M13 1L1 13" stroke="#2A1506" strokeWidth="2" strokeLinecap="round" />
                   </svg>
                 </button>
               </div>
@@ -441,7 +443,7 @@ export default function Apropos() {
               className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
             >
               <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                <path d="M12 4l-6 6 6 6" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M12 4l-6 6 6 6" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </button>
 
@@ -462,7 +464,7 @@ export default function Apropos() {
               className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
             >
               <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                <path d="M8 4l6 6-6 6" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M8 4l6 6-6 6" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </button>
 

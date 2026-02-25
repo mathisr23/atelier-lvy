@@ -80,7 +80,7 @@ export default function Cours() {
         </Reveal>
         <Reveal delay={0.2}>
           <p className="font-ui text-[#2A1506]/60 text-lg max-w-xl leading-relaxed">
-            Des séances régulières pour progresser à ton rythme. On travaille le modelage, le tournage, les engobes, en petit groupe, dans une ambiance détendue.
+            Des séances régulières pour progresser à ton rythme. On travaille des techniques de modelage variées pour s’adapter à tes projets, différentes techniques de décors, les engobes, les jeux de texture… Tout ça, en petit groupe, dans une ambiance détendue et chaleureuse.
           </p>
         </Reveal>
       </section>
@@ -107,11 +107,14 @@ export default function Cours() {
                     </li>
                   ))}
                 </ul>
-                <div className="bg-[#FBF5E9]/10 rounded-2xl px-5 py-4 flex items-center justify-between">
+                <div className="bg-[#FBF5E9]/10 rounded-2xl px-5 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                   <div>
-                    <p className="font-ui text-xs text-[#FBF5E9]/40 uppercase tracking-widest">Tarif</p>
-                    <p className="font-display font-bold text-2xl text-[#F5D060]">À venir</p>
-                    <p className="font-ui text-xs text-[#FBF5E9]/40">en cours de calcul</p>
+                    <p className="font-ui text-xs text-[#FBF5E9]/40 uppercase tracking-widest">Tarif (2h30)</p>
+                    <p className="font-display font-bold text-2xl text-[#F5D060]">55€ <span className="text-lg font-body font-normal">le cours</span></p>
+                    <div className="font-ui text-xs text-[#FBF5E9]/60 mt-1">
+                      Forfait 5 séances : 275€ <br />
+                      Forfait 10 séances : 550€
+                    </div>
                   </div>
                   <a href="#planning-jeudi" className="bg-[#F5D060] text-[#2A1506] border-2 border-[#F5D060] font-ui font-semibold text-sm px-5 py-2.5 rounded-xl hover:bg-[#2A1506] hover:text-[#FBF5E9] hover:border-[#2A1506] transition-all duration-200">
                     Voir les dates →
@@ -136,11 +139,14 @@ export default function Cours() {
                     </li>
                   ))}
                 </ul>
-                <div className="bg-[#2A1506]/5 rounded-2xl px-5 py-4 flex items-center justify-between">
+                <div className="bg-[#2A1506]/5 rounded-2xl px-5 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                   <div>
-                    <p className="font-ui text-xs text-[#2A1506]/40 uppercase tracking-widest">Tarif</p>
-                    <p className="font-display font-bold text-2xl text-[#2A1506]">À venir</p>
-                    <p className="font-ui text-xs text-[#2A1506]/40">en cours de calcul</p>
+                    <p className="font-ui text-xs text-[#2A1506]/40 uppercase tracking-widest">Tarif (Grand Soleil - 2h30)</p>
+                    <p className="font-display font-bold text-2xl text-[#2A1506]">65€ <span className="text-lg font-body font-normal text-[#2A1506]/80 lg:whitespace-nowrap">dégressif</span></p>
+                    <div className="font-ui text-xs text-[#2A1506]/60 mt-1">
+                      Forfait 5 séances : 350€ <br />
+                      Forfait 10 séances : 650€
+                    </div>
                   </div>
                   <a href="#planning-samedi" className={btn.orange.replace('px-8 py-3.5', 'px-5 py-2.5')}>Voir les dates →</a>
                 </div>

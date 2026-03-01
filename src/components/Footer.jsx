@@ -8,7 +8,7 @@ export default function Footer() {
         <div>
           <p className="font-display text-4xl font-bold mb-4">léa.</p>
           <p className="text-[#FBF5E9]/60 text-sm leading-relaxed max-w-xs">
-            Céramiste passionnée, je crée des pièces uniques en grès et propose des ateliers d'initiation.
+            Artiste céramiste passionnée, je crée des pièces uniques en grès et propose des ateliers d'initiation.
           </p>
         </div>
 

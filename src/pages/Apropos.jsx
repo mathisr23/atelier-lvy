@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Asterisk, Squiggle, patterns } from '../components/Deco'
 import Reveal from '../components/Reveal'
 import imgLea from '../assets/lea.png'
+import bookPdf from '../assets/book.pdf'
 import img3 from '../assets/3.jpg'
 import img4 from '../assets/4.jpg'
 import imgFSR22 from '../assets/FullSizeRender-22.jpg'
@@ -53,28 +54,33 @@ const testimonials = [
 const projects = [
   {
     id: 1,
-    name: 'Série 01',
+    name: 'Métamorphose',
+    subtitle: 'Porcelaine et plastique',
     color: '#E87040',
     preview: img3,
     images: [img3, img4, imgFSR22, imgFSR48, imgFSR52],
   },
   {
     id: 2,
-    name: 'Série 02',
+    name: 'Corail',
+    description: 'Déchets plastiques transformés',
+    subtitle: 'Pièces réalisées en tournage/modelage',
     color: '#F2A0A8',
     preview: imgIMG4854,
     images: [imgIMG4854, imgIMG4862, imgIMG4863, imgIMG4869],
   },
   {
     id: 3,
-    name: 'Série 03',
+    name: 'Océane',
+    subtitle: 'Pièces réalisées en tournage/modelage',
     color: '#9BBF90',
     preview: imgIMG4948,
     images: [imgIMG4948, imgIMG4959, imgIMG5065, imgIMG5071],
   },
   {
     id: 4,
-    name: 'Série 04',
+    name: 'Yolenda',
+    subtitle: 'Pièces réalisées en tournage/modelage',
     color: '#F5D060',
     preview: imgIMG4982,
     images: [imgIMG4982, imgIMG4984, imgIMG5006, imgIMG5020, imgIMG5029],
@@ -83,8 +89,8 @@ const projects = [
 
 export default function Apropos() {
   useSEO({
-    title: 'Léa — Céramiste',
-    description: "Créatrice céramiste. Créations en argile faites à la main, ateliers d'initiation et cours réguliers.",
+    title: 'Léa — Artiste céramiste',
+    description: "Créatrice artiste céramiste. Créations en argile faites à la main, ateliers d'initiation et cours réguliers.",
   })
 
   const [openProject, setOpenProject] = useState(null)
@@ -197,24 +203,24 @@ export default function Apropos() {
             <Reveal><p className="font-ui text-xs uppercase tracking-[0.3em] text-[#F5D060] mb-4">Qui suis-je ?</p></Reveal>
             <Reveal delay={0.1}>
               <h2 className="font-display font-bold text-5xl md:text-6xl leading-tight mb-8">
-                Une céramiste<br /><span className="italic text-[#F2A0A8]">passionnée</span>
+                Artiste et céramiste<br /><span className="italic text-[#F2A0A8]">passionnée</span>
               </h2>
             </Reveal>
             <Reveal delay={0.2}>
-              <div className="space-y-4 text-[#FBF5E9]/70 leading-relaxed font-body text-lg">
-                <p>J’ai découvert ma passion pour le modelage au sein de l’école Boulle en apprenant le savoir faire de gravure en modelé, basé principalement sur la création de bas-reliefs. Je me suis de fil en aiguille intéressée à la céramique pour donner vie à des créations avec plus de volume, telles que des tasses, des sculptures et autres objets.</p>
-                <p>J’ai appris ce savoir-faire en effectuant de nombreux stages auprès de différents ateliers, puis j’ai développé mon activité d’auto-entrepreneur pour réaliser des productions pour des ateliers travaillant pour de grandes maisons. Ces expériences m'ont permis de maîtriser les techniques de modelage, de coulage, mais aussi de tournage, avec de grandes attentes dans les finitions.</p>
-                <p>À présent, je souhaite créer mes propres productions et partager ma passion en animant des ateliers découverte mais aussi des cours hebdomadaires. L'organisation d'initiations avec les femmes battues via la ville de Rambouillet, ainsi que ma victoire au concours <em>Yes You Can</em> qui m'a aidé à financer mon atelier, ont conforté mon envie de transmission et d'aide.</p>
-                <p>J’ai toujours été fascinée par la nature, ses formes organiques mais aussi sa richesse de couleurs. Les problèmes sociétaux et environnementaux sont des sujets importants que je souhaite inclure dans mes créations. C’est pourquoi, je souhaite créer des pièces variées dans leurs formes mais aussi dans la pluralité des matières utilisées. Je perçois mon atelier comme une sorte de laboratoire d’idées, mêlant différents savoir-faire et matériaux tels que des matières nobles mais aussi ces « déchets ».</p>
+              <div className="space-y-3 text-[#FBF5E9]/70 leading-relaxed font-body text-base">
+                <p>Formée à l’école Boulle, j’ai découvert le modelage par la gravure en relief avant de plonger dans la céramique, pour donner du volume à mes créations.</p>
+                <p>J’ai forgé mon savoir-faire à travers de nombreux stages, puis en produisant pour de grandes maisons, maîtrisant tournage, coulage et modelage avec des exigences élevées en finitions.</p>
+                <p>Aujourd’hui, je crée mes propres pièces et partage ma passion via des ateliers et cours. Ma victoire au concours <em>Yes You Can</em> et les initiations organisées avec des femmes battues à Rambouillet ont renforcé mon envie de transmission.</p>
+                <p>Inspirée par la nature et ses formes organiques, j’explore des matières variées, du noble aux déchets réinventés, dans un atelier que je vis comme un laboratoire d’idées.</p>
               </div>
             </Reveal>
           </div>
 
           <Reveal direction="left" delay={0.15}>
             <div className="relative h-105 md:h-130">
-              <img src={imgLea} alt="Léa céramiste" className="absolute inset-0 w-full h-full object-cover object-center rounded-3xl" />
+              <img src={imgLea} alt="Léa artiste céramiste" className="absolute inset-0 w-full h-full object-cover object-center rounded-3xl" />
               <div className="absolute -bottom-6 -right-4 bg-[#F5D060] text-[#2A1506] rounded-2xl p-4 max-w-[160px] shadow-xl">
-                <p className="font-display font-bold text-2xl">+3 ans</p>
+                <p className="font-display font-bold text-2xl">5 ans</p>
                 <p className="font-ui text-xs">de pratique céramique</p>
               </div>
             </div>
@@ -231,9 +237,19 @@ export default function Apropos() {
                 <p className="font-ui text-xs uppercase tracking-[0.3em] text-[#E87040] mb-3">Portfolio</p>
                 <h2 className="font-display font-bold text-5xl md:text-7xl leading-tight">Mes<br /><span className="italic">créations</span></h2>
               </div>
-              <Link to="/boutique" className="inline-block border-b-2 border-[#2A1506] pb-1 font-ui text-sm font-semibold hover:text-[#E87040] hover:border-[#E87040] transition-colors self-start md:self-auto">
-                Voir la boutique →
-              </Link>
+              <div className="flex flex-col sm:flex-row gap-4 self-start md:self-auto">
+                <a
+                  href={bookPdf}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block border-b-2 border-orange pb-1 font-ui text-sm font-semibold text-orange hover:text-brown hover:border-brown transition-colors"
+                >
+                  Voir mon book →
+                </a>
+                <Link to="/boutique" className="inline-block border-b-2 border-brown pb-1 font-ui text-sm font-semibold hover:text-orange hover:border-orange transition-colors">
+                  Voir la boutique →
+                </Link>
+              </div>
             </div>
           </Reveal>
 
@@ -398,7 +414,15 @@ export default function Apropos() {
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between mb-6">
-                <h3 className="font-display font-bold text-3xl">{openProject.name}</h3>
+                <div>
+                  <h3 className="font-display font-bold text-3xl">{openProject.name}</h3>
+                  {openProject.description && (
+                    <p className="font-ui text-sm font-semibold mt-1" style={{ color: openProject.color }}>{openProject.description}</p>
+                  )}
+                  {openProject.subtitle && (
+                    <p className="font-ui text-xs text-[#2A1506]/50 mt-0.5">{openProject.subtitle}</p>
+                  )}
+                </div>
                 <button
                   onClick={() => setOpenProject(null)}
                   className="w-10 h-10 rounded-full bg-[#2A1506]/10 hover:bg-[#2A1506]/20 flex items-center justify-center transition-colors"

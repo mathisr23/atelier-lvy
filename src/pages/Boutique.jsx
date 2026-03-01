@@ -29,7 +29,7 @@ const steps = [
 
 export default function Boutique() {
   useSEO({
-    title: 'Boutique — Léa Céramiste',
+    title: 'Boutique — Léa Artiste céramiste',
     description: 'Explorez mes créations en céramique disponibles à la vente — pièces uniques faites à la main.',
   })
 
@@ -71,7 +71,7 @@ export default function Boutique() {
           </div>
         </Reveal>
         <Reveal direction="scale" delay={0.1}>
-          <div className="relative">
+          <div className="relative overflow-hidden rounded-2xl">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 select-none opacity-80">
               <CollectionImage src={img1} className="h-64" style={{ borderRadius: '40% 60% 70% 30% / 40% 50% 60% 50%' }} />
               <CollectionImage src={img2} className="h-64 md:h-80 md:-mt-8" style={{ borderRadius: '50% 50% 40% 60% / 60% 40% 50% 50%' }} />
@@ -82,7 +82,7 @@ export default function Boutique() {
               <CollectionImage src={img7} className="h-48 hidden md:block" style={{ borderRadius: '50% 50% 60% 40% / 40% 50% 60% 50%' }} />
               <CollectionImage src={img8} className="h-48 hidden md:block" style={{ borderRadius: '60% 40% 70% 30% / 50% 60% 40% 50%' }} />
             </div>
-            <div className="absolute inset-0 backdrop-blur-md bg-[#FBF5E9]/60 rounded-2xl flex flex-col items-center justify-center text-center px-6 gap-6">
+            <div className="absolute inset-0 backdrop-blur-md bg-[#FBF5E9]/60 flex flex-col items-center justify-center text-center px-6 gap-6">
               <div className="bg-[#2A1506] text-[#FBF5E9] rounded-lg px-8 py-3">
                 <p className="font-ui text-xs uppercase tracking-[0.3em] font-bold">Bientôt disponible</p>
               </div>
@@ -122,7 +122,7 @@ export default function Boutique() {
                 <h3 className="font-display font-bold text-2xl text-[#FBF5E9] mb-2">Tu as une idée en tête ?</h3>
                 <p className="font-body text-base text-[#FBF5E9]/60">Dis-moi tout, même une idée vague, on la développe ensemble.</p>
               </div>
-              <a href="mailto:lea.ceramique@gmail.com?subject=Commande sur mesure" className={btn.orange}>Faire une demande →</a>
+              <a href="mailto:contact.atelierlevy@gmail.com?subject=Commande sur mesure" className={btn.orange}>Faire une demande →</a>
             </div>
           </Reveal>
         </div>
@@ -139,7 +139,7 @@ export default function Boutique() {
                 Tu as modelé des pièces ailleurs et tu cherches un four ? Je propose des cuissons pour des projets extérieurs. Contacte-moi pour les tarifs et conditions.
               </p>
             </div>
-            <a href="mailto:lea.ceramique@gmail.com?subject=Cuisson extérieure" className={btn.dark}>Me contacter</a>
+            <a href="mailto:contact.atelierlevy@gmail.com?subject=Cuisson extérieure" className={btn.dark}>Me contacter</a>
           </div>
         </Reveal>
       </section>

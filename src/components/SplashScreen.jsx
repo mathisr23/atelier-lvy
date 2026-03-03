@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { useState, useEffect } from 'react'
 import { Asterisk } from './Deco'
+import logo1 from '../assets/logo1.png'
 
 export default function SplashScreen({ onDone }) {
   const [visible, setVisible] = useState(true)
@@ -44,23 +45,18 @@ export default function SplashScreen({ onDone }) {
 
           {/* Logo */}
           <div className="text-center relative z-10">
-            <motion.p
-              className="font-display font-black text-[#FBF5E9] leading-none"
-              style={{ fontSize: 'clamp(6rem, 18vw, 14rem)' }}
+            <motion.img
+              src={logo1}
+              alt="Léa — Artiste céramiste"
+              className="w-auto brightness-0 invert mx-auto"
+              style={{ height: 'clamp(12rem, 30vw, 22rem)' }}
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.15, duration: 0.7, ease: [0.25, 0.1, 0.25, 1] }}
-            >
-              léa<motion.span
-                className="text-[#E87040]"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.5, duration: 0.4 }}
-              >.</motion.span>
-            </motion.p>
+            />
 
             <motion.p
-              className="font-ui text-[#FBF5E9]/40 text-xs uppercase tracking-[0.5em] mt-3"
+              className="font-ui text-[#FBF5E9]/40 text-xs uppercase tracking-[0.5em] mt-4"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.7, duration: 0.5 }}

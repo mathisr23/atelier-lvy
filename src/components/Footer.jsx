@@ -7,7 +7,7 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-6 py-16 grid grid-cols-1 md:grid-cols-3 gap-12">
         {/* Brand */}
         <div>
-          <img src={logo1} alt="Léa — Artiste céramiste" className="h-10 w-auto mb-4 brightness-0 invert" />
+          <img src={logo1} alt="Léa — Artiste céramiste" className="h-20 w-auto mb-4 brightness-0 invert" />
           <p className="text-[#FBF5E9]/60 text-sm leading-relaxed max-w-xs">
             Artiste céramiste passionnée, je crée des pièces uniques en grès et propose des ateliers d'initiation.
           </p>

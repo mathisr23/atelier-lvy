@@ -18,7 +18,7 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         {/* Logo */}
         <NavLink to="/" className="hover:opacity-80 transition-opacity">
-          <img src={logo1} alt="Léa — Artiste céramiste" className="h-10 w-auto" />
+          <img src={logo1} alt="Léa — Artiste céramiste" className="h-20 w-auto" />
         </NavLink>
 
         {/* Desktop nav */}

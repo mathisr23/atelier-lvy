@@ -64,7 +64,6 @@ const projects = [
   {
     id: 2,
     name: 'Corail',
-    description: 'Déchets plastiques transformés',
     subtitle: 'Vase réalisé en modelage',
     color: '#F2A0A8',
     preview: imgIMG4854,
@@ -72,7 +71,7 @@ const projects = [
   },
   {
     id: 3,
-    name: 'Océane',
+    name: 'Océan',
     subtitle: 'Pièces réalisées en tournage',
     color: '#9BBF90',
     preview: imgIMG4948,
@@ -80,7 +79,7 @@ const projects = [
   },
   {
     id: 4,
-    name: 'Yolenda',
+    name: 'Sand',
     subtitle: 'Pièces réalisées en modelage et tournage',
     color: '#F5D060',
     preview: imgIMG4982,
@@ -134,20 +133,20 @@ export default function Apropos() {
         <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center py-20">
           <div className="relative z-10">
             <motion.p
-              className="font-ui text-sm uppercase tracking-[0.3em] text-[#E87040] mb-4"
+              className="font-ui text-sm uppercase tracking-[0.3em] text-[#E87040] -mb-8 relative z-10"
               initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
             >
               Artiste céramiste
             </motion.p>
             <motion.div
-              className="mb-6"
+              className="-mb-10 relative z-0"
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
             >
-              <img src={logo1} alt="Léa — Artiste céramiste" className="w-auto" style={{ height: 'clamp(5rem, 15vw, 12rem)' }} />
+              <img src={logo1} alt="Léa — Artiste céramiste" className="w-auto" style={{ height: 'clamp(14rem, 36vw, 30rem)' }} />
             </motion.div>
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }} className="relative z-10">
               <Squiggle width={90} color="#E87040" className="mb-6 opacity-60" />
             </motion.div>
             <motion.p
@@ -205,7 +204,7 @@ export default function Apropos() {
               <img src={imgLea} alt="Léa artiste céramiste" className="absolute inset-0 w-full h-full object-cover object-center rounded-3xl" />
               <div className="absolute -bottom-6 -right-4 bg-[#F5D060] text-[#2A1506] rounded-2xl p-4 max-w-[160px] shadow-xl">
                 <p className="font-display font-bold text-2xl">5 ans</p>
-                <p className="font-ui text-xs">de pratique céramique</p>
+                <p className="font-ui text-xs">d'expérience</p>
               </div>
             </div>
           </Reveal>

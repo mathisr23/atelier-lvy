@@ -2,6 +2,8 @@ import useSEO from '../hooks/useSEO'
 import { Asterisk, patterns } from '../components/Deco'
 import Reveal from '../components/Reveal'
 import imgFour from '../assets/four.png'
+import illustration1 from '../assets/illustration1.png'
+import illustration2 from '../assets/illustration2.png'
 
 import img1 from '../assets/2.jpg'
 import img2 from '../assets/3.jpg'
@@ -40,21 +42,43 @@ export default function Boutique() {
       {/* HERO */}
       <section className="px-6 md:px-16 lg:px-24 py-20 max-w-7xl mx-auto relative">
         <Asterisk size={24} color="#E87040" className="absolute top-24 right-8 opacity-25 rotate-12" />
-        <Reveal><p className="font-ui text-xs uppercase tracking-[0.3em] text-[#E87040] mb-4">Boutique</p></Reveal>
-        <Reveal delay={0.1}>
-          <h1 className="font-display font-black leading-[0.9] mb-10" style={{ fontSize: 'clamp(4rem, 12vw, 8rem)' }}>
-            Ce que je<br /><span className="text-[#E87040]">propose.</span>
-          </h1>
-        </Reveal>
-        <Reveal delay={0.2}>
-          <p className="font-body text-[#2A1506]/60 text-xl max-w-xl leading-relaxed mb-8">
-            Venez découvrir mes créations ou bien faites moi part de vos idées les plus folles pour créer des objets sur mesures répondant à vos gouts et besoins !
-          </p>
-          <div className="flex gap-4 flex-wrap">
-            <a href="#mes-pieces" className={btn.orange}>Mes pièces</a>
-            <a href="#sur-mesure" className={btn.dark}>Création sur mesure</a>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div>
+            <Reveal><p className="font-ui text-xs uppercase tracking-[0.3em] text-[#E87040] mb-4">Boutique</p></Reveal>
+            <Reveal delay={0.1}>
+              <h1 className="font-display font-black leading-[0.9] mb-10" style={{ fontSize: 'clamp(3.5rem, 10vw, 7rem)' }}>
+                Ce que je<br /><span className="text-[#E87040]">propose.</span>
+              </h1>
+            </Reveal>
+            <Reveal delay={0.2}>
+              <p className="font-body text-[#2A1506]/60 text-xl max-w-xl leading-relaxed mb-8">
+                Venez découvrir mes créations ou bien faites moi part de vos idées les plus folles pour créer des objets sur mesures répondant à vos gouts et besoins !
+              </p>
+              <div className="flex gap-4 flex-wrap">
+                <a href="#mes-pieces" className={btn.orange}>Mes pièces</a>
+                <a href="#sur-mesure" className={btn.dark}>Création sur mesure</a>
+              </div>
+            </Reveal>
           </div>
-        </Reveal>
+
+          {/* Illustrations */}
+          <Reveal direction="left" delay={0.15}>
+            <div className="relative h-[40rem] hidden lg:block">
+              <img
+                src={illustration1}
+                alt="Illustration céramique"
+                className="absolute top-0 right-0 w-[22rem] h-[22rem] object-contain drop-shadow-sm rotate-3 mix-blend-multiply contrast-[1.15] opacity-90"
+                style={{ imageRendering: '-webkit-optimize-contrast' }}
+              />
+              <img
+                src={illustration2}
+                alt="Illustration céramique"
+                className="absolute bottom-0 left-4 w-80 h-80 object-contain drop-shadow-sm -rotate-2 mix-blend-multiply contrast-[1.15] opacity-90"
+                style={{ imageRendering: '-webkit-optimize-contrast' }}
+              />
+            </div>
+          </Reveal>
+        </div>
       </section>
 
       {/* COLLECTION COMING SOON */}
@@ -130,9 +154,9 @@ export default function Boutique() {
       </section>
 
       {/* CUISSONS */}
-      <section className="px-6 md:px-16 lg:px-24 py-24 max-w-7xl mx-auto">
+      <section className="px-6 md:px-16 lg:px-24 py-16 max-w-7xl mx-auto">
         <Reveal>
-          <div className="bg-[#F2A0A8]/20 border border-[#F2A0A8]/40 rounded-3xl p-10 md:p-16 flex flex-col md:flex-row items-center gap-8 relative overflow-hidden">
+          <div className="bg-[#F2A0A8]/20 border border-[#F2A0A8]/40 rounded-3xl p-8 md:px-16 md:py-8 flex flex-col md:flex-row items-center gap-8">
             <div className="flex-1">
               <p className="font-ui text-xs uppercase tracking-[0.3em] text-[#D97080] mb-3">Services</p>
               <h2 className="font-display font-bold text-3xl md:text-4xl text-[#2A1506] mb-4 leading-tight">Cuissons extérieures</h2>
@@ -140,10 +164,12 @@ export default function Boutique() {
                 Tu as modelé des pièces ailleurs et tu cherches un four ? Je propose des cuissons pour des projets extérieurs. Contacte-moi pour les tarifs et conditions.
               </p>
             </div>
+            {/* four.png — entre le texte et le bouton */}
             <img
               src={imgFour}
               alt="Illustration d'un four de céramiste"
-              className="w-40 h-40 object-contain absolute -bottom-4 right-40 opacity-60 pointer-events-none hidden md:block"
+              className="object-contain opacity-90 pointer-events-none hidden md:block flex-shrink-0 mix-blend-multiply contrast-[1.1] md:-my-12"
+              style={{ width: '22rem', height: '22rem', imageRendering: '-webkit-optimize-contrast' }}
             />
             <a href="mailto:contact.atelierlvy@gmail.com?subject=Cuisson extérieure" className={btn.dark}>Me contacter</a>
           </div>

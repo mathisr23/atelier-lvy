@@ -139,12 +139,20 @@ export default function Cours() {
                 </h2>
               </Reveal>
               <Reveal delay={0.1}>
-                <p className="font-ui text-[#2A1506]/70 text-base leading-relaxed mb-6">
-                  Une seule séance, c'est une initiation. Les cours réguliers sont faits pour progresser vraiment : apprendre les techniques de modelage, de tournage et de décoration, séance après séance, dans un petit groupe soudé.
-                </p>
-                <p className="font-ui text-[#2A1506]/70 text-base leading-relaxed mb-8">
-                  C'est pourquoi les cours sont proposés en packs de 5 ou 10 séances. Tu choisis ton créneau et tu t'y retrouves à chaque fois.
-                </p>
+                <div className="font-ui text-[#2A1506]/70 text-base leading-relaxed mb-6 space-y-3">
+                  <p>Vous souhaitez aller plus loin dans l'apprentissage du modelage ? Les cours réguliers sont la meilleure solution ! Vous pouvez réaliser des projets plus complexes qui demandent plus de technique et de temps, séance après séance, dans un petit groupe soudé.</p>
+                  <p>C'est pourquoi les cours sont proposés en packs de 5 ou 10 séances. Tu peux créer différentes pièces avec plus de liberté dans leurs formats <span className="text-[#2A1506]/50 text-sm">(dans la limite de 10 kg par personne)</span>.</p>
+                  <p>Choisis ton créneau, ta présence sera requise à chaque séance après ton inscription !</p>
+                </div>
+                <div className="bg-[#2A1506]/10 rounded-2xl p-5 font-ui text-sm text-[#2A1506]/70 mb-8">
+                  <p className="font-semibold text-[#2A1506] mb-2">Inclus :</p>
+                  <ul className="space-y-1">
+                    <li>• 10 kg maximum de terre par personne</li>
+                    <li>• Engobes, outils et matériel fournis</li>
+                    <li>• 2 cuissons + émaillage inclus</li>
+                    <li>• Groupe de 6 personnes maximum</li>
+                  </ul>
+                </div>
               </Reveal>
               <Reveal delay={0.15}>
                 <div className="flex flex-wrap gap-3">
@@ -250,7 +258,7 @@ export default function Cours() {
         <Reveal>
           <div className="flex items-center gap-4 mb-8 flex-wrap">
             <h2 className="font-display font-bold text-3xl md:text-4xl">Jeudis soir</h2>
-            <span className="font-ui text-xs bg-[#F5D060] text-[#2A1506] px-3 py-1 rounded-lg uppercase tracking-widest">17h – 19h30</span>
+            <span className="font-ui text-xs bg-[#F5D060] text-[#2A1506] px-3 py-1 rounded-lg uppercase tracking-widest">18h30 – 21h</span>
             <span className="font-ui text-xs text-[#2A1506]/40 bg-[#2A1506]/5 px-3 py-1 rounded-lg">Mars – Avril 2026</span>
           </div>
         </Reveal>

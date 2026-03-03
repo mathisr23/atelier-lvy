@@ -136,7 +136,7 @@ export default function Initiation() {
       {/* DANS L'ATELIER — en premier (rose) */}
       <section
         id="atelier"
-        className="px-6 md:px-16 lg:px-24 py-24 mt-8 scroll-mt-20 relative overflow-hidden"
+        className="px-6 md:px-16 lg:px-24 pt-10 pb-24 mt-8 scroll-mt-20 relative overflow-hidden"
         style={{ backgroundColor: '#F2A0A8', backgroundImage: 'repeating-linear-gradient(-45deg, rgba(42,21,6,0.05) 0, rgba(42,21,6,0.05) 1px, transparent 0, transparent 50%)', backgroundSize: '14px 14px' }}
       >
         <div className="max-w-7xl mx-auto">
@@ -349,14 +349,16 @@ export default function Initiation() {
                     ))}
                   </ul>
                 </div>
-                <p className="font-ui text-xs text-[#2A1506]/60 mb-6">Tarif calculé selon le nombre de participants, la durée et les projets souhaités, je t'envoie un devis après contact. Ces initiations peuvent être personnalisées davantage qu'une initiation classique en atelier.</p>
+                <p className="font-ui text-sm text-[#2A1506]/70 mb-6">
+                  Des frais de déplacement s'appliquent selon la distance et le lieu.
+                </p>
                 <Link to="/contact?type=initiation" className={btn.dark}>Faire une demande →</Link>
               </Reveal>
             </div>
             <Reveal direction="left" delay={0.15}>
-              <div className="relative h-120 hidden lg:block">
-                <img src={illustration1} alt="Première cuisson" className="absolute top-0 right-0 w-52 h-52 rotate-3 rounded-2xl object-contain drop-shadow-lg" />
-                <img src={illustration2} alt="Émaillage et deuxième cuisson" className="absolute bottom-8 left-4 w-48 h-48 -rotate-4 rounded-2xl object-contain drop-shadow-lg" />
+              <div className="relative h-[42rem] hidden lg:block">
+                <img src={illustration1} alt="Première cuisson" className="absolute top-0 right-0 w-96 h-96 rotate-3 rounded-2xl object-contain drop-shadow-xl" />
+                <img src={illustration2} alt="Émaillage et deuxième cuisson" className="absolute bottom-4 left-0 w-80 h-80 -rotate-4 rounded-2xl object-contain drop-shadow-xl" />
                 <div className="absolute bottom-6 right-0 bg-[#FBF5E9] rounded-2xl p-4 shadow-lg">
                   <p className="font-display font-bold text-2xl text-[#2A1506]">2 – 10</p>
                   <p className="font-ui text-xs text-[#2A1506]/60">participants</p>

@@ -1,5 +1,6 @@
 import { NavLink } from 'react-router-dom'
 import { useState } from 'react'
+import logo1 from '../assets/logo1.png'
 
 const links = [
   { to: '/', label: 'À propos' },
@@ -16,8 +17,8 @@ export default function Navbar() {
     <header className="fixed top-0 left-0 right-0 z-50 bg-[#FBF5E9]/90 backdrop-blur-sm border-b border-[#2A1506]/10">
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         {/* Logo */}
-        <NavLink to="/" className="font-display text-2xl font-bold tracking-tight text-[#2A1506] hover:text-[#E87040] transition-colors">
-          léa.
+        <NavLink to="/" className="hover:opacity-80 transition-opacity">
+          <img src={logo1} alt="Léa — Artiste céramiste" className="h-10 w-auto" />
         </NavLink>
 
         {/* Desktop nav */}

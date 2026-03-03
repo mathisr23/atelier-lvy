@@ -1,4 +1,5 @@
 import { NavLink, Link } from 'react-router-dom'
+import logo1 from '../assets/logo1.png'
 
 export default function Footer() {
   return (
@@ -6,7 +7,7 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-6 py-16 grid grid-cols-1 md:grid-cols-3 gap-12">
         {/* Brand */}
         <div>
-          <p className="font-display text-4xl font-bold mb-4">léa.</p>
+          <img src={logo1} alt="Léa — Artiste céramiste" className="h-10 w-auto mb-4 brightness-0 invert" />
           <p className="text-[#FBF5E9]/60 text-sm leading-relaxed max-w-xs">
             Artiste céramiste passionnée, je crée des pièces uniques en grès et propose des ateliers d'initiation.
           </p>
@@ -36,7 +37,7 @@ export default function Footer() {
         {/* Contact */}
         <div>
           <p className="font-ui text-xs uppercase tracking-widest text-[#FBF5E9]/40 mb-4">Contact</p>
-          <Link to="/contact" className="text-[#FBF5E9]/70 hover:text-[#F5D060] transition-colors text-sm block mb-2">contact.atelierlevy@gmail.com</Link>
+          <a href="mailto:contact.atelierlvy@gmail.com" className="text-[#FBF5E9]/70 hover:text-[#F5D060] transition-colors text-sm block mb-2">contact.atelierlvy@gmail.com</a>
           <a
             href="https://instagram.com/atelier_lvy"
             target="_blank"

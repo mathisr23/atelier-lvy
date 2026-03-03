@@ -4,9 +4,8 @@ import useSEO from '../hooks/useSEO'
 import { Cake, Wine, Gem, Building2, Palette, Sparkles, Mail } from 'lucide-react'
 import { Asterisk, patterns } from '../components/Deco'
 import Reveal from '../components/Reveal'
-import imgAtelier1 from '../assets/IMG_4948.JPG'
-import imgAtelier2 from '../assets/IMG_4959.JPG'
-import imgAtelier3 from '../assets/IMG_4982.JPG'
+import illustration1 from '../assets/illustration1.png'
+import illustration2 from '../assets/illustration2.png'
 
 function FaqSection({ items }) {
   const [open, setOpen] = useState(null)
@@ -57,12 +56,12 @@ const evenements = [
 
 // Mars 2026 — à mettre à jour avec les vrais créneaux
 const creneaux = [
-  { jour: 'Mardi', day: 3, date: '3 mars', heure: '19h – 21h30', places: 4, dispo: true },
-  { jour: 'Samedi', day: 7, date: '7 mars', heure: '10h – 12h30', places: 6, dispo: true },
-  { jour: 'Mardi', day: 10, date: '10 mars', heure: '19h – 21h30', places: 2, dispo: true },
-  { jour: 'Samedi', day: 14, date: '14 mars', heure: '14h – 16h30', places: 0, dispo: false },
-  { jour: 'Mardi', day: 17, date: '17 mars', heure: '19h – 21h30', places: 5, dispo: true },
-  { jour: 'Samedi', day: 21, date: '21 mars', heure: '10h – 12h30', places: 6, dispo: true },
+  { jour: 'Vendredi', day: 6, date: '6 mars', heure: '18h30 – 20h30', places: 8, dispo: true },
+  { jour: 'Samedi', day: 7, date: '7 mars', heure: '14h – 17h', places: 8, dispo: true },
+  { jour: 'Vendredi', day: 13, date: '13 mars', heure: '18h30 – 20h30', places: 3, dispo: true },
+  { jour: 'Samedi', day: 14, date: '14 mars', heure: '14h – 17h', places: 0, dispo: false },
+  { jour: 'Vendredi', day: 20, date: '20 mars', heure: '18h30 – 20h30', places: 5, dispo: true },
+  { jour: 'Samedi', day: 21, date: '21 mars', heure: '14h – 17h', places: 8, dispo: true },
 ]
 
 // Mars 2026 commence un dimanche → offset 6 (grille Lun–Dim)
@@ -149,10 +148,19 @@ export default function Initiation() {
               </h2>
               <div className="font-ui text-[#2A1506]/70 text-base leading-relaxed max-w-xl">
                 <p className="mb-3">
-                  Venez seul·e ou accompagné·e pour découvrir la céramique pendant une initiation au modelage de 2h. Créez une à deux pièces en grès selon la forme, la grandeur et les couleurs que vous souhaitez utiliser. Je vous guide tout au long du processus de création !
+                  Venez seul·e ou accompagné·e pour découvrir la céramique pendant une initiation au modelage de 2h. Créez une à deux pièces en grès selon leurs formes et leurs grandeurs, puis, décorez les à l'aide d'engobe coloré ! Je vous guide tout au long du processus pour vous aider à mettre en forme vos idées.
                 </p>
-                <p>
-                  Une fois vos créations finies, il faut encore être un peu patient. Le séchage des pièces et les cuissons peuvent prendre du temps. Dès que vos pièces sortent du four, je vous envoie un message pour venir récupérer vos créations (délai d'un mois minimum).
+                <p className="mb-3">
+                  Une fois vos créations finies, il faut encore être un peu patient. Le séchage des pièces et les cuissons peuvent prendre du temps. Dès que vos pièces sortent du four, je vous envoie un message pour venir récupérer vos créations.
+                </p>
+                <p className="mb-4">
+                  Après avoir réservé votre créneau, je reviens vers vous pour confirmer votre inscription en vous demandant de régler un acompte (Lydia, Wero ou espèces).
+                </p>
+                <p className="text-[#2A1506]/50 text-sm">
+                  Acompte non remboursable. Possibilité de replanifier l'initiation si annulation 24h avant la date prévue.
+                </p>
+                <p className="text-[#2A1506]/40 text-xs mt-2">
+                  (8 personnes maximum par session, délai d'un mois minimum après la date de l'initiation avant de récupérer vos œuvres, possibilité de livraison avec des frais supplémentaires)
                 </p>
               </div>
             </div>
@@ -160,10 +168,10 @@ export default function Initiation() {
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
             {[
-              { num: '1', label: 'Vous réservez un créneau' },
-              { num: '2', label: 'Vous créez votre pièce' },
-              { num: '3', label: "Je m'occupe de la cuisson" },
-              { num: '4', label: 'Vous récupérez votre œuvre' },
+              { num: '1', label: 'Réservez votre créneau' },
+              { num: '2', label: 'Modelez vos pièces' },
+              { num: '3', label: 'Décorez les à l\'engobe' },
+              { num: '4', label: 'Je m\'occupe de la cuisson et vous préviens dès que vos pièces sont disponibles !' },
             ].map(({ num, label }, i) => (
               <Reveal key={num} delay={i * 0.08}>
                 <div className="bg-[#FBF5E9]/60 backdrop-blur-sm rounded-2xl p-5 text-center">
@@ -287,11 +295,11 @@ export default function Initiation() {
                   ) : (
                     <p className="font-ui text-sm text-[#2A1506]/50">Sélectionne un créneau ci-dessus</p>
                   )}
-                  <p className="font-ui text-xs text-[#2A1506]/40 mt-1">Un acompte est demandé pour confirmer (Lydia, Vero ou espèces).</p>
+                  <p className="font-ui text-xs text-[#2A1506]/40 mt-1">Un acompte est demandé pour confirmer (Lydia, Wero ou espèces). Acompte non remboursable.</p>
                 </div>
                 <Link
                   to={selected !== null
-                    ? `/contact?type=initiation&date=${creneaux[selected].jour} ${creneaux[selected].date}&places=${nbPlaces}`
+                    ? `/contact?type=initiation&date=${creneaux[selected].jour} ${creneaux[selected].date} à ${creneaux[selected].heure}&places=${nbPlaces}`
                     : '/contact?type=initiation'}
                   className={btn.dark}
                 >
@@ -322,7 +330,7 @@ export default function Initiation() {
               </Reveal>
               <Reveal delay={0.2}>
                 <p className="font-body text-[#2A1506]/70 text-lg leading-relaxed mb-8 max-w-md">
-                  Je viens animer un atelier de modelage chez vous. 2 heures de création, de rires et de céramique, idéal pour une occasion un peu spéciale. Faites moi part de vos inspirations pour que j'adapte le matériel à vos besoins !
+                  Je viens animer un atelier de modelage chez vous — 2 heures de modelage, de rires, de créativité et de partage. Idéal pour une occasion un peu spéciale ! Faites moi part de vos inspirations pour que j'adapte le matériel à vos besoins. <em>Frais de déplacement applicables selon la distance.</em>
                 </p>
                 <div className="flex flex-wrap gap-2 mb-10">
                   {evenements.map(({ icon: Icon, label }) => (
@@ -347,10 +355,9 @@ export default function Initiation() {
             </div>
             <Reveal direction="left" delay={0.15}>
               <div className="relative h-120 hidden lg:block">
-                <img src={imgAtelier1} alt="Atelier céramique" className="absolute top-0 right-0 w-52 h-64 rotate-3 rounded-2xl object-cover shadow-lg" />
-                <img src={imgAtelier2} alt="Atelier céramique" className="absolute top-16 left-12 w-44 h-56 -rotate-4 rounded-2xl object-cover shadow-lg" />
-                <img src={imgAtelier3} alt="Atelier céramique" className="absolute bottom-0 right-6 w-44 h-40 rotate-2 rounded-2xl object-cover shadow-lg" />
-                <div className="absolute bottom-6 left-0 bg-[#FBF5E9] rounded-2xl p-4 shadow-lg">
+                <img src={illustration1} alt="Première cuisson" className="absolute top-0 right-0 w-52 h-52 rotate-3 rounded-2xl object-contain drop-shadow-lg" />
+                <img src={illustration2} alt="Émaillage et deuxième cuisson" className="absolute bottom-8 left-4 w-48 h-48 -rotate-4 rounded-2xl object-contain drop-shadow-lg" />
+                <div className="absolute bottom-6 right-0 bg-[#FBF5E9] rounded-2xl p-4 shadow-lg">
                   <p className="font-display font-bold text-2xl text-[#2A1506]">2 – 10</p>
                   <p className="font-ui text-xs text-[#2A1506]/60">participants</p>
                 </div>
@@ -363,13 +370,36 @@ export default function Initiation() {
       {/* FAQ */}
       <FaqSection
         items={[
-          { q: "Faut-il avoir de l'expérience ?", a: "Aucune ! Les initiations sont faites pour les débutants complets. Tu seras guidé(e) à chaque étape, du façonnage jusqu'à l'émaillage." },
-          { q: "Qu'est-ce qu'on repart avec ?", a: "Avec tes créations, une fois les deux cuissons terminées. Compte environ 1 mois après l'initiation pour les récupérer à l'atelier (livraison possible sur devis)." },
+          { q: "Faut-il avoir de l'expérience ?", a: "Aucune ! Les initiations sont faites pour les débutants, même ceux qui n'ont pas l'habitude des activités manuelles. Tu seras guidé(e) tout au long du cours pour que tu puisses réaliser tes envies." },
+          { q: "Qu'est-ce qu'on repart avec ?", a: "Malheureusement pas tout de suite : les pièces ont besoin de temps pour sécher avant de pouvoir passer en première cuisson. Ensuite, je m'occupe de les émailler pour qu'elles puissent être étanches après la deuxième cuisson. Il faut au moins compter 1 mois après la date de l'initiation avant de pouvoir venir les récupérer." },
           { q: "Que faut-il apporter ?", a: "Rien du tout, sauf des vêtements confortables que tu ne crains pas de salir. L'argile, les outils et les tabliers sont fournis." },
           { q: "C'est possible en cadeau ?", a: "Oui, les initiations font des cadeaux très originaux. Contacte-moi pour recevoir un bon cadeau personnalisé à offrir." },
-          { q: "Combien de personnes par session ?", a: "Entre 2 et 10 participants selon la formule choisie. Les groupes restent petits pour que chacun avance à son rythme." },
+          { q: "Combien de personnes par session ?", a: "8 personnes maximum. Les groupes restent petits pour que chacun avance à son rythme." },
         ]}
       />
+
+      {/* INITIATION PONCTUELLE */}
+      <section className="px-6 md:px-16 lg:px-24 py-16 max-w-7xl mx-auto">
+        <Reveal>
+          <div className="bg-[#F5D060]/30 border border-[#F5D060]/50 rounded-3xl p-10 md:p-12 flex flex-col md:flex-row items-start gap-8">
+            <div className="flex-1">
+              <span className="inline-block font-ui text-xs uppercase tracking-widest bg-[#F5D060] text-[#2A1506] px-3 py-1 rounded-lg mb-4">Offre spéciale</span>
+              <h3 className="font-display font-bold text-2xl md:text-3xl text-[#2A1506] mb-3">Initiation parent / enfant</h3>
+              <p className="font-ui text-[#2A1506]/60 text-sm leading-relaxed max-w-md mb-4">
+                Un moment unique à partager en famille ! Venez créer ensemble pendant 2 heures de modelage, pour les enfants à partir de 3 ans.
+              </p>
+              <div className="bg-[#FBF5E9] rounded-2xl p-5 inline-block">
+                <p className="font-display font-bold text-3xl text-[#2A1506] mb-1">70 – 80 €</p>
+                <p className="font-ui text-sm text-[#2A1506]/60">pour 1 adulte + 1 enfant (dès 3 ans)</p>
+                <p className="font-ui text-sm text-[#E87040] font-semibold mt-2">+ 20 € par enfant supplémentaire</p>
+              </div>
+            </div>
+            <div className="self-center">
+              <Link to="/contact?type=initiation" className={btn.dark}>Réserver →</Link>
+            </div>
+          </div>
+        </Reveal>
+      </section>
 
       {/* NOTE CONFIRMATION */}
       <section className="px-6 md:px-16 lg:px-24 py-16 max-w-7xl mx-auto">
@@ -380,7 +410,7 @@ export default function Initiation() {
             </div>
             <p className="font-ui text-[#2A1506]/70 text-sm leading-relaxed flex-1">
               Pour toute demande ou réservation, je confirme uniquement par <strong className="text-[#2A1506]">mail</strong> à l'adresse{' '}
-              <a href="mailto:contact.atelierlevy@gmail.com" className="text-[#2A1506] underline underline-offset-2">contact.atelierlevy@gmail.com</a>.
+              <a href="mailto:contact.atelierlvy@gmail.com" className="text-[#2A1506] underline underline-offset-2">contact.atelierlvy@gmail.com</a>
             </p>
           </div>
         </Reveal>

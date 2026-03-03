@@ -44,21 +44,30 @@ const btn = {
   sage: 'inline-block font-ui font-semibold text-sm px-8 py-3.5 bg-[#9BBF90] text-[#2A1506] border-2 border-[#9BBF90] rounded-xl hover:bg-[#E87040] hover:text-[#FBF5E9] hover:border-[#E87040] transition-all duration-200 whitespace-nowrap',
 }
 
+const coursMardi = [
+  { date: '3 mars', heure: '18h30 – 21h', places: 4, dispo: true },
+  { date: '10 mars', heure: '18h30 – 21h', places: 6, dispo: true },
+  { date: '17 mars', heure: '18h30 – 21h', places: 3, dispo: true },
+  { date: '24 mars', heure: '18h30 – 21h', places: 0, dispo: false },
+  { date: '7 avril', heure: '18h30 – 21h', places: 5, dispo: true },
+  { date: '14 avril', heure: '18h30 – 21h', places: 6, dispo: true },
+]
+
 const coursJeudi = [
-  { date: '5 mars', heure: '17h – 19h30', places: 5, dispo: true },
-  { date: '12 mars', heure: '17h – 19h30', places: 3, dispo: true },
-  { date: '26 mars', heure: '17h – 19h30', places: 6, dispo: true },
-  { date: '2 avril', heure: '17h – 19h30', places: 0, dispo: false },
-  { date: '9 avril', heure: '17h – 19h30', places: 4, dispo: true },
-  { date: '16 avril', heure: '17h – 19h30', places: 6, dispo: true },
+  { date: '5 mars', heure: '18h30 – 21h', places: 5, dispo: true },
+  { date: '12 mars', heure: '18h30 – 21h', places: 3, dispo: true },
+  { date: '26 mars', heure: '18h30 – 21h', places: 6, dispo: true },
+  { date: '2 avril', heure: '18h30 – 21h', places: 0, dispo: false },
+  { date: '9 avril', heure: '18h30 – 21h', places: 4, dispo: true },
+  { date: '16 avril', heure: '18h30 – 21h', places: 6, dispo: true },
 ]
 
 const coursSamedi = [
   { date: '8 mars', heure: '10h – 12h30', places: 4, dispo: true },
-  { date: '15 mars', heure: '14h – 16h30', places: 2, dispo: true },
+  { date: '15 mars', heure: '14h – 17h', places: 2, dispo: true },
   { date: '22 mars', heure: '10h – 12h30', places: 0, dispo: false },
   { date: '5 avril', heure: '10h – 12h30', places: 5, dispo: true },
-  { date: '12 avril', heure: '14h – 16h30', places: 6, dispo: true },
+  { date: '12 avril', heure: '14h – 17h', places: 6, dispo: true },
   { date: '26 avril', heure: '10h – 12h30', places: 3, dispo: true },
 ]
 
@@ -89,13 +98,16 @@ export default function Cours() {
     description: "Cours réguliers de céramique proposés en packs. Progressez semaine après semaine dans un petit groupe chaleureux.",
   })
 
+  const [selectedMardi, setSelectedMardi] = useState(null)
   const [selectedJeudi, setSelectedJeudi] = useState(null)
   const [selectedSamedi, setSelectedSamedi] = useState(null)
+  const [nbSeances, setNbSeances] = useState(5)
 
   const selectedSession =
-    selectedJeudi !== null ? `Jeudi ${coursJeudi[selectedJeudi].date}`
-      : selectedSamedi !== null ? `Samedi ${coursSamedi[selectedSamedi].date}`
-        : null
+    selectedMardi !== null ? `Mardi ${coursMardi[selectedMardi].date}`
+      : selectedJeudi !== null ? `Jeudi ${coursJeudi[selectedJeudi].date}`
+        : selectedSamedi !== null ? `Samedi ${coursSamedi[selectedSamedi].date}`
+          : null
 
   return (
     <div className="bg-[#FBF5E9] pt-20">
@@ -145,15 +157,37 @@ export default function Cours() {
               </Reveal>
             </div>
 
-            {/* Les deux créneaux */}
+            {/* Les créneaux */}
             <div className="flex flex-col gap-4">
+              <Reveal delay={0.02}>
+                <div className="bg-[#E87040] text-[#2A1506] rounded-3xl p-6 md:p-8">
+                  <div className="flex items-start justify-between mb-4">
+                    <div>
+                      <p className="font-ui text-xs uppercase tracking-widest text-[#2A1506]/50 mb-1">En semaine</p>
+                      <h3 className="font-display font-black text-4xl">Mardi soir</h3>
+                      <p className="font-ui text-[#2A1506] text-base font-medium mt-1">18h30 – 21h</p>
+                    </div>
+                    <span className="font-display italic text-6xl text-[#2A1506]/10 select-none leading-none">M</span>
+                  </div>
+                  <div className="bg-[#2A1506]/10 rounded-2xl px-5 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div className="font-ui text-sm text-[#2A1506]/70">
+                      <p className="text-[#2A1506] font-semibold mb-1">Pack 5 séances : 275€</p>
+                      <p>Pack 10 séances : 550€</p>
+                      <p className="text-[#2A1506]/60 text-xs mt-1.5">Je te recontacte par mail pour valider ton inscription.</p>
+                    </div>
+                    <a href="#planning-mardi" className="bg-[#2A1506] text-[#FBF5E9] border-2 border-[#2A1506] font-ui font-semibold text-sm px-5 py-2.5 rounded-xl hover:bg-[#FBF5E9] hover:text-[#2A1506] transition-all duration-200 whitespace-nowrap">
+                      Voir les dates →
+                    </a>
+                  </div>
+                </div>
+              </Reveal>
               <Reveal delay={0.05}>
                 <div className="bg-[#2A1506] text-[#FBF5E9] rounded-3xl p-6 md:p-8">
                   <div className="flex items-start justify-between mb-4">
                     <div>
                       <p className="font-ui text-xs uppercase tracking-widest text-[#FBF5E9]/40 mb-1">En semaine</p>
                       <h3 className="font-display font-black text-4xl">Jeudi soir</h3>
-                      <p className="font-ui text-[#F5D060] text-base font-medium mt-1">17h – 19h30</p>
+                      <p className="font-ui text-[#F5D060] text-base font-medium mt-1">18h30 – 21h</p>
                     </div>
                     <span className="font-display italic text-6xl text-[#FBF5E9]/10 select-none leading-none">J</span>
                   </div>
@@ -161,7 +195,7 @@ export default function Cours() {
                     <div className="font-ui text-sm text-[#FBF5E9]/70">
                       <p className="text-[#FBF5E9] font-semibold mb-1">Pack 5 séances : 275€</p>
                       <p>Pack 10 séances : 550€</p>
-                      <p className="text-[#F5D060]/80 text-xs mt-1.5">Présence à chaque jeudi requise.</p>
+                      <p className="text-[#F5D060]/80 text-xs mt-1.5">Présence à chaque jeudi requise. Je te recontacte par mail pour valider ton inscription.</p>
                     </div>
                     <a href="#planning-jeudi" className="bg-[#F5D060] text-[#2A1506] border-2 border-[#F5D060] font-ui font-semibold text-sm px-5 py-2.5 rounded-xl hover:bg-[#2A1506] hover:text-[#FBF5E9] hover:border-[#2A1506] transition-all duration-200 whitespace-nowrap">
                       Voir les dates →
@@ -193,6 +227,24 @@ export default function Cours() {
         </div>
       </section>
 
+      {/* PLANNING MARDI */}
+      <section id="planning-mardi" className="px-6 md:px-16 lg:px-24 py-20 max-w-7xl mx-auto scroll-mt-24">
+        <Reveal>
+          <div className="flex items-center gap-4 mb-8 flex-wrap">
+            <h2 className="font-display font-bold text-3xl md:text-4xl">Mardis soir</h2>
+            <span className="font-ui text-xs bg-[#E87040] text-[#FBF5E9] px-3 py-1 rounded-lg uppercase tracking-widest">18h30 – 21h</span>
+            <span className="font-ui text-xs text-[#2A1506]/40 bg-[#2A1506]/5 px-3 py-1 rounded-lg">Mars – Avril 2026</span>
+          </div>
+        </Reveal>
+        <Reveal delay={0.1}>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-4">
+            {coursMardi.map((c, i) => (
+              <SessionCard key={i} c={c} selected={selectedMardi === i} onClick={() => { setSelectedMardi(selectedMardi === i ? null : i); setSelectedJeudi(null); setSelectedSamedi(null) }} />
+            ))}
+          </div>
+        </Reveal>
+      </section>
+
       {/* PLANNING JEUDI */}
       <section id="planning-jeudi" className="px-6 md:px-16 lg:px-24 py-20 max-w-7xl mx-auto scroll-mt-24">
         <Reveal>
@@ -205,7 +257,7 @@ export default function Cours() {
         <Reveal delay={0.1}>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-4">
             {coursJeudi.map((c, i) => (
-              <SessionCard key={i} c={c} selected={selectedJeudi === i} onClick={() => { setSelectedJeudi(selectedJeudi === i ? null : i); setSelectedSamedi(null) }} />
+              <SessionCard key={i} c={c} selected={selectedJeudi === i} onClick={() => { setSelectedJeudi(selectedJeudi === i ? null : i); setSelectedSamedi(null); setSelectedMardi(null) }} />
             ))}
           </div>
         </Reveal>
@@ -223,7 +275,7 @@ export default function Cours() {
         <Reveal delay={0.1}>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-4">
             {coursSamedi.map((c, i) => (
-              <SessionCard key={i} c={c} selected={selectedSamedi === i} onClick={() => { setSelectedSamedi(selectedSamedi === i ? null : i); setSelectedJeudi(null) }} />
+              <SessionCard key={i} c={c} selected={selectedSamedi === i} onClick={() => { setSelectedSamedi(selectedSamedi === i ? null : i); setSelectedJeudi(null); setSelectedMardi(null) }} />
             ))}
           </div>
         </Reveal>
@@ -239,12 +291,36 @@ export default function Cours() {
                 ? <>Tu as choisi : <span className="italic text-[#F5D060]">{selectedSession}</span></>
                 : <>Choisis une <span className="italic text-[#9BBF90]">date</span></>}
             </h2>
+
+            {selectedSession && (
+              <div className="mb-8">
+                <p className="font-ui text-[#FBF5E9]/60 text-sm mb-4">Quel nombre de séances souhaites-tu ?</p>
+                <div className="flex justify-center gap-3">
+                  {[1, 5, 10].map((n) => (
+                    <button
+                      key={n}
+                      onClick={() => setNbSeances(n)}
+                      className={`font-ui font-semibold text-sm px-6 py-3 rounded-xl border-2 transition-all duration-150 ${
+                        nbSeances === n
+                          ? 'bg-[#9BBF90] border-[#9BBF90] text-[#2A1506]'
+                          : 'bg-transparent border-[#FBF5E9]/20 text-[#FBF5E9]/60 hover:border-[#FBF5E9]/50'
+                      }`}
+                    >
+                      {n === 1 ? '1 cours' : `Pack ${n}`}
+                    </button>
+                  ))}
+                </div>
+                <p className="font-ui text-[#FBF5E9]/40 text-xs mt-3">
+                  Tu seras inscrit·e aux séances qui suivent cette date selon le nombre choisi.
+                </p>
+              </div>
+            )}
+
             <p className="font-ui text-[#FBF5E9]/50 text-sm mb-10">
-              Je confirme ta place uniquement par mail à{' '}
-              <a href="mailto:contact.atelierlevy@gmail.com" className="text-[#9BBF90] underline underline-offset-2">contact.atelierlevy@gmail.com</a>.
+              Une fois ta demande effectuée, je te recontacte par mail pour finaliser ton inscription.
             </p>
             <div className="flex justify-center">
-              <Link to={selectedSession ? `/contact?type=cours&date=${selectedSession}` : '/contact?type=cours'} className={btn.sage}>M'inscrire par mail →</Link>
+              <Link to={selectedSession ? `/contact?type=cours&date=${selectedSession}&seances=${nbSeances}` : '/contact?type=cours'} className={btn.sage}>M'inscrire par mail →</Link>
             </div>
           </div>
         </Reveal>
@@ -254,10 +330,10 @@ export default function Cours() {
       <FaqSection
         items={[
           { q: "Peut-on commencer sans expérience ?", a: "Oui, les cours sont ouverts à tous les niveaux. Si tu n'as jamais touché l'argile, une initiation avant de prendre un pack est une bonne façon de démarrer." },
-          { q: "Que se passe-t-il si je rate une séance ?", a: "Le pack est valable sur la saison en cours. En cas d'absence, la séance n'est pas automatiquement reportée, mais contacte-moi directement et on s'arrange selon les disponibilités." },
+          { q: "Que se passe-t-il si je rate une séance ?", a: "Il faut me prévenir en amont pour que je puisse reprogrammer le cours. Dans le cas contraire, si je n'ai pas été prévenue, la séance n'est pas reprogrammable." },
           { q: "Les cuissons sont-elles vraiment incluses ?", a: "Oui, les deux cuissons (biscuit et émaillage) sont comprises dans le prix du pack. Aucun frais supplémentaire." },
-          { q: "Peut-on rejoindre un pack en cours de saison ?", a: "Oui, tu peux rejoindre le groupe dès qu'une place se libère, quelle que soit la date dans la saison. Le tarif est ajusté au prorata des séances restantes." },
-          { q: "Combien de temps pour récupérer ses pièces ?", a: "Les pièces sont cuites en lot à intervalles réguliers. Compte généralement 2 à 4 semaines après chaque séance pour les récupérer à l'atelier." },
+          { q: "Peut-on rejoindre un pack en cours de saison ?", a: "Oui ! Tu peux rejoindre le groupe dès qu'une place se libère. Les cours commenceront à partir de cette date et ce pour le nombre de cours choisi." },
+          { q: "Combien de temps pour récupérer ses pièces ?", a: "Il faut compter environ 1 mois à partir du moment où ta pièce est finie. La durée d'attente reste assez variable selon la fréquence des fours et le temps de séchage des pièces." },
         ]}
       />
 

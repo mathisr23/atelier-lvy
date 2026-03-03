@@ -27,12 +27,18 @@ export default function Contact() {
   const [searchParams] = useSearchParams()
   const defaultType = searchParams.get('type') || 'autre'
   const defaultDate = searchParams.get('date') || ''
+  const defaultPlaces = searchParams.get('places') || ''
+  const defaultSeances = searchParams.get('seances') || ''
 
   const [form, setForm] = useState({
-    name: '',
+    prenom: '',
+    nom: '',
     email: '',
+    telephone: '',
     type: defaultType,
     date: defaultDate,
+    places: defaultPlaces,
+    seances: defaultSeances,
     message: '',
   })
   const [status, setStatus] = useState('idle') // 'idle' | 'loading' | 'success' | 'error'
@@ -45,7 +51,8 @@ export default function Contact() {
 
   const validate = () => {
     const e = {}
-    if (!form.name.trim()) e.name = 'Ton prénom est requis.'
+    if (!form.prenom.trim()) e.prenom = 'Ton prénom est requis.'
+    if (!form.nom.trim()) e.nom = 'Ton nom est requis.'
     if (!form.email.trim()) {
       e.email = 'Ton email est requis.'
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
@@ -128,28 +135,53 @@ export default function Contact() {
                     className="space-y-6"
                   >
                     {form.date && (
-                      <div className="flex items-center gap-3 bg-[#E87040]/15 border border-[#E87040]/40 rounded-xl px-4 py-3">
-                        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" className="shrink-0 text-[#E87040]">
+                      <div className="flex items-start gap-3 bg-[#E87040]/15 border border-[#E87040]/40 rounded-xl px-4 py-3">
+                        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" className="shrink-0 text-[#E87040] mt-0.5">
                           <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="1.8"/>
                           <path d="M16 2v4M8 2v4M3 10h18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
                         </svg>
-                        <p className="font-ui text-sm text-[#FBF5E9]/80">
-                          Créneau sélectionné : <span className="font-semibold text-[#E87040]">{form.date}</span>
-                        </p>
+                        <div>
+                          <p className="font-ui text-sm text-[#FBF5E9]/80">
+                            Créneau sélectionné : <span className="font-semibold text-[#E87040]">{form.date}</span>
+                          </p>
+                          {form.places && (
+                            <p className="font-ui text-xs text-[#FBF5E9]/50 mt-0.5">
+                              {form.places} place{form.places > 1 ? 's' : ''} souhaitée{form.places > 1 ? 's' : ''}
+                            </p>
+                          )}
+                          {form.seances && (
+                            <p className="font-ui text-xs text-[#FBF5E9]/50 mt-0.5">
+                              {form.seances === '1' ? '1 cours' : `Pack ${form.seances} séances`}
+                            </p>
+                          )}
+                        </div>
                       </div>
                     )}
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
+                        <label className="font-ui text-xs uppercase tracking-widest text-[#FBF5E9]/40 block mb-2">Prénom</label>
+                        <input
+                          value={form.prenom}
+                          onChange={set('prenom')}
+                          placeholder="Ton prénom"
+                          className={`${inputClass} ${errors.prenom ? 'border-rose' : ''}`}
+                        />
+                        {errors.prenom && <p className="font-ui text-xs text-rose mt-1.5">{errors.prenom}</p>}
+                      </div>
+                      <div>
                         <label className="font-ui text-xs uppercase tracking-widest text-[#FBF5E9]/40 block mb-2">Nom</label>
                         <input
-                          value={form.name}
-                          onChange={set('name')}
-                          placeholder="Ton prénom et nom"
-                          className={`${inputClass} ${errors.name ? 'border-rose' : ''}`}
+                          value={form.nom}
+                          onChange={set('nom')}
+                          placeholder="Ton nom de famille"
+                          className={`${inputClass} ${errors.nom ? 'border-rose' : ''}`}
                         />
-                        {errors.name && <p className="font-ui text-xs text-rose mt-1.5">{errors.name}</p>}
+                        {errors.nom && <p className="font-ui text-xs text-rose mt-1.5">{errors.nom}</p>}
                       </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label className="font-ui text-xs uppercase tracking-widest text-[#FBF5E9]/40 block mb-2">Email</label>
                         <input
@@ -160,6 +192,16 @@ export default function Contact() {
                           className={`${inputClass} ${errors.email ? 'border-rose' : ''}`}
                         />
                         {errors.email && <p className="font-ui text-xs text-rose mt-1.5">{errors.email}</p>}
+                      </div>
+                      <div>
+                        <label className="font-ui text-xs uppercase tracking-widest text-[#FBF5E9]/40 block mb-2">Téléphone</label>
+                        <input
+                          type="tel"
+                          value={form.telephone}
+                          onChange={set('telephone')}
+                          placeholder="06 00 00 00 00"
+                          className={inputClass}
+                        />
                       </div>
                     </div>
 
@@ -204,7 +246,7 @@ export default function Contact() {
                     {status === 'error' && (
                       <p className="font-ui text-sm text-rose">
                         Une erreur est survenue. Réessaie ou écris directement à{' '}
-                        <a href="mailto:contact.atelierlevy@gmail.com" className="underline">contact.atelierlevy@gmail.com</a>
+                        <a href="mailto:contact.atelierlvy@gmail.com" className="underline">contact.atelierlvy@gmail.com</a>
                       </p>
                     )}
 
@@ -227,7 +269,7 @@ export default function Contact() {
               <div>
                 <p className="font-ui text-xs uppercase tracking-[0.3em] text-[#E87040] mb-5">Autres façons de me joindre</p>
                 <div className="space-y-4">
-                  <a href="mailto:contact.atelierlevy@gmail.com" className="flex items-center gap-4 group">
+                  <a href="mailto:contact.atelierlvy@gmail.com" className="flex items-center gap-4 group">
                     <div className="w-12 h-12 rounded-2xl bg-[#2A1506] flex items-center justify-center flex-shrink-0 group-hover:bg-[#E87040] transition-colors">
                       <svg width="18" height="18" fill="none" viewBox="0 0 24 24">
                         <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -235,7 +277,7 @@ export default function Contact() {
                     </div>
                     <div>
                       <p className="font-ui text-xs text-[#2A1506]/40 uppercase tracking-widest mb-0.5">Email</p>
-                      <p className="font-ui text-sm font-medium text-[#2A1506] group-hover:text-[#E87040] transition-colors">contact.atelierlevy@gmail.com</p>
+                      <p className="font-ui text-sm font-medium text-[#2A1506] group-hover:text-[#E87040] transition-colors">contact.atelierlvy@gmail.com</p>
                     </div>
                   </a>
                   <a href="https://instagram.com/atelier_lvy" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 group">

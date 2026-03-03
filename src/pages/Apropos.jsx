@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Asterisk, Squiggle, patterns } from '../components/Deco'
 import Reveal from '../components/Reveal'
 import imgLea from '../assets/lea.png'
+import logo1 from '../assets/logo1.png'
 import bookPdf from '../assets/book.pdf'
 import img3 from '../assets/3.jpg'
 import img4 from '../assets/4.jpg'
@@ -55,7 +56,7 @@ const projects = [
   {
     id: 1,
     name: 'Métamorphose',
-    subtitle: 'Porcelaine et plastique',
+    subtitle: 'Porcelaine et déchets plastiques transformés',
     color: '#E87040',
     preview: img3,
     images: [img3, img4, imgFSR22, imgFSR48, imgFSR52],
@@ -64,7 +65,7 @@ const projects = [
     id: 2,
     name: 'Corail',
     description: 'Déchets plastiques transformés',
-    subtitle: 'Pièces réalisées en tournage/modelage',
+    subtitle: 'Vase réalisé en modelage',
     color: '#F2A0A8',
     preview: imgIMG4854,
     images: [imgIMG4854, imgIMG4862, imgIMG4863, imgIMG4869],
@@ -72,18 +73,18 @@ const projects = [
   {
     id: 3,
     name: 'Océane',
-    subtitle: 'Pièces réalisées en tournage/modelage',
+    subtitle: 'Pièces réalisées en tournage',
     color: '#9BBF90',
     preview: imgIMG4948,
-    images: [imgIMG4948, imgIMG4959, imgIMG5065, imgIMG5071],
+    images: [imgIMG4948, imgIMG4959, imgIMG5065],
   },
   {
     id: 4,
     name: 'Yolenda',
-    subtitle: 'Pièces réalisées en tournage/modelage',
+    subtitle: 'Pièces réalisées en modelage et tournage',
     color: '#F5D060',
     preview: imgIMG4982,
-    images: [imgIMG4982, imgIMG4984, imgIMG5006, imgIMG5020, imgIMG5029],
+    images: [imgIMG4982, imgIMG4984, imgIMG5006],
   },
 ]
 
@@ -138,28 +139,14 @@ export default function Apropos() {
             >
               Artiste céramiste
             </motion.p>
-            <motion.h1
-              className="font-display font-black leading-[0.9] mb-6 flex"
-              style={{ fontSize: 'clamp(5rem, 15vw, 12rem)' }}
-              variants={{
-                hidden: { opacity: 0 },
-                visible: {
-                  opacity: 1,
-                  transition: { staggerChildren: 0.12, delayChildren: 0.2 }
-                }
-              }}
-              initial="hidden"
-              animate="visible"
+            <motion.div
+              className="mb-6"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
             >
-              {['l', 'é', 'a'].map((letter, i) => (
-                <motion.span key={i} variants={{ hidden: { opacity: 0, y: 50 }, visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } } }}>
-                  {letter}
-                </motion.span>
-              ))}
-              <motion.span className="text-[#E87040]" variants={{ hidden: { opacity: 0, scale: 0 }, visible: { opacity: 1, scale: 1, transition: { duration: 0.5, ease: 'backOut' } } }}>
-                .
-              </motion.span>
-            </motion.h1>
+              <img src={logo1} alt="Léa — Artiste céramiste" className="w-auto" style={{ height: 'clamp(5rem, 15vw, 12rem)' }} />
+            </motion.div>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}>
               <Squiggle width={90} color="#E87040" className="mb-6 opacity-60" />
             </motion.div>
@@ -181,9 +168,6 @@ export default function Apropos() {
             <motion.div initial={{ opacity: 0, rotate: 0 }} animate={{ opacity: 1, rotate: -6 }} transition={{ delay: 0.4, duration: 0.6 }} className="absolute top-16 left-0 w-44 h-44 overflow-hidden shadow-xl" style={{ backgroundColor: '#9BBF90', borderRadius: '50% 50% 40% 60% / 60% 40% 50% 50%' }} />
             <motion.div initial={{ opacity: 0, rotate: 0 }} animate={{ opacity: 1, rotate: -2 }} transition={{ delay: 0.5, duration: 0.6 }} className="absolute bottom-0 right-0 w-48 h-56 overflow-hidden shadow-xl" style={{ backgroundColor: '#F2A0A8', borderRadius: '60% 40% 50% 50% / 50% 60% 40% 50%' }} />
             <motion.div initial={{ opacity: 0, rotate: 0 }} animate={{ opacity: 1, rotate: 6 }} transition={{ delay: 0.6, duration: 0.6 }} className="absolute bottom-8 left-12 w-36 h-36 overflow-hidden shadow-xl" style={{ backgroundColor: '#F5D060', borderRadius: '30% 70% 70% 30% / 30% 30% 70% 70%' }} />
-            <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.7 }} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#FBF5E9] border border-[#2A1506]/20 rounded-full w-28 h-28 flex items-center justify-center rotate-12 shadow-2xl z-10 hover:scale-110 transition-transform duration-300">
-              <span className="font-display text-center text-[#2A1506] text-xs font-bold leading-tight">fait<br />à la<br />main</span>
-            </motion.div>
           </div>
         </div>
 
@@ -208,10 +192,10 @@ export default function Apropos() {
             </Reveal>
             <Reveal delay={0.2}>
               <div className="space-y-3 text-[#FBF5E9]/70 leading-relaxed font-body text-base">
-                <p>Formée à l’école Boulle, j’ai découvert le modelage par la gravure en relief avant de plonger dans la céramique, pour donner du volume à mes créations.</p>
-                <p>J’ai forgé mon savoir-faire à travers de nombreux stages, puis en produisant pour de grandes maisons, maîtrisant tournage, coulage et modelage avec des exigences élevées en finitions.</p>
-                <p>Aujourd’hui, je crée mes propres pièces et partage ma passion via des ateliers et cours. Ma victoire au concours <em>Yes You Can</em> et les initiations organisées avec des femmes battues à Rambouillet ont renforcé mon envie de transmission.</p>
-                <p>Inspirée par la nature et ses formes organiques, j’explore des matières variées, du noble aux déchets réinventés, dans un atelier que je vis comme un laboratoire d’idées.</p>
+                <p>J’ai découvert ma passion pour le modelage à l’École Boulle, en me formant à la gravure en modelé et à la création de bas-reliefs. Progressivement, je me suis tournée vers la céramique afin de donner plus de volume à mes créations, tasses, sculptures et objets variés.</p>
+                <p>Formée grâce à plusieurs divers stages, j’ai ensuite développé mon activité d’auto-entrepreneur afin de produire des commandes pour des ateliers collaborant avec de grandes maisons. Ces expériences m’ont permis de maîtriser les techniques de modelage, de coulage, tournage ou encore de décor.</p>
+                <p>Aujourd’hui, je crée mes propres pièces en m’inspirant de la nature, de ses formes organiques et la richesse de ses couleurs. J’intègre également des réflexions sociétales et environnementales à mon travail. J’imagine mon atelier comme un laboratoire d’idées, où se mêlent des savoir-faire et une pluralité de matériaux.</p>
+                <p>Je transmets ma passion à travers des ateliers découverte et des cours hebdomadaires, pensés comme des espaces de rencontre et de partage où l’on peut libérer notre créativité. J’y crée des moments hors du quotidien, où chacun peut expérimenter, s’exprimer librement et laisser place à son imagination, tout en tissant du lien avec d’autres.</p>
               </div>
             </Reveal>
           </div>

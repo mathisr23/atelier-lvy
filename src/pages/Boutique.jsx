@@ -1,6 +1,7 @@
 import useSEO from '../hooks/useSEO'
 import { Asterisk, patterns } from '../components/Deco'
 import Reveal from '../components/Reveal'
+import imgFour from '../assets/four.png'
 
 import img1 from '../assets/2.jpg'
 import img2 from '../assets/3.jpg'
@@ -95,7 +96,7 @@ export default function Boutique() {
       </section>
 
       {/* SUR COMMANDE */}
-      <section className="px-6 md:px-16 lg:px-24 py-24 mt-16 relative overflow-hidden" style={{ backgroundColor: '#9BBF90', backgroundImage: 'radial-gradient(circle, rgba(42,21,6,0.1) 1.5px, transparent 1.5px)', backgroundSize: '22px 22px' }}>
+      <section id="sur-mesure" className="px-6 md:px-16 lg:px-24 py-24 mt-16 relative overflow-hidden" style={{ backgroundColor: '#9BBF90', backgroundImage: 'radial-gradient(circle, rgba(42,21,6,0.1) 1.5px, transparent 1.5px)', backgroundSize: '22px 22px' }}>
         <Asterisk size={40} color="rgba(42,21,6,0.1)" className="absolute top-12 right-12 rotate-6" />
         <Asterisk size={22} color="rgba(42,21,6,0.08)" className="absolute bottom-20 left-8 -rotate-12" />
         <div className="max-w-7xl mx-auto relative z-10">
@@ -122,7 +123,7 @@ export default function Boutique() {
                 <h3 className="font-display font-bold text-2xl text-[#FBF5E9] mb-2">Tu as une idée en tête ?</h3>
                 <p className="font-body text-base text-[#FBF5E9]/60">Dis-moi tout, même une idée vague, on la développe ensemble.</p>
               </div>
-              <a href="mailto:contact.atelierlevy@gmail.com?subject=Commande sur mesure" className={btn.orange}>Faire une demande →</a>
+              <a href="mailto:contact.atelierlvy@gmail.com?subject=Commande sur mesure" className={btn.orange}>Faire une demande →</a>
             </div>
           </Reveal>
         </div>
@@ -131,7 +132,7 @@ export default function Boutique() {
       {/* CUISSONS */}
       <section className="px-6 md:px-16 lg:px-24 py-24 max-w-7xl mx-auto">
         <Reveal>
-          <div className="bg-[#F2A0A8]/20 border border-[#F2A0A8]/40 rounded-3xl p-10 md:p-16 flex flex-col md:flex-row items-center gap-8">
+          <div className="bg-[#F2A0A8]/20 border border-[#F2A0A8]/40 rounded-3xl p-10 md:p-16 flex flex-col md:flex-row items-center gap-8 relative overflow-hidden">
             <div className="flex-1">
               <p className="font-ui text-xs uppercase tracking-[0.3em] text-[#D97080] mb-3">Services</p>
               <h2 className="font-display font-bold text-3xl md:text-4xl text-[#2A1506] mb-4 leading-tight">Cuissons extérieures</h2>
@@ -139,7 +140,12 @@ export default function Boutique() {
                 Tu as modelé des pièces ailleurs et tu cherches un four ? Je propose des cuissons pour des projets extérieurs. Contacte-moi pour les tarifs et conditions.
               </p>
             </div>
-            <a href="mailto:contact.atelierlevy@gmail.com?subject=Cuisson extérieure" className={btn.dark}>Me contacter</a>
+            <img
+              src={imgFour}
+              alt="Illustration d'un four de céramiste"
+              className="w-40 h-40 object-contain absolute -bottom-4 right-40 opacity-60 pointer-events-none hidden md:block"
+            />
+            <a href="mailto:contact.atelierlvy@gmail.com?subject=Cuisson extérieure" className={btn.dark}>Me contacter</a>
           </div>
         </Reveal>
       </section>

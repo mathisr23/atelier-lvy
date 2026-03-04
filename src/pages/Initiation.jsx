@@ -1,11 +1,12 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import useSEO from '../hooks/useSEO'
 import { Cake, Wine, Gem, Building2, Palette, Sparkles, Mail } from 'lucide-react'
-import { Asterisk, patterns } from '../components/Deco'
+import { Asterisk } from '../components/Deco'
 import Reveal from '../components/Reveal'
 import illustration1 from '../assets/illustration1.png'
 import illustration2 from '../assets/illustration2.png'
+import { supabase } from '../lib/supabase'
 
 function FaqSection({ items }) {
   const [open, setOpen] = useState(null)
@@ -42,7 +43,6 @@ function FaqSection({ items }) {
 const btn = {
   dark: 'inline-block font-ui font-semibold text-sm px-8 py-3.5 bg-[#2A1506] text-[#FBF5E9] border-2 border-[#E87040] rounded-xl hover:bg-[#E87040] hover:text-[#2A1506] hover:border-[#E87040] transition-all duration-200 whitespace-nowrap',
   outline: 'inline-block font-ui font-semibold text-sm px-8 py-3.5 bg-transparent text-[#E87040] border-2 border-[#E87040] rounded-xl hover:bg-[#E87040] hover:text-[#FBF5E9] transition-all duration-200 whitespace-nowrap',
-  orange: 'inline-block font-ui font-semibold text-sm px-8 py-3.5 bg-[#E87040] text-[#2A1506] border-2 border-[#E87040] rounded-xl hover:bg-transparent hover:text-[#E87040] hover:border-[#E87040] transition-all duration-200 whitespace-nowrap',
 }
 
 const evenements = [
@@ -54,20 +54,14 @@ const evenements = [
   { icon: Sparkles, label: 'Autre occasion' },
 ]
 
-// Mars 2026 — à mettre à jour avec les vrais créneaux
-const creneaux = [
-  { jour: 'Vendredi', day: 6, date: '6 mars', heure: '18h30 – 20h30', places: 8, dispo: true },
-  { jour: 'Samedi', day: 7, date: '7 mars', heure: '14h – 17h', places: 8, dispo: true },
-  { jour: 'Vendredi', day: 13, date: '13 mars', heure: '18h30 – 20h30', places: 3, dispo: true },
-  { jour: 'Samedi', day: 14, date: '14 mars', heure: '14h – 17h', places: 0, dispo: false },
-  { jour: 'Vendredi', day: 20, date: '20 mars', heure: '18h30 – 20h30', places: 5, dispo: true },
-  { jour: 'Samedi', day: 21, date: '21 mars', heure: '14h – 17h', places: 8, dispo: true },
-]
-
-// Mars 2026 commence un dimanche → offset 6 (grille Lun–Dim)
-const CALENDAR_OFFSET = 6
 const DAYS_LABELS = ['L', 'M', 'M', 'J', 'V', 'S', 'D']
 const MONTHS = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre']
+
+const getOffset = (month, year) => {
+  const d = new Date(year, month, 1).getDay()
+  return d === 0 ? 6 : d - 1
+}
+const getDaysInMonth = (month, year) => new Date(year, month + 1, 0).getDate()
 
 export default function Initiation() {
   useSEO({
@@ -75,10 +69,26 @@ export default function Initiation() {
     description: "Ateliers d'initiation à la céramique : découvrez le tournage et le modelage le temps d'une session.",
   })
 
-  const [selected, setSelected] = useState(null)
+  const now = new Date()
+  const [selected, setSelected] = useState(null) // session id
   const [nbPlaces, setNbPlaces] = useState(1)
-  const [currentMonth, setCurrentMonth] = useState(2) // 0-indexé : 2 = Mars
-  const [currentYear, setCurrentYear] = useState(2026)
+  const [currentMonth, setCurrentMonth] = useState(now.getMonth())
+  const [currentYear, setCurrentYear] = useState(now.getFullYear())
+  const [sessions, setSessions] = useState([])
+  const [loadingSessions, setLoadingSessions] = useState(true)
+
+  useEffect(() => {
+    setLoadingSessions(true)
+    setSelected(null)
+    supabase
+      .from('sessions')
+      .select('*')
+      .eq('mois', currentMonth)
+      .eq('annee', currentYear)
+      .or('type.eq.initiation,type.is.null')
+      .order('day', { ascending: true })
+      .then(({ data }) => { setSessions(data || []); setLoadingSessions(false) })
+  }, [currentMonth, currentYear])
 
   const prevMonth = () => {
     if (currentMonth === 0) { setCurrentMonth(11); setCurrentYear(y => y - 1) }
@@ -89,7 +99,9 @@ export default function Initiation() {
     else setCurrentMonth(m => m + 1)
   }
 
-  const isMars2026 = currentMonth === 2 && currentYear === 2026
+  const selectedSession = sessions.find(s => s.id === selected) || null
+  const offset = getOffset(currentMonth, currentYear)
+  const daysInMonth = getDaysInMonth(currentMonth, currentYear)
 
   return (
     <div className="bg-[#FBF5E9] pt-20">
@@ -109,7 +121,7 @@ export default function Initiation() {
         </Reveal>
       </section>
 
-      {/* FORMAT PILLS — atelier en premier, domicile en second */}
+      {/* FORMAT PILLS */}
       <section className="px-6 md:px-16 lg:px-24 pb-8 max-w-7xl mx-auto">
         <Reveal>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -133,16 +145,16 @@ export default function Initiation() {
         </Reveal>
       </section>
 
-      {/* DANS L'ATELIER — en premier (rose) */}
+      {/* DANS L'ATELIER */}
       <section
         id="atelier"
-        className="px-6 md:px-16 lg:px-24 pt-10 pb-24 mt-8 scroll-mt-20 relative overflow-hidden"
+        className="px-6 md:px-16 lg:px-24 pt-4 pb-24 mt-4 scroll-mt-20 relative overflow-hidden"
         style={{ backgroundColor: '#F2A0A8', backgroundImage: 'repeating-linear-gradient(-45deg, rgba(42,21,6,0.05) 0, rgba(42,21,6,0.05) 1px, transparent 0, transparent 50%)', backgroundSize: '14px 14px' }}
       >
         <div className="max-w-7xl mx-auto">
           <Reveal>
-            <p className="font-ui text-xs uppercase tracking-[0.3em] text-[#2A1506]/50 mb-4">Format ①</p>
-            <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-12">
+            <p className="font-ui text-xs uppercase tracking-[0.3em] text-[#2A1506]/50 mt-12 mb-4">Format ①</p>
+            <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mt-12 mb-12">
               <h2 className="font-display font-black text-5xl md:text-6xl text-[#2A1506] leading-tight flex-shrink-0">
                 Dans<br /><span className="italic">mon atelier</span>
               </h2>
@@ -160,7 +172,7 @@ export default function Initiation() {
                   Acompte non remboursable. Possibilité de replanifier l'initiation si annulation 24h avant la date prévue.
                 </p>
                 <p className="text-[#2A1506]/40 text-xs mt-2">
-                  (8 personnes maximum par session, délai d'un mois minimum après la date de l'initiation avant de récupérer vos œuvres, possibilité de livraison avec des frais supplémentaires)
+                  (6 personnes maximum par session, délai d'un mois minimum après la date de l'initiation avant de récupérer vos œuvres, possibilité de livraison avec des frais supplémentaires)
                 </p>
               </div>
             </div>
@@ -170,8 +182,8 @@ export default function Initiation() {
             {[
               { num: '1', label: 'Réservez votre créneau' },
               { num: '2', label: 'Modelez vos pièces' },
-              { num: '3', label: 'Décorez les à l\'engobe' },
-              { num: '4', label: 'Je m\'occupe de la cuisson et vous préviens dès que vos pièces sont disponibles !' },
+              { num: '3', label: "Décorez les à l'engobe" },
+              { num: '4', label: "Je m'occupe de la cuisson et vous préviens dès que vos pièces sont disponibles !" },
             ].map(({ num, label }, i) => (
               <Reveal key={num} delay={i * 0.08}>
                 <div className="bg-[#FBF5E9]/60 backdrop-blur-sm rounded-2xl p-5 text-center">
@@ -183,112 +195,99 @@ export default function Initiation() {
           </div>
 
           <Reveal delay={0.1}>
-            <div className="bg-[#FBF5E9] rounded-3xl p-8 md:p-10">
+            <div className="bg-[#FBF5E9] rounded-3xl p-6 md:p-8">
 
-              {/* En-tête avec navigation de mois */}
-              <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
+              {/* Header calendrier */}
+              <div className="flex flex-col md:flex-row md:items-center justify-between mb-5 gap-4">
                 <h3 className="font-display font-bold text-2xl text-[#2A1506]">Créneaux disponibles</h3>
                 <div className="flex items-center gap-3 flex-wrap">
                   <span className="font-ui text-sm font-semibold bg-[#E87040] text-white px-4 py-1.5 rounded-lg shadow-sm">Initiation 2h = 50€ / pers</span>
                   <div className="flex items-center gap-1 bg-[#2A1506]/10 rounded-xl px-3 py-2">
-                    <button
-                      onClick={prevMonth}
-                      className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-[#2A1506]/10 transition-colors text-[#2A1506] text-xl font-bold"
-                      aria-label="Mois précédent"
-                    >‹</button>
-                    <span className="font-ui text-sm font-bold text-[#2A1506] min-w-[130px] text-center uppercase tracking-wide">
+                    <button onClick={prevMonth} className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-[#2A1506]/10 transition-colors text-[#2A1506] text-lg font-bold" aria-label="Mois précédent">‹</button>
+                    <span className="font-ui text-sm font-bold text-[#2A1506] min-w-[120px] text-center uppercase tracking-wide">
                       {MONTHS[currentMonth]} {currentYear}
                     </span>
-                    <button
-                      onClick={nextMonth}
-                      className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-[#2A1506]/10 transition-colors text-[#2A1506] text-xl font-bold"
-                      aria-label="Mois suivant"
-                    >›</button>
+                    <button onClick={nextMonth} className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-[#2A1506]/10 transition-colors text-[#2A1506] text-lg font-bold" aria-label="Mois suivant">›</button>
                   </div>
                 </div>
               </div>
 
-              {/* Calendrier */}
-              <div className="mb-6">
+              {/* Calendrier compact */}
+              <div className="mb-5">
                 <div className="grid grid-cols-7 mb-1">
                   {DAYS_LABELS.map((d, i) => (
-                    <div key={i} className="text-center font-ui text-xs text-[#2A1506]/40 py-2">{d}</div>
+                    <div key={i} className="text-center font-ui text-xs text-[#2A1506]/40 py-1">{d}</div>
                   ))}
                 </div>
-                {isMars2026 ? (
-                  <div className="grid grid-cols-7 gap-1.5">
-                    {Array.from({ length: 42 }, (_, i) => {
-                      const day = i - CALENDAR_OFFSET + 1
-                      if (day < 1 || day > 31) return <div key={i} />
-                      const idx = creneaux.findIndex(c => c.day === day)
-                      const c = idx !== -1 ? creneaux[idx] : null
-                      const isSel = selected === idx && idx !== -1
+                {loadingSessions ? (
+                  <div className="h-24 flex items-center justify-center text-[#2A1506]/40 font-ui text-sm italic">Chargement…</div>
+                ) : (
+                  <div className="grid grid-cols-7 gap-1">
+                    {Array.from({ length: Math.ceil((offset + daysInMonth) / 7) * 7 }, (_, i) => {
+                      const day = i - offset + 1
+                      if (day < 1 || day > daysInMonth) return <div key={i} className="w-full aspect-square" />
+                      const session = sessions.find(s => s.day === day)
+                      const isSel = session && selected === session.id
+                      const dispo = session && session.places_restantes > 0
                       return (
                         <button
                           key={i}
-                          disabled={!c || !c.dispo}
-                          onClick={() => { if (c && c.dispo) { setSelected(isSel ? null : idx); setNbPlaces(1) } }}
-                          className={`relative aspect-square rounded-xl flex flex-col items-center justify-center transition-all duration-150
-                            ${!c ? 'cursor-default' : ''}
-                            ${c && !c.dispo ? 'bg-[#2A1506]/10 cursor-not-allowed' : ''}
-                            ${c && c.dispo && !isSel ? 'bg-[#E87040]/20 border-2 border-[#E87040] hover:bg-[#E87040] cursor-pointer' : ''}
-                            ${isSel ? 'bg-[#2A1506] scale-110 shadow-lg z-10' : ''}
+                          disabled={!session || !dispo}
+                          onClick={() => { if (session && dispo) { setSelected(isSel ? null : session.id); setNbPlaces(1) } }}
+                          className={`w-full aspect-square rounded-lg flex flex-col items-center justify-center transition-all duration-150 text-xs
+                            ${!session ? 'cursor-default' : ''}
+                            ${session && !dispo ? 'bg-[#2A1506]/10 cursor-not-allowed' : ''}
+                            ${session && dispo && !isSel ? 'bg-[#E87040]/20 border border-[#E87040] hover:bg-[#E87040] cursor-pointer' : ''}
+                            ${isSel ? 'bg-[#2A1506] scale-110 shadow-md z-10' : ''}
                           `}
                         >
-                          <span className={`font-display font-bold text-sm leading-none
-                            ${!c ? 'text-[#2A1506]/25' : isSel ? 'text-[#FBF5E9]' : c.dispo ? 'text-[#2A1506]' : 'text-[#2A1506]/40'}`}>
+                          <span className={`font-display font-bold text-base md:text-lg leading-none
+                            ${!session ? 'text-[#2A1506]/25' : isSel ? 'text-[#FBF5E9]' : dispo ? 'text-[#2A1506]' : 'text-[#2A1506]/35'}`}>
                             {day}
                           </span>
-                          {c && (
-                            <span className={`text-[0.55rem] leading-none mt-0.5 font-ui font-semibold
-                              ${isSel ? 'text-[#F5D060]' : c.dispo ? 'text-[#E87040]' : 'text-[#2A1506]/30'}`}>
-                              {c.dispo ? `${c.places}pl` : '✕'}
+                          {session && (
+                            <span className={`text-[0.65rem] md:text-xs leading-none mt-1 font-ui font-semibold
+                              ${isSel ? 'text-[#F5D060]' : dispo ? 'text-[#E87040]' : 'text-[#2A1506]/30'}`}>
+                              {dispo ? `${session.places_restantes} place${session.places_restantes > 1 ? 's' : ''}` : '✕'}
                             </span>
                           )}
                         </button>
                       )
                     })}
                   </div>
-                ) : (
-                  <div className="h-32 flex items-center justify-center text-[#2A1506]/40 font-ui text-sm italic">
-                    Aucun créneau disponible ce mois-ci.
-                  </div>
                 )}
-                <div className="flex items-center gap-6 mt-3">
-                  <div className="flex items-center gap-2">
+                {sessions.length === 0 && !loadingSessions && (
+                  <p className="text-center font-ui text-sm text-[#2A1506]/40 italic mt-3">Aucun créneau ce mois-ci.</p>
+                )}
+                <div className="flex items-center gap-5 mt-3">
+                  <div className="flex items-center gap-1.5">
                     <div className="w-3 h-3 rounded bg-[#E87040]/20 border border-[#E87040]" />
                     <span className="font-ui text-xs text-[#2A1506]/50">Disponible</span>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1.5">
                     <div className="w-3 h-3 rounded bg-[#2A1506]/10" />
                     <span className="font-ui text-xs text-[#2A1506]/50">Complet</span>
                   </div>
                 </div>
               </div>
 
-              <div className="border-t border-[#2A1506]/10 pt-6 flex flex-col md:flex-row items-start md:items-center gap-4 justify-between">
+              {/* Sélection + réservation */}
+              <div className="border-t border-[#2A1506]/10 pt-5 flex flex-col md:flex-row items-start md:items-center gap-4 justify-between">
                 <div className="flex flex-col gap-2">
-                  {selected !== null ? (
+                  {selectedSession ? (
                     <>
                       <p className="font-ui text-sm text-[#2A1506] font-semibold">
-                        {creneaux[selected].jour} {creneaux[selected].date} à {creneaux[selected].heure}
+                        {selectedSession.jour} {selectedSession.date} à {selectedSession.heure}
                       </p>
-                      <p className="font-ui text-xs text-[#E87040]">
-                        {creneaux[selected].places} place{creneaux[selected].places > 1 ? 's' : ''} restante{creneaux[selected].places > 1 ? 's' : ''}
+                      <p className="font-display font-bold text-2xl text-[#E87040]">
+                        {selectedSession.places_restantes} place{selectedSession.places_restantes > 1 ? 's' : ''} restante{selectedSession.places_restantes > 1 ? 's' : ''}
                       </p>
-                      {/* Sélecteur de places */}
                       <div className="flex items-center gap-3 mt-1">
                         <span className="font-ui text-xs text-[#2A1506]/70">Nombre de places :</span>
                         <div className="flex items-center gap-2">
-                          <button
-                            onClick={() => setNbPlaces(n => Math.max(1, n - 1))}
-                            className="w-7 h-7 rounded-lg bg-[#2A1506]/10 hover:bg-[#2A1506]/20 flex items-center justify-center font-bold text-[#2A1506] transition-colors"
-                          >−</button>
+                          <button onClick={() => setNbPlaces(n => Math.max(1, n - 1))} className="w-7 h-7 rounded-lg bg-[#2A1506]/10 hover:bg-[#2A1506]/20 flex items-center justify-center font-bold text-[#2A1506] transition-colors">−</button>
                           <span className="font-display font-bold text-xl w-8 text-center text-[#2A1506]">{nbPlaces}</span>
-                          <button
-                            onClick={() => setNbPlaces(n => Math.min(creneaux[selected].places, n + 1))}
-                            className="w-7 h-7 rounded-lg bg-[#2A1506]/10 hover:bg-[#2A1506]/20 flex items-center justify-center font-bold text-[#2A1506] transition-colors"
-                          >+</button>
+                          <button onClick={() => setNbPlaces(n => Math.min(selectedSession.places_restantes, n + 1))} className="w-7 h-7 rounded-lg bg-[#2A1506]/10 hover:bg-[#2A1506]/20 flex items-center justify-center font-bold text-[#2A1506] transition-colors">+</button>
                         </div>
                       </div>
                     </>
@@ -298,8 +297,8 @@ export default function Initiation() {
                   <p className="font-ui text-xs text-[#2A1506]/40 mt-1">Un acompte est demandé pour confirmer (Lydia, Wero ou espèces). Acompte non remboursable.</p>
                 </div>
                 <Link
-                  to={selected !== null
-                    ? `/contact?type=initiation&date=${creneaux[selected].jour} ${creneaux[selected].date} à ${creneaux[selected].heure}&places=${nbPlaces}`
+                  to={selectedSession
+                    ? `/contact?type=initiation&date=${selectedSession.jour} ${selectedSession.date} à ${selectedSession.heure}&places=${nbPlaces}&session_id=${selectedSession.id}`
                     : '/contact?type=initiation'}
                   className={btn.dark}
                 >
@@ -311,7 +310,7 @@ export default function Initiation() {
         </div>
       </section>
 
-      {/* À DOMICILE — en second (jaune) */}
+      {/* À DOMICILE */}
       <section
         id="domicile"
         className="px-6 md:px-16 lg:px-24 py-24 scroll-mt-20 relative overflow-hidden"
@@ -369,17 +368,6 @@ export default function Initiation() {
         </div>
       </section>
 
-      {/* FAQ */}
-      <FaqSection
-        items={[
-          { q: "Faut-il avoir de l'expérience ?", a: "Aucune ! Les initiations sont faites pour les débutants, même ceux qui n'ont pas l'habitude des activités manuelles. Tu seras guidé(e) tout au long du cours pour que tu puisses réaliser tes envies." },
-          { q: "Qu'est-ce qu'on repart avec ?", a: "Malheureusement pas tout de suite : les pièces ont besoin de temps pour sécher avant de pouvoir passer en première cuisson. Ensuite, je m'occupe de les émailler pour qu'elles puissent être étanches après la deuxième cuisson. Il faut au moins compter 1 mois après la date de l'initiation avant de pouvoir venir les récupérer." },
-          { q: "Que faut-il apporter ?", a: "Rien du tout, sauf des vêtements confortables que tu ne crains pas de salir. L'argile, les outils et les tabliers sont fournis." },
-          { q: "C'est possible en cadeau ?", a: "Oui, les initiations font des cadeaux très originaux. Contacte-moi pour recevoir un bon cadeau personnalisé à offrir." },
-          { q: "Combien de personnes par session ?", a: "8 personnes maximum. Les groupes restent petits pour que chacun avance à son rythme." },
-        ]}
-      />
-
       {/* INITIATION PONCTUELLE */}
       <section className="px-6 md:px-16 lg:px-24 py-16 max-w-7xl mx-auto">
         <Reveal>
@@ -402,6 +390,17 @@ export default function Initiation() {
           </div>
         </Reveal>
       </section>
+
+      {/* FAQ */}
+      <FaqSection
+        items={[
+          { q: "Faut-il avoir de l'expérience ?", a: "Aucune ! Les initiations sont faites pour les débutants, même ceux qui n'ont pas l'habitude des activités manuelles. Tu seras guidé(e) tout au long du cours pour que tu puisses réaliser tes envies." },
+          { q: "Qu'est-ce qu'on repart avec ?", a: "Malheureusement pas tout de suite : les pièces ont besoin de temps pour sécher avant de pouvoir passer en première cuisson. Ensuite, je m'occupe de les émailler pour qu'elles puissent être étanches après la deuxième cuisson. Il faut au moins compter 1 mois après la date de l'initiation avant de pouvoir venir les récupérer." },
+          { q: "Que faut-il apporter ?", a: "Rien du tout, sauf des vêtements confortables que tu ne crains pas de salir. L'argile, les outils et les tabliers sont fournis." },
+          { q: "C'est possible en cadeau ?", a: "Oui, les initiations font des cadeaux très originaux. Contacte-moi pour recevoir un bon cadeau personnalisé à offrir." },
+          { q: "Combien de personnes par session ?", a: "6 personnes maximum. Les groupes restent petits pour que chacun avance à son rythme." },
+        ]}
+      />
 
       {/* NOTE CONFIRMATION */}
       <section className="px-6 md:px-16 lg:px-24 py-16 max-w-7xl mx-auto">

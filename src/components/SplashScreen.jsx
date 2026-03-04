@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { useState, useEffect } from 'react'
 import { Asterisk } from './Deco'
-import logo1 from '../assets/logo1.png'
+import logo1 from '../assets/logo2.png'
 
 export default function SplashScreen({ onDone }) {
   const [visible, setVisible] = useState(true)
@@ -48,7 +48,7 @@ export default function SplashScreen({ onDone }) {
             <motion.img
               src={logo1}
               alt="Léa — Artiste céramiste"
-              className="w-auto brightness-0 invert mx-auto"
+              className="w-auto mx-auto"
               style={{ height: 'clamp(12rem, 30vw, 22rem)' }}
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
@@ -61,7 +61,7 @@ export default function SplashScreen({ onDone }) {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.7, duration: 0.5 }}
             >
-              Céramiste
+              Artiste céramiste
             </motion.p>
           </div>
 

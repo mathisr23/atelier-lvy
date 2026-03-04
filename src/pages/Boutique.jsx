@@ -2,6 +2,7 @@ import useSEO from '../hooks/useSEO'
 import { Asterisk, patterns } from '../components/Deco'
 import Reveal from '../components/Reveal'
 import imgFour from '../assets/four.png'
+import imgTablier from '../assets/tablier.png'
 import illustration1 from '../assets/illustration1.png'
 import illustration2 from '../assets/illustration2.png'
 
@@ -25,7 +26,7 @@ const CollectionImage = ({ src, className, style }) => (
 )
 
 const steps = [
-  { num: '01', title: 'Contact moi', text: "Raconte-moi ton idée et tes envies, tu peux aussi me faire un croquis et m’envoyer des inspirations. Ensuite je te recontacte pour qu’on puisse échanger ensemble et bien cerner ce que tu souhaites.", color: '#E87040' },
+  { num: '01', title: 'Contacte moi', text: "Raconte-moi ton idée et tes envies, tu peux aussi me faire un croquis et m’envoyer des inspirations. Ensuite je te recontacte pour qu’on puisse échanger ensemble et bien cerner ce que tu souhaites.", color: '#E87040' },
   { num: '02', title: 'Devis et croquis', text: "Je te prépare un devis et un premier croquis de ta pièce. On affine ensemble jusqu'à ce que ce soit parfait. Sur certains projets, un acompte peut être demandé.", color: '#9BBF90' },
   { num: '03', title: 'Création', text: "Une fois le devis validé, je façonne ta pièce à la main, la colore si besoin puis la cuit et l’émail. Chaque étape est faite avec soin, ça prend un peu de temps, mais ça vaut le coup !", color: '#F2A0A8' },
 ]
@@ -61,19 +62,14 @@ export default function Boutique() {
             </Reveal>
           </div>
 
-          {/* Illustrations */}
+          {/* Tablier + illustrations */}
           <Reveal direction="left" delay={0.15}>
             <div className="relative h-[40rem] hidden lg:block">
+              {/* Tablier — grand, centré */}
               <img
-                src={illustration1}
-                alt="Illustration céramique"
-                className="absolute top-0 right-0 w-[22rem] h-[22rem] object-contain drop-shadow-sm rotate-3 mix-blend-multiply contrast-[1.15] opacity-90"
-                style={{ imageRendering: '-webkit-optimize-contrast' }}
-              />
-              <img
-                src={illustration2}
-                alt="Illustration céramique"
-                className="absolute bottom-0 left-4 w-80 h-80 object-contain drop-shadow-sm -rotate-2 mix-blend-multiply contrast-[1.15] opacity-90"
+                src={imgTablier}
+                alt="Tablier de céramiste"
+                className="absolute inset-0 m-auto w-[26rem] h-[34rem] object-contain drop-shadow-xl mix-blend-multiply contrast-[1.1]"
                 style={{ imageRendering: '-webkit-optimize-contrast' }}
               />
             </div>
@@ -154,26 +150,30 @@ export default function Boutique() {
       </section>
 
       {/* CUISSONS */}
-      <section className="px-6 md:px-16 lg:px-24 py-16 max-w-7xl mx-auto">
-        <Reveal>
-          <div className="bg-[#F2A0A8]/20 border border-[#F2A0A8]/40 rounded-3xl p-8 md:px-16 md:py-8 flex flex-col md:flex-row items-center gap-8">
-            <div className="flex-1">
-              <p className="font-ui text-xs uppercase tracking-[0.3em] text-[#D97080] mb-3">Services</p>
-              <h2 className="font-display font-bold text-3xl md:text-4xl text-[#2A1506] mb-4 leading-tight">Cuissons extérieures</h2>
-              <p className="font-body text-[#2A1506]/60 text-base leading-relaxed max-w-sm">
-                Tu as modelé des pièces ailleurs et tu cherches un four ? Je propose des cuissons pour des projets extérieurs. Contacte-moi pour les tarifs et conditions.
-              </p>
+      <section className="pt-16">
+        <div className="px-6 md:px-16 lg:px-24 max-w-7xl mx-auto mb-8">
+          <Reveal>
+            <div className="bg-[#F2A0A8]/20 border border-[#F2A0A8]/40 rounded-3xl p-8 md:px-16 md:py-10 flex flex-col md:flex-row items-center gap-8">
+              <div className="flex-1">
+                <p className="font-ui text-xs uppercase tracking-[0.3em] text-[#D97080] mb-3">Services</p>
+                <h2 className="font-display font-bold text-3xl md:text-4xl text-[#2A1506] mb-4 leading-tight">Cuissons extérieures</h2>
+                <p className="font-body text-[#2A1506]/60 text-base leading-relaxed max-w-sm">
+                  Tu as modelé des pièces ailleurs et tu cherches un four ? Je propose des cuissons pour des projets extérieurs. Contacte-moi pour les tarifs et conditions.
+                </p>
+              </div>
+              <a href="mailto:contact.atelierlvy@gmail.com?subject=Cuisson extérieure" className={btn.dark}>Me contacter</a>
             </div>
-            {/* four.png — entre le texte et le bouton */}
-            <img
-              src={imgFour}
-              alt="Illustration d'un four de céramiste"
-              className="object-contain opacity-90 pointer-events-none hidden md:block flex-shrink-0 mix-blend-multiply contrast-[1.1] md:-my-12"
-              style={{ width: '22rem', height: '22rem', imageRendering: '-webkit-optimize-contrast' }}
-            />
-            <a href="mailto:contact.atelierlvy@gmail.com?subject=Cuisson extérieure" className={btn.dark}>Me contacter</a>
-          </div>
-        </Reveal>
+          </Reveal>
+        </div>
+        {/* four collé au bord droit via flex — aucune dépendance au containing block */}
+        <div className="hidden md:flex justify-end overflow-hidden" style={{ height: '5rem' }}>
+          <img
+            src={imgFour}
+            alt="Illustration d'un four de céramiste"
+            className="object-contain pointer-events-none mix-blend-multiply contrast-[1.1]"
+            style={{ width: '50rem', height: '50rem', imageRendering: '-webkit-optimize-contrast', marginTop: '-32rem' }}
+          />
+        </div>
       </section>
 
     </div>

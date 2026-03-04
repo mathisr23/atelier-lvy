@@ -1,9 +1,9 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import useSEO from '../hooks/useSEO'
 import { Baby } from 'lucide-react'
-import { Asterisk, patterns } from '../components/Deco'
 import Reveal from '../components/Reveal'
+import { supabase } from '../lib/supabase'
 
 function FaqSection({ items }) {
   const [open, setOpen] = useState(null)
@@ -44,32 +44,11 @@ const btn = {
   sage: 'inline-block font-ui font-semibold text-sm px-8 py-3.5 bg-[#9BBF90] text-[#2A1506] border-2 border-[#9BBF90] rounded-xl hover:bg-[#E87040] hover:text-[#FBF5E9] hover:border-[#E87040] transition-all duration-200 whitespace-nowrap',
 }
 
-const coursMardi = [
-  { date: '3 mars', heure: '18h30 – 21h', places: 4, dispo: true },
-  { date: '10 mars', heure: '18h30 – 21h', places: 6, dispo: true },
-  { date: '17 mars', heure: '18h30 – 21h', places: 3, dispo: true },
-  { date: '24 mars', heure: '18h30 – 21h', places: 0, dispo: false },
-  { date: '7 avril', heure: '18h30 – 21h', places: 5, dispo: true },
-  { date: '14 avril', heure: '18h30 – 21h', places: 6, dispo: true },
-]
-
-const coursJeudi = [
-  { date: '5 mars', heure: '18h30 – 21h', places: 5, dispo: true },
-  { date: '12 mars', heure: '18h30 – 21h', places: 3, dispo: true },
-  { date: '26 mars', heure: '18h30 – 21h', places: 6, dispo: true },
-  { date: '2 avril', heure: '18h30 – 21h', places: 0, dispo: false },
-  { date: '9 avril', heure: '18h30 – 21h', places: 4, dispo: true },
-  { date: '16 avril', heure: '18h30 – 21h', places: 6, dispo: true },
-]
-
-const coursSamedi = [
-  { date: '8 mars', heure: '10h – 12h30', places: 4, dispo: true },
-  { date: '15 mars', heure: '14h – 17h', places: 2, dispo: true },
-  { date: '22 mars', heure: '10h – 12h30', places: 0, dispo: false },
-  { date: '5 avril', heure: '10h – 12h30', places: 5, dispo: true },
-  { date: '12 avril', heure: '14h – 17h', places: 6, dispo: true },
-  { date: '26 avril', heure: '10h – 12h30', places: 3, dispo: true },
-]
+const packPrices = {
+  mardi: { 5: '275€', 10: '550€' },
+  jeudi: { 5: '275€', 10: '550€' },
+  samedi: { 5: '350€', 10: '650€' },
+}
 
 function SessionCard({ c, selected, onClick }) {
   return (
@@ -102,12 +81,67 @@ export default function Cours() {
   const [selectedJeudi, setSelectedJeudi] = useState(null)
   const [selectedSamedi, setSelectedSamedi] = useState(null)
   const [nbSeances, setNbSeances] = useState(5)
+  const [nbPlaces, setNbPlaces] = useState(1)
+
+  const [dbMardi, setDbMardi] = useState([])
+  const [dbJeudi, setDbJeudi] = useState([])
+  const [dbSamedi, setDbSamedi] = useState([])
+  const [reservations, setReservations] = useState([])
+
+  useEffect(() => {
+    supabase
+      .from('reservations')
+      .select('date_session, nb_places, nb_seances')
+      .eq('type', 'cours')
+      .eq('status', 'accepted')
+      .then(({ data }) => setReservations(data || []))
+
+    supabase
+      .from('sessions')
+      .select('*')
+      .eq('type', 'cours')
+      .order('annee').order('mois').order('day')
+      .then(({ data }) => {
+        const sorted = data || []
+        setDbMardi(sorted.filter(s => s.jour.toLowerCase() === 'mardi'))
+        setDbJeudi(sorted.filter(s => s.jour.toLowerCase() === 'jeudi'))
+        setDbSamedi(sorted.filter(s => s.jour.toLowerCase() === 'samedi'))
+      })
+  }, [])
+
+  const computePlaces = (baseArray, dayPrefix) => {
+    return baseArray.map((c, i) => {
+      let reserved = 0
+      reservations.forEach(r => {
+        if (r.date_session && r.date_session.toLowerCase().startsWith(dayPrefix.toLowerCase())) {
+          const startDate = r.date_session.replace(new RegExp(`^${dayPrefix} `, 'i'), '')
+          const startIndex = baseArray.findIndex(x => x.date === startDate)
+          if (startIndex !== -1) {
+            const numPlaces = r.nb_places || 1
+            const nbSns = r.nb_seances || 5
+            if (i >= startIndex && i < startIndex + nbSns) {
+              reserved += numPlaces
+            }
+          }
+        }
+      })
+      const places_restantes = Math.max(0, c.places_total - reserved)
+      return { ...c, places: places_restantes, dispo: places_restantes > 0 }
+    })
+  }
+
+  const coursMardi = computePlaces(dbMardi, 'Mardi')
+  const coursJeudi = computePlaces(dbJeudi, 'Jeudi')
+  const coursSamedi = computePlaces(dbSamedi, 'Samedi')
 
   const selectedSession =
     selectedMardi !== null ? `Mardi ${coursMardi[selectedMardi].date}`
       : selectedJeudi !== null ? `Jeudi ${coursJeudi[selectedJeudi].date}`
         : selectedSamedi !== null ? `Samedi ${coursSamedi[selectedSamedi].date}`
           : null
+
+  const selectedDay = selectedMardi !== null ? 'mardi' : selectedJeudi !== null ? 'jeudi' : selectedSamedi !== null ? 'samedi' : null
+  const selectedObj = selectedMardi !== null ? coursMardi[selectedMardi] : selectedJeudi !== null ? coursJeudi[selectedJeudi] : selectedSamedi !== null ? coursSamedi[selectedSamedi] : null
 
   return (
     <div className="bg-[#FBF5E9] pt-20">
@@ -149,7 +183,7 @@ export default function Cours() {
                   <ul className="space-y-1">
                     <li>• 10 kg maximum de terre par personne</li>
                     <li>• Engobes, outils et matériel fournis</li>
-                    <li>• 2 cuissons + émaillage inclus</li>
+                    <li>• Cuissons + émaillage inclus</li>
                     <li>• Groupe de 6 personnes maximum</li>
                   </ul>
                 </div>
@@ -217,7 +251,7 @@ export default function Cours() {
                     <div>
                       <p className="font-ui text-xs uppercase tracking-widest text-[#2A1506]/40 mb-1">Week-end</p>
                       <h3 className="font-display font-black text-4xl text-[#2A1506]">Samedi</h3>
-                      <p className="font-ui text-[#E87040] text-base font-medium mt-1">Matin ou après-midi</p>
+                      <p className="font-ui text-[#E87040] text-base font-medium mt-1">10h – 12h30</p>
                     </div>
                     <span className="font-display italic text-6xl text-[#2A1506]/5 select-none leading-none">S</span>
                   </div>
@@ -245,11 +279,15 @@ export default function Cours() {
           </div>
         </Reveal>
         <Reveal delay={0.1}>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-4">
-            {coursMardi.map((c, i) => (
-              <SessionCard key={i} c={c} selected={selectedMardi === i} onClick={() => { setSelectedMardi(selectedMardi === i ? null : i); setSelectedJeudi(null); setSelectedSamedi(null) }} />
-            ))}
-          </div>
+          {coursMardi.length === 0 ? (
+            <p className="font-ui text-sm text-[#2A1506]/40 italic">Aucun créneau prévu pour le moment.</p>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-4">
+              {coursMardi.map((c, i) => (
+                <SessionCard key={c.id || i} c={c} selected={selectedMardi === i} onClick={() => { setSelectedMardi(selectedMardi === i ? null : i); setSelectedJeudi(null); setSelectedSamedi(null); setNbPlaces(1) }} />
+              ))}
+            </div>
+          )}
         </Reveal>
       </section>
 
@@ -263,11 +301,15 @@ export default function Cours() {
           </div>
         </Reveal>
         <Reveal delay={0.1}>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-4">
-            {coursJeudi.map((c, i) => (
-              <SessionCard key={i} c={c} selected={selectedJeudi === i} onClick={() => { setSelectedJeudi(selectedJeudi === i ? null : i); setSelectedSamedi(null); setSelectedMardi(null) }} />
-            ))}
-          </div>
+          {coursJeudi.length === 0 ? (
+            <p className="font-ui text-sm text-[#2A1506]/40 italic">Aucun créneau prévu pour le moment.</p>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-4">
+              {coursJeudi.map((c, i) => (
+                <SessionCard key={c.id || i} c={c} selected={selectedJeudi === i} onClick={() => { setSelectedJeudi(selectedJeudi === i ? null : i); setSelectedSamedi(null); setSelectedMardi(null); setNbPlaces(1) }} />
+              ))}
+            </div>
+          )}
         </Reveal>
       </section>
 
@@ -276,16 +318,20 @@ export default function Cours() {
         <Reveal>
           <div className="flex items-center gap-4 mb-8 flex-wrap">
             <h2 className="font-display font-bold text-3xl md:text-4xl">Samedis</h2>
-            <span className="font-ui text-xs bg-[#E87040] text-[#FBF5E9] px-3 py-1 rounded-lg uppercase tracking-widest">Matin &amp; après-midi</span>
+            <span className="font-ui text-xs bg-[#E87040] text-[#FBF5E9] px-3 py-1 rounded-lg uppercase tracking-widest">10h – 12h30</span>
             <span className="font-ui text-xs text-[#2A1506]/40 bg-[#2A1506]/5 px-3 py-1 rounded-lg">Mars – Avril 2026</span>
           </div>
         </Reveal>
         <Reveal delay={0.1}>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-4">
-            {coursSamedi.map((c, i) => (
-              <SessionCard key={i} c={c} selected={selectedSamedi === i} onClick={() => { setSelectedSamedi(selectedSamedi === i ? null : i); setSelectedJeudi(null); setSelectedMardi(null) }} />
-            ))}
-          </div>
+          {coursSamedi.length === 0 ? (
+            <p className="font-ui text-sm text-[#2A1506]/40 italic">Aucun créneau prévu pour le moment.</p>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-4">
+              {coursSamedi.map((c, i) => (
+                <SessionCard key={c.id || i} c={c} selected={selectedSamedi === i} onClick={() => { setSelectedSamedi(selectedSamedi === i ? null : i); setSelectedJeudi(null); setSelectedMardi(null); setNbPlaces(1) }} />
+              ))}
+            </div>
+          )}
         </Reveal>
       </section>
 
@@ -301,25 +347,41 @@ export default function Cours() {
             </h2>
 
             {selectedSession && (
-              <div className="mb-8">
+              <div className="mb-8 flex flex-col items-center">
                 <p className="font-ui text-[#FBF5E9]/60 text-sm mb-4">Quel nombre de séances souhaites-tu ?</p>
-                <div className="flex justify-center gap-3">
+                <div className="flex justify-center gap-3 mb-8">
                   {[1, 5, 10].map((n) => (
                     <button
                       key={n}
                       onClick={() => setNbSeances(n)}
-                      className={`font-ui font-semibold text-sm px-6 py-3 rounded-xl border-2 transition-all duration-150 ${
-                        nbSeances === n
-                          ? 'bg-[#9BBF90] border-[#9BBF90] text-[#2A1506]'
-                          : 'bg-transparent border-[#FBF5E9]/20 text-[#FBF5E9]/60 hover:border-[#FBF5E9]/50'
-                      }`}
+                      className={`font-ui font-semibold text-sm px-6 py-3 rounded-xl border-2 transition-all duration-150 flex flex-col items-center ${nbSeances === n
+                        ? 'bg-[#9BBF90] border-[#9BBF90] text-[#2A1506]'
+                        : 'bg-transparent border-[#FBF5E9]/20 text-[#FBF5E9]/60 hover:border-[#FBF5E9]/50'
+                        }`}
                     >
-                      {n === 1 ? '1 cours' : `Pack ${n}`}
+                      <span>{n === 1 ? '1 cours' : `Pack ${n}`}</span>
+                      {selectedDay && packPrices[selectedDay]?.[n] && (
+                        <span className={`text-xs font-normal mt-0.5 ${nbSeances === n ? 'text-[#2A1506]/70' : 'text-[#FBF5E9]/40'}`}>
+                          {packPrices[selectedDay][n]}
+                        </span>
+                      )}
                     </button>
                   ))}
                 </div>
-                <p className="font-ui text-[#FBF5E9]/40 text-xs mt-3">
-                  Tu seras inscrit·e aux séances qui suivent cette date selon le nombre choisi.
+
+                <div className="bg-[#FBF5E9]/10 rounded-2xl p-5 inline-block">
+                  <div className="flex items-center gap-4">
+                    <span className="font-ui text-sm text-[#FBF5E9]/70">Personnes :</span>
+                    <div className="flex items-center gap-2">
+                      <button onClick={() => setNbPlaces(n => Math.max(1, n - 1))} className="w-8 h-8 rounded-lg bg-[#FBF5E9]/10 hover:bg-[#FBF5E9]/20 flex items-center justify-center font-bold text-[#FBF5E9] transition-colors">−</button>
+                      <span className="font-display font-bold text-2xl w-10 text-center text-[#FBF5E9]">{nbPlaces}</span>
+                      <button onClick={() => setNbPlaces(n => Math.min(selectedObj?.places || 1, n + 1))} className="w-8 h-8 rounded-lg bg-[#FBF5E9]/10 hover:bg-[#FBF5E9]/20 flex items-center justify-center font-bold text-[#FBF5E9] transition-colors">+</button>
+                    </div>
+                  </div>
+                </div>
+
+                <p className="font-ui text-[#FBF5E9]/40 text-xs mt-6 max-w-sm">
+                  Tu seras inscrit·e aux séances qui suivent cette date selon le nombre de séances et de places choisis.
                 </p>
               </div>
             )}
@@ -328,7 +390,7 @@ export default function Cours() {
               Une fois ta demande effectuée, je te recontacte par mail pour finaliser ton inscription.
             </p>
             <div className="flex justify-center">
-              <Link to={selectedSession ? `/contact?type=cours&date=${selectedSession}&seances=${nbSeances}` : '/contact?type=cours'} className={btn.sage}>M'inscrire par mail →</Link>
+              <Link to={selectedSession ? `/contact?type=cours&date=${selectedSession}&seances=${nbSeances}&places=${nbPlaces}` : '/contact?type=cours'} className={btn.sage}>M'inscrire par mail →</Link>
             </div>
           </div>
         </Reveal>

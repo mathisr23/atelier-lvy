@@ -9,6 +9,7 @@ import Boutique from './pages/Boutique'
 import Initiation from './pages/Initiation'
 import Cours from './pages/Cours'
 import Contact from './pages/Contact'
+import Admin from './pages/Admin'
 import NotFound from './pages/NotFound'
 
 function ScrollToTop() {
@@ -46,23 +47,33 @@ function AnimatedRoutes() {
   )
 }
 
-function App() {
+function MainApp() {
   const [splashDone, setSplashDone] = useState(false)
-
   return (
     <>
       <SplashScreen onDone={() => setSplashDone(true)} />
       {splashDone && (
-        <BrowserRouter>
+        <>
           <ScrollToTop />
           <Navbar />
           <main>
             <AnimatedRoutes />
           </main>
           <Footer />
-        </BrowserRouter>
+        </>
       )}
     </>
+  )
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/atelier-gestion-lvy" element={<Admin />} />
+        <Route path="*" element={<MainApp />} />
+      </Routes>
+    </BrowserRouter>
   )
 }
 

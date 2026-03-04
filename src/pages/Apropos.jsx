@@ -25,6 +25,7 @@ import imgIMG4984 from '../assets/IMG_4984.JPG'
 import imgIMG5006 from '../assets/IMG_5006.JPG'
 import imgIMG5020 from '../assets/IMG_5020.JPG'
 import imgIMG5029 from '../assets/IMG_5029.JPG'
+import illustration3 from '../assets/illustration3.png'
 
 // Classes boutons partagées
 const btn = {
@@ -162,11 +163,21 @@ export default function Apropos() {
           </div>
 
           {/* Collage photos */}
-          <div className="relative h-[500px] hidden lg:block group">
+          <div className="relative h-[600px] hidden lg:block group">
             <motion.div initial={{ opacity: 0, rotate: 0 }} animate={{ opacity: 1, rotate: 3 }} transition={{ delay: 0.3, duration: 0.6 }} className="absolute top-0 right-8 w-56 h-64 overflow-hidden shadow-xl" style={{ backgroundColor: '#E87040', borderRadius: '40% 60% 70% 30% / 40% 50% 60% 50%' }} />
             <motion.div initial={{ opacity: 0, rotate: 0 }} animate={{ opacity: 1, rotate: -6 }} transition={{ delay: 0.4, duration: 0.6 }} className="absolute top-16 left-0 w-44 h-44 overflow-hidden shadow-xl" style={{ backgroundColor: '#9BBF90', borderRadius: '50% 50% 40% 60% / 60% 40% 50% 50%' }} />
             <motion.div initial={{ opacity: 0, rotate: 0 }} animate={{ opacity: 1, rotate: -2 }} transition={{ delay: 0.5, duration: 0.6 }} className="absolute bottom-0 right-0 w-48 h-56 overflow-hidden shadow-xl" style={{ backgroundColor: '#F2A0A8', borderRadius: '60% 40% 50% 50% / 50% 60% 40% 50%' }} />
             <motion.div initial={{ opacity: 0, rotate: 0 }} animate={{ opacity: 1, rotate: 6 }} transition={{ delay: 0.6, duration: 0.6 }} className="absolute bottom-8 left-12 w-36 h-36 overflow-hidden shadow-xl" style={{ backgroundColor: '#F5D060', borderRadius: '30% 70% 70% 30% / 30% 30% 70% 70%' }} />
+            {/* illustration3 centrée entre les formes */}
+            <motion.img
+              src={illustration3}
+              alt="Illustration céramique"
+              initial={{ opacity: 0, scale: 0.85 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.45, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+              className="absolute inset-0 m-auto w-[30rem] h-[30rem] object-contain drop-shadow-2xl mix-blend-multiply contrast-[1.1] pointer-events-none"
+              style={{ imageRendering: '-webkit-optimize-contrast' }}
+            />
           </div>
         </div>
 
@@ -191,6 +202,7 @@ export default function Apropos() {
             </Reveal>
             <Reveal delay={0.2}>
               <div className="space-y-3 text-[#FBF5E9]/70 leading-relaxed font-body text-base">
+                <p className="text-[#FBF5E9]/90 font-semibold italic">Je m’appelle Léa, artiste céramiste basée à Boinville-le-Gaillard.</p>
                 <p>J’ai découvert ma passion pour le modelage à l’École Boulle, en me formant à la gravure en modelé et à la création de bas-reliefs. Progressivement, je me suis tournée vers la céramique afin de donner plus de volume à mes créations, tasses, sculptures et objets variés.</p>
                 <p>Formée grâce à plusieurs divers stages, j’ai ensuite développé mon activité d’auto-entrepreneur afin de produire des commandes pour des ateliers collaborant avec de grandes maisons. Ces expériences m’ont permis de maîtriser les techniques de modelage, de coulage, tournage ou encore de décor.</p>
                 <p>Aujourd’hui, je crée mes propres pièces en m’inspirant de la nature, de ses formes organiques et la richesse de ses couleurs. J’intègre également des réflexions sociétales et environnementales à mon travail. J’imagine mon atelier comme un laboratoire d’idées, où se mêlent des savoir-faire et une pluralité de matériaux.</p>

@@ -4,9 +4,9 @@ import useSEO from '../hooks/useSEO'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Squiggle } from '../components/Deco'
 import Reveal from '../components/Reveal'
+import { supabase } from '../lib/supabase'
 
-// 🔑 À remplacer : créer un compte gratuit sur formspree.io et coller l'endpoint ici
-const FORMSPREE_ENDPOINT = 'https://formspree.io/f/meqvdlbg'
+const EDGE_FUNCTION_URL = import.meta.env.VITE_ADMIN_EDGE_FUNCTION_URL
 
 const types = [
   { value: 'commande', label: 'Commande sur mesure' },
@@ -29,6 +29,7 @@ export default function Contact() {
   const defaultDate = searchParams.get('date') || ''
   const defaultPlaces = searchParams.get('places') || ''
   const defaultSeances = searchParams.get('seances') || ''
+  const defaultSessionId = searchParams.get('session_id') || ''
 
   const [form, setForm] = useState({
     prenom: '',
@@ -39,6 +40,7 @@ export default function Contact() {
     date: defaultDate,
     places: defaultPlaces,
     seances: defaultSeances,
+    session_id: defaultSessionId,
     message: '',
   })
   const [status, setStatus] = useState('idle') // 'idle' | 'loading' | 'success' | 'error'
@@ -67,14 +69,34 @@ export default function Contact() {
     const errs = validate()
     if (Object.keys(errs).length) { setErrors(errs); return }
     setStatus('loading')
+
     try {
-      const res = await fetch(FORMSPREE_ENDPOINT, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify(form),
-      })
-      const data = await res.json()
-      setStatus(data.ok ? 'success' : 'error')
+      const id = crypto.randomUUID()
+      const jour = form.date ? form.date.split(' ')[0].toLowerCase() : null
+      const { error } = await supabase.from('reservations').insert([{
+        id,
+        type: form.type,
+        prenom: form.prenom.trim(),
+        nom: form.nom.trim(),
+        email: form.email.trim(),
+        telephone: form.telephone.trim() || null,
+        date_session: form.date || null,
+        jour,
+        nb_seances: form.seances ? parseInt(form.seances) : null,
+        nb_places: form.places ? parseInt(form.places) : null,
+        session_id: form.session_id || null,
+        message: form.message.trim() || null,
+      }])
+
+      if (!error) {
+        await fetch(EDGE_FUNCTION_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ reservationId: id, action: 'notify_admin' }),
+        })
+      }
+
+      setStatus(error ? 'error' : 'success')
     } catch {
       setStatus('error')
     }

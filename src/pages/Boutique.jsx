@@ -1,10 +1,10 @@
 import useSEO from '../hooks/useSEO'
 import { Asterisk, patterns } from '../components/Deco'
 import Reveal from '../components/Reveal'
-import imgFour from '../assets/four.png'
+import imgFourMarron from '../assets/four_marron.png'
 import imgTablier from '../assets/tablier.png'
-import illustration1 from '../assets/illustration1.png'
-import illustration2 from '../assets/illustration2.png'
+import imgVase from '../assets/vase4.png'
+import imgTasse from '../assets/tasse1.png'
 
 import img1 from '../assets/2.jpg'
 import img2 from '../assets/3.jpg'
@@ -65,13 +65,9 @@ export default function Boutique() {
           {/* Tablier + illustrations */}
           <Reveal direction="left" delay={0.15}>
             <div className="relative h-[40rem] hidden lg:block">
-              {/* Tablier — grand, centré */}
-              <img
-                src={imgTablier}
-                alt="Tablier de céramiste"
-                className="absolute inset-0 m-auto w-[26rem] h-[34rem] object-contain drop-shadow-xl mix-blend-multiply contrast-[1.1]"
-                style={{ imageRendering: '-webkit-optimize-contrast' }}
-              />
+              <img src={imgTablier} alt="Tablier de céramiste" className="absolute inset-0 m-auto w-[26rem] h-[34rem] object-contain mix-blend-multiply contrast-[1.1]" style={{ imageRendering: '-webkit-optimize-contrast' }} />
+              <img src={imgVase} alt="Vase en céramique" className="absolute bottom-8 right-0 w-52 h-52 rotate-6 object-contain mix-blend-multiply contrast-[1.1] pointer-events-none" style={{ imageRendering: '-webkit-optimize-contrast' }} />
+              <img src={imgTasse} alt="Tasse en céramique" className="absolute top-8 left-0 w-44 h-44 -rotate-4 object-contain mix-blend-multiply contrast-[1.1] pointer-events-none" style={{ imageRendering: '-webkit-optimize-contrast' }} />
             </div>
           </Reveal>
         </div>
@@ -116,7 +112,7 @@ export default function Boutique() {
       </section>
 
       {/* SUR COMMANDE */}
-      <section id="sur-mesure" className="px-6 md:px-16 lg:px-24 py-24 mt-16 relative overflow-hidden" style={{ backgroundColor: '#9BBF90', backgroundImage: 'radial-gradient(circle, rgba(42,21,6,0.1) 1.5px, transparent 1.5px)', backgroundSize: '22px 22px' }}>
+      <section id="sur-mesure" className="px-6 md:px-16 lg:px-24 py-24 mt-16 relative" style={{ backgroundColor: '#9BBF90', backgroundImage: 'radial-gradient(circle, rgba(42,21,6,0.1) 1.5px, transparent 1.5px)', backgroundSize: '22px 22px' }}>
         <Asterisk size={40} color="rgba(42,21,6,0.1)" className="absolute top-12 right-12 rotate-6" />
         <Asterisk size={22} color="rgba(42,21,6,0.08)" className="absolute bottom-20 left-8 -rotate-12" />
         <div className="max-w-7xl mx-auto relative z-10">
@@ -150,32 +146,30 @@ export default function Boutique() {
       </section>
 
       {/* CUISSONS */}
-      <section className="pt-16">
-        <div className="px-6 md:px-16 lg:px-24 max-w-7xl mx-auto mb-8">
+      <section className="py-16 relative overflow-hidden">
+        <div className="px-6 md:px-16 lg:px-24 max-w-7xl mx-auto">
           <Reveal>
-            <div className="bg-[#F2A0A8]/20 border border-[#F2A0A8]/40 rounded-3xl p-8 md:px-16 md:py-10 flex flex-col md:flex-row items-center gap-8">
-              <div className="flex-1">
+            <div className="bg-[#F2A0A8]/20 border border-[#F2A0A8]/40 rounded-3xl p-8 md:px-16 md:py-16 flex flex-col md:flex-row items-center justify-between gap-8">
+              <div>
                 <p className="font-ui text-xs uppercase tracking-[0.3em] text-[#D97080] mb-3">Services</p>
                 <h2 className="font-display font-bold text-3xl md:text-4xl text-[#2A1506] mb-4 leading-tight">Cuissons extérieures</h2>
                 <p className="font-body text-[#2A1506]/60 text-base leading-relaxed max-w-sm">
                   Tu as modelé des pièces ailleurs et tu cherches un four ? Je propose des cuissons pour des projets extérieurs. Contacte-moi pour les tarifs et conditions.
                 </p>
               </div>
-              <a href="mailto:contact.atelierlvy@gmail.com?subject=Cuisson extérieure" className={btn.dark}>Me contacter</a>
+              <a href="mailto:contact.atelierlvy@gmail.com?subject=Cuisson extérieure" className={`${btn.dark} shrink-0`}>Me contacter</a>
             </div>
           </Reveal>
         </div>
-        {/* four collé au bord droit via flex — aucune dépendance au containing block */}
-        <div className="hidden md:flex justify-end overflow-hidden" style={{ height: '5rem' }}>
-          <img
-            src={imgFour}
-            alt="Illustration d'un four de céramiste"
-            className="object-contain pointer-events-none mix-blend-multiply contrast-[1.1]"
-            style={{ width: '50rem', height: '50rem', imageRendering: '-webkit-optimize-contrast', marginTop: '-32rem' }}
-          />
-        </div>
-      </section>
+        {/* Four positionné sur le fond beige, en bas à droite */}
 
+      </section>
+      <img
+        src={imgFourMarron}
+        alt="Illustration d'un four de céramiste"
+        className="absolute bottom-[-140rem] right-0 w-64 md:w-[28rem] object-contain pointer-events-none mix-blend-multiply contrast-[1.1]"
+        style={{ imageRendering: '-webkit-optimize-contrast' }}
+      />
     </div>
   )
 }

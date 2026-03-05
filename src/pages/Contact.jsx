@@ -5,6 +5,9 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Squiggle } from '../components/Deco'
 import Reveal from '../components/Reveal'
 import { supabase } from '../lib/supabase'
+import imgPinceau from '../assets/pinceau_marron.png'
+import imgRessort from '../assets/ressort_marron.png'
+import imgvase3 from '../assets/vas3.png'
 
 const EDGE_FUNCTION_URL = import.meta.env.VITE_ADMIN_EDGE_FUNCTION_URL
 
@@ -30,6 +33,27 @@ export default function Contact() {
   const defaultPlaces = searchParams.get('places') || ''
   const defaultSeances = searchParams.get('seances') || ''
   const defaultSessionId = searchParams.get('session_id') || ''
+
+  // Calcul du prix selon le type de réservation
+  const prixRecap = (() => {
+    if (!defaultDate) return null
+    const places = parseInt(defaultPlaces) || 1
+    if (defaultType === 'initiation') {
+      return { total: places * 50, detail: `${places} pers. × 50 €` }
+    }
+    if (defaultType === 'cours') {
+      const seances = parseInt(defaultSeances)
+      if (!seances || seances === 1) return null
+      const jourLower = defaultDate.split(' ')[0].toLowerCase()
+      const tarifs = jourLower === 'samedi'
+        ? { 5: 350, 10: 650 }
+        : { 5: 275, 10: 550 }
+      const prix = tarifs[seances]
+      if (!prix) return null
+      return { total: prix * places, detail: `${places > 1 ? `${places} pers. × ` : ''}Pack ${seances} séances${places > 1 ? ` (${prix} €/pers.)` : ''}` }
+    }
+    return null
+  })()
 
   const [form, setForm] = useState({
     prenom: '',
@@ -108,6 +132,9 @@ export default function Contact() {
       {/* ─── HERO ─── */}
       <section className="px-6 md:px-16 lg:px-24 py-20 max-w-7xl mx-auto relative overflow-hidden">
         <div className="absolute top-20 right-10 w-64 h-64 rounded-full bg-[#E87040]/10 blur-3xl pointer-events-none" />
+        <img src={imgPinceau} alt="" aria-hidden="true" className="absolute top-8 right-8 w-72 h-72 -rotate-6 object-contain contrast-[1.1] pointer-events-none hidden lg:block" style={{ imageRendering: '-webkit-optimize-contrast' }} />
+        <img src={imgRessort} alt="" aria-hidden="true" className="absolute bottom-8 right-16 w-96 h-96 rotate-3 object-contain contrast-[1.1] pointer-events-none hidden lg:block" style={{ imageRendering: '-webkit-optimize-contrast' }} />
+        <img src={imgvase3} alt="" aria-hidden="true" className="absolute bottom-30 right-80 w-72 h-72 -rotate-3 object-contain contrast-[1.1] pointer-events-none hidden lg:block" style={{ imageRendering: '-webkit-optimize-contrast' }} />
 
         <Reveal><p className="font-ui text-xs uppercase tracking-[0.3em] text-[#E87040] mb-4">Contact</p></Reveal>
         <Reveal delay={0.1}>
@@ -159,8 +186,8 @@ export default function Contact() {
                     {form.date && (
                       <div className="flex items-start gap-3 bg-[#E87040]/15 border border-[#E87040]/40 rounded-xl px-4 py-3">
                         <svg width="16" height="16" fill="none" viewBox="0 0 24 24" className="shrink-0 text-[#E87040] mt-0.5">
-                          <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="1.8"/>
-                          <path d="M16 2v4M8 2v4M3 10h18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+                          <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="1.8" />
+                          <path d="M16 2v4M8 2v4M3 10h18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
                         </svg>
                         <div>
                           <p className="font-ui text-sm text-[#FBF5E9]/80">
@@ -233,11 +260,10 @@ export default function Contact() {
                         {types.map(({ value, label }) => (
                           <label
                             key={value}
-                            className={`flex items-center gap-3 rounded-xl px-4 py-3 cursor-pointer border-2 transition-all duration-150 ${
-                              form.type === value
-                                ? 'bg-[#E87040] border-[#E87040] text-[#2A1506]'
-                                : 'bg-white/5 border-[#FBF5E9]/10 text-[#FBF5E9]/60 hover:border-[#FBF5E9]/30'
-                            }`}
+                            className={`flex items-center gap-3 rounded-xl px-4 py-3 cursor-pointer border-2 transition-all duration-150 ${form.type === value
+                              ? 'bg-[#E87040] border-[#E87040] text-[#2A1506]'
+                              : 'bg-white/5 border-[#FBF5E9]/10 text-[#FBF5E9]/60 hover:border-[#FBF5E9]/30'
+                              }`}
                           >
                             <input
                               type="radio"
@@ -288,6 +314,56 @@ export default function Contact() {
           {/* Infos contact */}
           <Reveal direction="left" delay={0.2} className="lg:col-span-2">
             <div className="space-y-6 pt-2">
+
+              {/* Récap réservation */}
+              {prixRecap && (
+                <div className="bg-[#2A1506] rounded-2xl p-6">
+                  <p className="font-ui text-xs uppercase tracking-[0.3em] text-[#FBF5E9]/40 mb-4">Récap de ta réservation</p>
+                  <div className="space-y-3">
+                    {defaultDate && (
+                      <div className="flex items-start gap-2">
+                        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" className="shrink-0 text-[#E87040] mt-0.5">
+                          <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="1.8" />
+                          <path d="M16 2v4M8 2v4M3 10h18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+                        </svg>
+                        <div>
+                          <p className="font-ui text-xs text-[#FBF5E9]/40 uppercase tracking-wider mb-0.5">Créneau</p>
+                          <p className="font-ui text-sm font-semibold text-[#FBF5E9]">{defaultDate}</p>
+                        </div>
+                      </div>
+                    )}
+                    {defaultPlaces && (
+                      <div className="flex items-start gap-2">
+                        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" className="shrink-0 text-[#E87040] mt-0.5">
+                          <circle cx="12" cy="8" r="4" stroke="currentColor" strokeWidth="1.8" />
+                          <path d="M4 20c0-3.314 3.582-6 8-6s8 2.686 8 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+                        </svg>
+                        <div>
+                          <p className="font-ui text-xs text-[#FBF5E9]/40 uppercase tracking-wider mb-0.5">Places</p>
+                          <p className="font-ui text-sm font-semibold text-[#FBF5E9]">{defaultPlaces} personne{parseInt(defaultPlaces) > 1 ? 's' : ''}</p>
+                        </div>
+                      </div>
+                    )}
+                    {defaultSeances && defaultSeances !== '1' && (
+                      <div className="flex items-start gap-2">
+                        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" className="shrink-0 text-[#E87040] mt-0.5">
+                          <path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+                        </svg>
+                        <div>
+                          <p className="font-ui text-xs text-[#FBF5E9]/40 uppercase tracking-wider mb-0.5">Pack</p>
+                          <p className="font-ui text-sm font-semibold text-[#FBF5E9]">{defaultSeances} séances</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  <div className="border-t border-[#FBF5E9]/10 mt-4 pt-4 flex items-center justify-between">
+                    <p className="font-ui text-xs text-[#FBF5E9]/40 uppercase tracking-wider">Total estimé</p>
+                    <p className="font-display font-black text-3xl text-[#E87040]">{prixRecap.total} €</p>
+                  </div>
+                  <p className="font-ui text-xs text-[#FBF5E9]/25 mt-2 leading-relaxed">{prixRecap.detail}</p>
+                  <p className="font-ui text-xs text-[#FBF5E9]/20 mt-1 leading-relaxed">Un acompte sera demandé pour confirmer ta réservation.</p>
+                </div>
+              )}
               <div>
                 <p className="font-ui text-xs uppercase tracking-[0.3em] text-[#E87040] mb-5">Autres façons de me joindre</p>
                 <div className="space-y-4">

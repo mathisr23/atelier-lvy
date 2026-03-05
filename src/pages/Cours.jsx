@@ -4,6 +4,8 @@ import useSEO from '../hooks/useSEO'
 import { Baby } from 'lucide-react'
 import Reveal from '../components/Reveal'
 import { supabase } from '../lib/supabase'
+import imgOutils2 from '../assets/outils_marron_2.png'
+import imgPince from '../assets/pince_marron.png'
 
 function FaqSection({ items }) {
   const [open, setOpen] = useState(null)
@@ -148,17 +150,27 @@ export default function Cours() {
 
       {/* HERO */}
       <section className="px-6 md:px-16 lg:px-24 py-20 max-w-7xl mx-auto">
-        <Reveal><p className="font-ui text-xs uppercase tracking-[0.3em] text-[#9BBF90] mb-4">Cours réguliers</p></Reveal>
-        <Reveal delay={0.1}>
-          <h1 className="font-display font-black leading-[0.9] mb-8" style={{ fontSize: 'clamp(3.5rem, 10vw, 9rem)' }}>
-            Apprendre,<br /><span className="italic text-[#9BBF90]">semaine</span><br />après semaine<span className="text-[#E87040]">.</span>
-          </h1>
-        </Reveal>
-        <Reveal delay={0.2}>
-          <p className="font-ui text-[#2A1506]/60 text-lg max-w-xl leading-relaxed">
-            Les cours réguliers, ce n'est pas une initiation. C'est un engagement dans la durée pour vraiment progresser, explorer des techniques variées et trouver ton propre style dans l'argile.
-          </p>
-        </Reveal>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div>
+            <Reveal><p className="font-ui text-xs uppercase tracking-[0.3em] text-[#9BBF90] mb-4">Cours réguliers</p></Reveal>
+            <Reveal delay={0.1}>
+              <h1 className="font-display font-black leading-[0.9] mb-8" style={{ fontSize: 'clamp(3.5rem, 10vw, 9rem)' }}>
+                Apprendre,<br /><span className="italic text-[#9BBF90]">semaine</span><br />après semaine<span className="text-[#E87040]">.</span>
+              </h1>
+            </Reveal>
+            <Reveal delay={0.2}>
+              <p className="font-ui text-[#2A1506]/60 text-lg max-w-xl leading-relaxed">
+                Les cours réguliers, ce n'est pas une initiation. C'est un engagement dans la durée pour vraiment progresser, explorer des techniques variées et trouver ton propre style dans l'argile.
+              </p>
+            </Reveal>
+          </div>
+          <Reveal direction="left" delay={0.15}>
+            <div className="relative h-[36rem] hidden lg:block">
+              <img src={imgOutils2} alt="Outils de céramiste" className="absolute top-0 right-4 w-80 h-80 rotate-2 object-contain mix-blend-multiply contrast-[1.1] pointer-events-none" style={{ imageRendering: '-webkit-optimize-contrast' }} />
+              <img src={imgPince} alt="Pince de céramiste" className="absolute bottom-0 left-8 w-64 h-64 -rotate-3 object-contain mix-blend-multiply contrast-[1.1] pointer-events-none" style={{ imageRendering: '-webkit-optimize-contrast' }} />
+            </div>
+          </Reveal>
+        </div>
       </section>
 
       {/* CONCEPT PACKS */}

@@ -175,7 +175,7 @@ export default function Apropos() {
               initial={{ opacity: 0, scale: 0.85 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.45, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-              className="absolute inset-0 m-auto w-[30rem] h-[30rem] object-contain drop-shadow-2xl mix-blend-multiply contrast-[1.1] pointer-events-none"
+              className="absolute inset-0 m-auto w-[50rem] h-[50rem] object-contain drop-shadow-2xl mix-blend-multiply contrast-[1.1] pointer-events-none"
               style={{ imageRendering: '-webkit-optimize-contrast' }}
             />
           </div>

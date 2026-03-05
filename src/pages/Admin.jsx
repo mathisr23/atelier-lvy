@@ -153,8 +153,11 @@ function ReservationCard({ r, sessions, onAction }) {
 }
 
 /* ─── SESSION CARD ─── */
-function SessionCard({ s, onDelete }) {
+function SessionCard({ s, onDelete, onEdit }) {
   const [deleting, setDeleting] = useState(false)
+  const [editing, setEditing] = useState(false)
+  const [saving, setSaving] = useState(false)
+  const [editForm, setEditForm] = useState({ heure: s.heure, places_total: s.places_total })
   const pct = s.places_total > 0 ? Math.round((s.places_restantes / s.places_total) * 100) : 0
   const barColor = pct === 0 ? 'bg-[#F2A0A8]' : pct < 50 ? 'bg-[#F5D060]' : 'bg-[#9BBF90]'
 
@@ -165,31 +168,96 @@ function SessionCard({ s, onDelete }) {
     onDelete(s.id)
   }
 
+  const handleSave = async () => {
+    if (!editForm.heure.trim()) return
+    setSaving(true)
+    const newTotal = parseInt(editForm.places_total)
+    const diff = newTotal - s.places_total
+    const newRestantes = Math.max(0, s.places_restantes + diff)
+    const { data, error } = await supabase.from('sessions')
+      .update({ heure: editForm.heure.trim(), places_total: newTotal, places_restantes: newRestantes })
+      .eq('id', s.id)
+      .select()
+      .single()
+    if (!error && data) {
+      onEdit(data)
+      setEditing(false)
+    }
+    setSaving(false)
+  }
+
   return (
     <div className="bg-white rounded-2xl border-2 border-[#2A1506]/10 p-4 flex flex-col gap-3 hover:border-[#2A1506]/20 transition-colors">
       <div className="flex items-start justify-between gap-2">
-        <div>
+        <div className="flex-1">
           <div className="flex items-center gap-2 mb-1">
             <span className={`font-ui text-[0.6rem] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${s.type === 'cours' ? 'bg-[#E87040] text-white' : 'bg-[#F2A0A8] text-[#2A1506]'
               }`}>{s.type || 'initiation'}</span>
           </div>
           <p className="font-display font-bold text-lg text-[#2A1506]">{s.jour} {s.date}</p>
-          <p className="font-ui text-sm text-[#E87040] font-medium">{s.heure}</p>
+          {editing ? (
+            <div className="mt-2 flex flex-col gap-2">
+              <div>
+                <label className="font-ui text-xs text-[#2A1506]/40 uppercase tracking-wider block mb-1">Horaires</label>
+                <input
+                  type="text"
+                  value={editForm.heure}
+                  onChange={e => setEditForm(f => ({ ...f, heure: e.target.value }))}
+                  placeholder="18h30 – 20h30"
+                  className="w-full font-ui text-sm bg-[#FBF5E9] border-2 border-[#E87040]/40 focus:border-[#E87040] outline-none rounded-lg px-3 py-1.5 transition-colors"
+                  autoFocus
+                />
+              </div>
+              <div>
+                <label className="font-ui text-xs text-[#2A1506]/40 uppercase tracking-wider block mb-1">Places totales</label>
+                <input
+                  type="number"
+                  min={1}
+                  max={20}
+                  value={editForm.places_total}
+                  onChange={e => setEditForm(f => ({ ...f, places_total: parseInt(e.target.value) }))}
+                  className="w-full font-ui text-sm bg-[#FBF5E9] border-2 border-[#E87040]/40 focus:border-[#E87040] outline-none rounded-lg px-3 py-1.5 transition-colors"
+                />
+              </div>
+              <div className="flex gap-2 mt-1">
+                <button onClick={handleSave} disabled={saving}
+                  className="flex-1 font-ui font-bold text-xs py-1.5 rounded-lg bg-[#9BBF90] text-[#2A1506] hover:bg-[#7aab6e] transition-colors disabled:opacity-50">
+                  {saving ? '…' : '✓ Enregistrer'}
+                </button>
+                <button onClick={() => { setEditing(false); setEditForm({ heure: s.heure, places_total: s.places_total }) }}
+                  className="flex-1 font-ui font-bold text-xs py-1.5 rounded-lg bg-[#2A1506]/8 text-[#2A1506]/60 hover:bg-[#2A1506]/15 transition-colors">
+                  Annuler
+                </button>
+              </div>
+            </div>
+          ) : (
+            <p className="font-ui text-sm text-[#E87040] font-medium">{s.heure}</p>
+          )}
         </div>
-        <button onClick={handleDelete} disabled={deleting}
-          className="font-ui text-xs text-[#2A1506]/25 hover:text-[#F2A0A8] hover:bg-[#F2A0A8]/10 transition-colors px-2 py-1 rounded-lg disabled:opacity-40">
-          {deleting ? '…' : 'Suppr.'}
-        </button>
+        {!editing && (
+          <div className="flex flex-col gap-1 items-end">
+            <button onClick={() => setEditing(true)}
+              className="font-ui text-xs text-[#2A1506]/30 hover:text-[#E87040] hover:bg-[#E87040]/10 transition-colors px-2 py-1 rounded-lg">
+              Modifier
+            </button>
+            <button onClick={handleDelete} disabled={deleting}
+              className="font-ui text-xs text-[#2A1506]/25 hover:text-[#F2A0A8] hover:bg-[#F2A0A8]/10 transition-colors px-2 py-1 rounded-lg disabled:opacity-40">
+              {deleting ? '…' : 'Suppr.'}
+            </button>
+          </div>
+        )}
       </div>
-      <div>
-        <div className="flex justify-between font-ui text-xs mb-1.5">
-          <span className="text-[#2A1506]/50">Places restantes</span>
-          <span className="font-bold text-[#2A1506]">{s.places_restantes} / {s.places_total}</span>
+      {!editing && (
+        <div>
+          <div className="flex justify-between font-ui text-xs mb-1.5">
+            <span className="text-[#2A1506]/50">Places restantes</span>
+            <span className="font-bold text-[#2A1506]">{s.places_restantes} / {s.places_total}</span>
+          </div>
+          <div className="h-2 bg-[#2A1506]/8 rounded-full overflow-hidden">
+            <div className={`h-full rounded-full transition-all duration-300 ${barColor}`} style={{ width: `${pct}%` }} />
+          </div>
         </div>
-        <div className="h-2 bg-[#2A1506]/8 rounded-full overflow-hidden">
-          <div className={`h-full rounded-full transition-all duration-300 ${barColor}`} style={{ width: `${pct}%` }} />
-        </div>
-      </div>
+      )}
     </div>
   )
 }
@@ -332,6 +400,7 @@ export default function Admin() {
   }
   const handleSessionAdd = (s) => setSessions(prev => [...prev, s].sort((a, b) => a.annee - b.annee || a.mois - b.mois || a.day - b.day))
   const handleSessionDelete = (id) => setSessions(prev => prev.filter(s => s.id !== id))
+  const handleSessionEdit = (updated) => setSessions(prev => prev.map(s => s.id === updated.id ? updated : s))
 
   if (!session) return <LoginForm />
 
@@ -405,7 +474,7 @@ export default function Admin() {
               <p className="font-ui text-[#2A1506]/30 text-sm text-center py-12 italic">Aucun créneau pour l'instant.</p>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {sessions.map(s => <SessionCard key={s.id} s={s} onDelete={handleSessionDelete} />)}
+                {sessions.map(s => <SessionCard key={s.id} s={s} onDelete={handleSessionDelete} onEdit={handleSessionEdit} />)}
               </div>
             )}
           </>

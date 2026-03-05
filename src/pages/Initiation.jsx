@@ -4,8 +4,8 @@ import useSEO from '../hooks/useSEO'
 import { Cake, Wine, Gem, Building2, Palette, Sparkles, Mail } from 'lucide-react'
 import { Asterisk } from '../components/Deco'
 import Reveal from '../components/Reveal'
-import illustration1 from '../assets/illustration1.png'
-import illustration2 from '../assets/illustration2.png'
+import imgOutils from '../assets/outils_marron.png'
+import imgTablier2 from '../assets/tablier_2_marron.png'
 import { supabase } from '../lib/supabase'
 
 function FaqSection({ items }) {
@@ -356,8 +356,8 @@ export default function Initiation() {
             </div>
             <Reveal direction="left" delay={0.15}>
               <div className="relative h-[42rem] hidden lg:block">
-                <img src={illustration1} alt="Première cuisson" className="absolute top-0 right-0 w-96 h-96 rotate-3 rounded-2xl object-contain drop-shadow-xl" />
-                <img src={illustration2} alt="Émaillage et deuxième cuisson" className="absolute bottom-4 left-0 w-80 h-80 -rotate-4 rounded-2xl object-contain drop-shadow-xl" />
+                <img src={imgTablier2} alt="Tablier de céramiste" className="absolute top-0 right-0 w-96 h-96 rotate-3 object-contain mix-blend-multiply contrast-[1.1]" style={{ imageRendering: '-webkit-optimize-contrast' }} />
+                <img src={imgOutils} alt="Outils de céramiste" className="absolute bottom-4 left-0 w-80 h-80 -rotate-2 object-contain mix-blend-multiply contrast-[1.1]" style={{ imageRendering: '-webkit-optimize-contrast' }} />
                 <div className="absolute bottom-6 right-0 bg-[#FBF5E9] rounded-2xl p-4 shadow-lg">
                   <p className="font-display font-bold text-2xl text-[#2A1506]">2 – 10</p>
                   <p className="font-ui text-xs text-[#2A1506]/60">participants</p>

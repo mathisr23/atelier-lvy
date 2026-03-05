@@ -113,10 +113,35 @@ export default function Contact() {
       }])
 
       if (!error) {
-        await fetch(EDGE_FUNCTION_URL, {
+        const typeLabel = types.find(t => t.value === form.type)?.label || form.type
+        const emailParams = {
+          service_id: 'service_dqskaks',
+          user_id: 'hY4_VKEndRIZ__zMW',
+          template_params: {
+            type_demande: typeLabel,
+            user_prenom: form.prenom.trim(),
+            user_nom: form.nom.trim(),
+            user_email: form.email.trim(),
+            user_tel: form.telephone.trim() || 'Non renseigné',
+            date: form.date || 'Non renseigné',
+            places: form.places || 'N/A',
+            seances: form.seances || 'N/A',
+            message: form.message.trim() || 'Aucun message',
+          }
+        }
+
+        // 1. Envoi de la notification pour TOI (Léa)
+        await fetch('https://api.emailjs.com/api/v1.0/email/send', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ reservationId: id, action: 'notify_admin' }),
+          body: JSON.stringify({ ...emailParams, template_id: 'template_u9ltpku' }),
+        })
+
+        // 2. Envoi du mail de récap automatique pour LE CLIENT
+        await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...emailParams, template_id: 'template_6u26s73' }),
         })
       }
 

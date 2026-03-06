@@ -107,18 +107,27 @@ export default function Initiation() {
     <div className="bg-[#FBF5E9] pt-20">
 
       {/* HERO */}
-      <section className="px-6 md:px-16 lg:px-24 py-20 max-w-7xl mx-auto">
-        <Reveal><p className="font-ui text-xs uppercase tracking-[0.3em] text-[#E87040] mb-4">Initiation</p></Reveal>
-        <Reveal delay={0.1}>
-          <h1 className="font-display font-black leading-[0.9] mb-8" style={{ fontSize: 'clamp(3.5rem, 10vw, 9rem)' }}>
-            Les mains<br />dans la terre<span className="text-[#9BBF90]">.</span>
-          </h1>
-        </Reveal>
-        <Reveal delay={0.2}>
-          <p className="font-ui text-[#2A1506]/60 text-lg max-w-xl leading-relaxed">
-            Pas besoin d'expérience ou de talent particulier, juste besoin de curiosité et d'une envie de créer quelque chose avec ses mains ! Je m'occupe du reste.
-          </p>
-        </Reveal>
+      <section className="px-6  py-20 max-w-7xl mx-auto">
+        <div className="flex items-center justify-between pb-12">
+          <div className="shrink-0 max-w-[55%]">
+            <Reveal><p className="font-ui text-xs uppercase tracking-[0.3em] text-[#E87040] mb-4">Initiation</p></Reveal>
+            <Reveal delay={0.1}>
+              <h1 className="font-display font-black leading-[0.9] mb-8" style={{ fontSize: 'clamp(3.5rem, 10vw, 9rem)' }}>
+                Les mains<br />dans la terre<span className="text-[#9BBF90]">.</span>
+              </h1>
+            </Reveal>
+            <Reveal delay={0.2}>
+              <p className="font-ui text-[#2A1506]/60 text-lg max-w-md leading-relaxed">
+                Pas besoin d'expérience ou de talent particulier, juste besoin de curiosité et d'une envie de créer quelque chose avec ses mains ! Je m'occupe du reste.
+              </p>
+            </Reveal>
+          </div>
+          <Reveal direction="left" delay={0.15}>
+            <div className="hidden lg:flex items-center justify-end -mr-24">
+              <img src={imgTablier2} alt="Tablier de céramiste" className="w-[28rem] h-auto object-contain mix-blend-multiply contrast-[1.1] pointer-events-none" style={{ imageRendering: '-webkit-optimize-contrast' }} />
+            </div>
+          </Reveal>
+        </div>
       </section>
 
       {/* FORMAT PILLS */}

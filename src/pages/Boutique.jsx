@@ -4,6 +4,8 @@ import Reveal from '../components/Reveal'
 import imgFourMarron from '../assets/four_marron.png'
 import imgVase1 from '../assets/vase1.png'
 import imgVerre from '../assets/verre.png'
+import imgTasse from '../assets/tasse1.png'
+import imgVas3 from '../assets/vas3.png'
 
 import img1 from '../assets/2.jpg'
 import img2 from '../assets/3.jpg'
@@ -61,11 +63,13 @@ export default function Boutique() {
             </Reveal>
           </div>
 
-          {/* Vase1 + Verre en biais */}
+          {/* 4 illustrations en quinquonce */}
           <Reveal direction="left" delay={0.15}>
             <div className="relative h-[40rem] hidden lg:block">
-              <img src={imgVase1} alt="Vase en céramique" className="absolute top-4 left-8 w-72 h-72 -rotate-12 object-contain mix-blend-multiply contrast-[1.1] pointer-events-none" style={{ imageRendering: '-webkit-optimize-contrast' }} />
-              <img src={imgVerre} alt="Verre en céramique" className="absolute bottom-8 right-4 w-80 h-80 rotate-[18deg] object-contain mix-blend-multiply contrast-[1.1] pointer-events-none" style={{ imageRendering: '-webkit-optimize-contrast' }} />
+              <img src={imgVase1} alt="Vase en céramique" className="absolute -top-10 -right-20 w-96 h-96 -rotate-16 object-contain mix-blend-multiply contrast-[1.1] pointer-events-none" style={{ imageRendering: '-webkit-optimize-contrast' }} />
+              <img src={imgTasse} alt="Tasse en céramique" className="absolute top-30 left-0 w-96 h-96 rotate-8 object-contain mix-blend-multiply contrast-[1.1] pointer-events-none" style={{ imageRendering: '-webkit-optimize-contrast' }} />
+              <img src={imgVas3} alt="Vase sculpté" className="absolute bottom-0 -right-40 w-96 h-96 rotate-4 object-contain mix-blend-multiply contrast-[1.1] pointer-events-none" style={{ imageRendering: '-webkit-optimize-contrast' }} />
+              <img src={imgVerre} alt="Verre en céramique" className="absolute -bottom-30 left-8 w-96 h-96 -rotate-16 object-contain mix-blend-multiply contrast-[1.1] pointer-events-none" style={{ imageRendering: '-webkit-optimize-contrast' }} />
             </div>
           </Reveal>
         </div>

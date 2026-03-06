@@ -11,6 +11,19 @@ import imgvase3 from '../assets/vas3.png'
 
 const EDGE_FUNCTION_URL = import.meta.env.VITE_ADMIN_EDGE_FUNCTION_URL
 
+const ROW = (label, value) =>
+  `<tr><td style="padding:10px 0;border-bottom:1px solid rgba(42,21,6,0.05)"><strong>${label}</strong></td><td style="padding:10px 0;border-bottom:1px solid rgba(42,21,6,0.05);text-align:right">${value}</td></tr>`
+
+function buildRecap({ date, places, seances }) {
+  const rows = [
+    date && ROW('Créneau', date),
+    places && ROW('Places', places),
+    seances && seances !== '1' && ROW('Pack séances', `${seances} séances`),
+  ].filter(Boolean)
+  if (!rows.length) return ''
+  return `<table style="width:100%;border-collapse:collapse;font-size:14px">${rows.join('')}</table>`
+}
+
 const types = [
   { value: 'commande', label: 'Commande sur mesure' },
   { value: 'initiation', label: 'Initiation' },
@@ -123,9 +136,10 @@ export default function Contact() {
             user_nom: form.nom.trim(),
             user_email: form.email.trim(),
             user_tel: form.telephone.trim() || 'Non renseigné',
-            date: form.date || 'Non renseigné',
-            places: form.places || 'N/A',
-            seances: form.seances || 'N/A',
+            date: form.date || '',
+            places: form.places || '',
+            seances: form.seances || '',
+            recap: buildRecap({ date: form.date, places: form.places, seances: form.seances }),
             message: form.message.trim() || 'Aucun message',
           }
         }
@@ -141,7 +155,15 @@ export default function Contact() {
         await fetch('https://api.emailjs.com/api/v1.0/email/send', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ...emailParams, template_id: 'template_6u26s73' }),
+          body: JSON.stringify({
+            ...emailParams,
+            template_id: 'template_6u26s73',
+            template_params: {
+              ...emailParams.template_params,
+              titre: `Récap de ta demande — ${typeLabel}`,
+              intro: `Merci pour ton message ! Je te confirme avoir bien reçu ta demande pour : ${typeLabel}. Je te réponds personnellement dans les plus brefs délais (généralement sous 48h).`,
+            },
+          }),
         })
       }
 

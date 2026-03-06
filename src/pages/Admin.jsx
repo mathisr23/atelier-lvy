@@ -3,6 +3,19 @@ import { supabase } from '../lib/supabase'
 
 const EDGE_FUNCTION_URL = import.meta.env.VITE_ADMIN_EDGE_FUNCTION_URL
 
+const ROW_ADMIN = (label, value) =>
+  `<tr><td style="padding:10px 0;border-bottom:1px solid rgba(42,21,6,0.05)"><strong>${label}</strong></td><td style="padding:10px 0;border-bottom:1px solid rgba(42,21,6,0.05);text-align:right">${value}</td></tr>`
+
+function buildRecapAdmin({ date, places, seances }) {
+  const rows = [
+    date && ROW_ADMIN('Créneau', date),
+    places && ROW_ADMIN('Places', String(places)),
+    seances && seances > 1 && ROW_ADMIN('Pack séances', `${seances} séances`),
+  ].filter(Boolean)
+  if (!rows.length) return ''
+  return `<table style="width:100%;border-collapse:collapse;font-size:14px">${rows.join('')}</table>`
+}
+
 const JOURS_FR = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi']
 const MONTHS_FR = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre']
 
@@ -65,6 +78,34 @@ function LoginForm() {
   )
 }
 
+/* ─── CALCUL DU TOTAL ─── */
+function computeTotal(r) {
+  const places = r.nb_places || 1
+  if (r.type === 'initiation') return `${50 * places} €`
+  if (r.type === 'cours') {
+    const seances = r.nb_seances
+    if (!seances || seances === 1) return null
+    const isSamedi = (r.date_session || '').toLowerCase().includes('samedi')
+    const packPrice = seances >= 10 ? (isSamedi ? 650 : 550) : (isSamedi ? 350 : 275)
+    return `${packPrice * places} €`
+  }
+  return null
+}
+
+const emailTypeLabel = {
+  initiation: "Confirmation d'initiation",
+  cours: 'Confirmation de cours',
+  commande: 'Confirmation de commande',
+  autre: 'Réponse à la demande',
+}
+
+const acceptLabel = {
+  initiation: '✓ Confirmer',
+  cours: '✓ Confirmer',
+  commande: '✓ Accepter',
+  autre: '✓ Répondre',
+}
+
 /* ─── RESERVATION CARD ─── */
 function ReservationCard({ r, sessions, onAction }) {
   const [loading, setLoading] = useState(null)
@@ -72,6 +113,7 @@ function ReservationCard({ r, sessions, onAction }) {
   const tc = typeConfig[r.type] || typeConfig.autre
   const date = new Date(r.created_at).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })
   const session = sessions?.find(s => s.id === r.session_id)
+  const total = computeTotal(r)
 
   const handleAction = async (action) => {
     setLoading(action)
@@ -90,8 +132,43 @@ function ReservationCard({ r, sessions, onAction }) {
     await fetch(EDGE_FUNCTION_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ reservationId: r.id, action }),
+      body: JSON.stringify({ reservationId: r.id, action, type: r.type }),
     })
+
+    // Email de confirmation au client via EmailJS
+    if (action === 'accept' && r.email) {
+      const typeLabel = typeConfig[r.type]?.label || r.type
+      const introMap = {
+        initiation: `Bonne nouvelle ! Ton initiation est confirmée. Prépare-toi à mettre les mains dans l'argile !`,
+        cours: `Bonne nouvelle ! Ton inscription aux cours est confirmée. À très vite à l'atelier !`,
+        commande: `Bonne nouvelle ! Ta commande sur mesure est confirmée. Je vais me mettre au travail !`,
+        autre: `J'ai bien pris note de ta demande et je te confirme ma réponse. N'hésite pas à me recontacter si besoin.`,
+      }
+      await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          service_id: 'service_dqskaks',
+          user_id: 'hY4_VKEndRIZ__zMW',
+          template_id: 'template_6u26s73',
+          template_params: {
+            titre: `✅ Ta demande de ${typeLabel} est confirmée — Atelier LVY`,
+            intro: introMap[r.type] || introMap.autre,
+            type_demande: typeLabel,
+            user_prenom: r.prenom,
+            user_nom: r.nom,
+            user_email: r.email,
+            user_tel: r.telephone || 'Non renseigné',
+            date: r.date_session || '',
+            places: r.nb_places ? String(r.nb_places) : '',
+            seances: r.nb_seances ? String(r.nb_seances) : '',
+            recap: buildRecapAdmin({ date: r.date_session, places: r.nb_places, seances: r.nb_seances }),
+            message: r.message || '',
+          },
+        }),
+      })
+    }
+
     onAction(r.id, newStatus)
     setLoading(null)
   }
@@ -134,19 +211,31 @@ function ReservationCard({ r, sessions, onAction }) {
         <p className="font-body text-sm text-[#2A1506]/60 italic leading-relaxed border-l-2 border-[#E87040]/30 pl-3">{r.message}</p>
       )}
 
-      <p className="font-ui text-xs text-[#2A1506]/25">{date}</p>
+      <div className="flex items-center justify-between">
+        <p className="font-ui text-xs text-[#2A1506]/25">{date}</p>
+        {total && (
+          <span className="font-ui text-sm font-bold bg-[#2A1506] text-[#F5D060] px-3 py-1 rounded-lg">
+            Total : {total}
+          </span>
+        )}
+      </div>
 
       {r.status === 'pending' && (
-        <div className="flex gap-2">
-          <button onClick={() => handleAction('accept')} disabled={!!loading}
-            className="flex-1 font-ui font-bold text-sm py-2.5 rounded-xl bg-[#9BBF90] text-[#2A1506] hover:bg-[#7aab6e] transition-colors disabled:opacity-50">
-            {loading === 'accept' ? '…' : '✓ Accepter'}
-          </button>
-          <button onClick={() => handleAction('refuse')} disabled={!!loading}
-            className="flex-1 font-ui font-bold text-sm py-2.5 rounded-xl bg-[#F2A0A8] text-[#2A1506] hover:bg-[#d97080] hover:text-white transition-colors disabled:opacity-50">
-            {loading === 'refuse' ? '…' : '✕ Refuser'}
-          </button>
-        </div>
+        <>
+          <p className="font-ui text-[0.65rem] text-[#2A1506]/30 text-center -mb-1">
+            {emailTypeLabel[r.type] || emailTypeLabel.autre}
+          </p>
+          <div className="flex gap-2">
+            <button onClick={() => handleAction('accept')} disabled={!!loading}
+              className="flex-1 font-ui font-bold text-sm py-2.5 rounded-xl bg-[#9BBF90] text-[#2A1506] hover:bg-[#7aab6e] transition-colors disabled:opacity-50">
+              {loading === 'accept' ? '…' : (acceptLabel[r.type] || '✓ Accepter')}
+            </button>
+            <button onClick={() => handleAction('refuse')} disabled={!!loading}
+              className="flex-1 font-ui font-bold text-sm py-2.5 rounded-xl bg-[#F2A0A8] text-[#2A1506] hover:bg-[#d97080] hover:text-white transition-colors disabled:opacity-50">
+              {loading === 'refuse' ? '…' : '✕ Refuser'}
+            </button>
+          </div>
+        </>
       )}
     </div>
   )

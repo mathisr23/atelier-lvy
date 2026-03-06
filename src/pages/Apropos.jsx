@@ -4,7 +4,9 @@ import useSEO from '../hooks/useSEO'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Asterisk, Squiggle, patterns } from '../components/Deco'
 import Reveal from '../components/Reveal'
-import imgLea from '../assets/lea.png'
+import imgLea1 from '../assets/lea1.JPG'
+import imgLea2 from '../assets/lea2.JPG'
+import imgLea3 from '../assets/lea3.JPG'
 import logo1 from '../assets/logo1.png'
 import bookPdf from '../assets/book.pdf'
 import img3 from '../assets/3.jpg'
@@ -25,7 +27,7 @@ import imgIMG4984 from '../assets/IMG_4984.JPG'
 import imgIMG5006 from '../assets/IMG_5006.JPG'
 import imgIMG5020 from '../assets/IMG_5020.JPG'
 import imgIMG5029 from '../assets/IMG_5029.JPG'
-import illustration3 from '../assets/illustration3.png'
+import imgEtagere from '../assets/etagère_marron.png'
 
 // Classes boutons partagées
 const btn = {
@@ -170,8 +172,8 @@ export default function Apropos() {
             <motion.div initial={{ opacity: 0, rotate: 0 }} animate={{ opacity: 1, rotate: 6 }} transition={{ delay: 0.6, duration: 0.6 }} className="absolute bottom-8 left-12 w-36 h-36 overflow-hidden shadow-xl" style={{ backgroundColor: '#F5D060', borderRadius: '30% 70% 70% 30% / 30% 30% 70% 70%' }} />
             {/* illustration3 centrée entre les formes */}
             <motion.img
-              src={illustration3}
-              alt="Illustration céramique"
+              src={imgEtagere}
+              alt="Étagère céramiste"
               initial={{ opacity: 0, scale: 0.85 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.45, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
@@ -202,7 +204,7 @@ export default function Apropos() {
             </Reveal>
             <Reveal delay={0.2}>
               <div className="space-y-3 text-[#FBF5E9]/70 leading-relaxed font-body text-base">
-                <p className="text-[#FBF5E9]/90 font-semibold italic">Je m’appelle Léa, artiste céramiste basée à Boinville-le-Gaillard.</p>
+                <p className="text-[#FBF5E9]/90 font-bold">Je m’appelle Léa, artiste céramiste basée à Boinville-le-Gaillard.</p>
                 <p>J’ai découvert ma passion pour le modelage à l’École Boulle, en me formant à la gravure en modelé et à la création de bas-reliefs. Progressivement, je me suis tournée vers la céramique afin de donner plus de volume à mes créations, tasses, sculptures et objets variés.</p>
                 <p>Formée grâce à plusieurs divers stages, j’ai ensuite développé mon activité d’auto-entrepreneur afin de produire des commandes pour des ateliers collaborant avec de grandes maisons. Ces expériences m’ont permis de maîtriser les techniques de modelage, de coulage, tournage ou encore de décor.</p>
                 <p>Aujourd’hui, je crée mes propres pièces en m’inspirant de la nature, de ses formes organiques et la richesse de ses couleurs. J’intègre également des réflexions sociétales et environnementales à mon travail. J’imagine mon atelier comme un laboratoire d’idées, où se mêlent des savoir-faire et une pluralité de matériaux.</p>
@@ -212,9 +214,20 @@ export default function Apropos() {
           </div>
 
           <Reveal direction="left" delay={0.15}>
-            <div className="relative h-105 md:h-130">
-              <img src={imgLea} alt="Léa artiste céramiste" className="absolute inset-0 w-full h-full object-cover object-center rounded-3xl" />
-              <div className="absolute -bottom-6 -right-4 bg-[#F5D060] text-[#2A1506] rounded-2xl p-4 max-w-[160px] shadow-xl">
+            <div className="relative h-[520px]">
+              {/* Photo 1 — haut gauche */}
+              <div className="absolute top-0 left-0 w-48 h-60 rounded-2xl overflow-hidden shadow-xl rotate-[-3deg]">
+                <img src={imgLea1} alt="Léa céramiste" className="w-full h-full object-cover object-top" />
+              </div>
+              {/* Photo 2 — centre */}
+              <div className="absolute top-16 left-1/2 -translate-x-1/2 w-52 h-64 rounded-2xl overflow-hidden shadow-2xl rotate-[1.5deg] z-10">
+                <img src={imgLea2} alt="Léa à l'atelier" className="w-full h-full object-cover object-center" />
+              </div>
+              {/* Photo 3 — bas droite */}
+              <div className="absolute bottom-0 right-0 w-48 h-60 rounded-2xl overflow-hidden shadow-xl rotate-[4deg]">
+                <img src={imgLea3} alt="Léa et la céramique" className="w-full h-full object-cover object-center" />
+              </div>
+              <div className="absolute -bottom-6 left-4 bg-[#F5D060] text-[#2A1506] rounded-2xl p-4 max-w-[160px] shadow-xl z-20">
                 <p className="font-display font-bold text-2xl">5 ans</p>
                 <p className="font-ui text-xs">d'expérience</p>
               </div>

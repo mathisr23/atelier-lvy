@@ -2,9 +2,8 @@ import useSEO from '../hooks/useSEO'
 import { Asterisk, patterns } from '../components/Deco'
 import Reveal from '../components/Reveal'
 import imgFourMarron from '../assets/four_marron.png'
-import imgTablier from '../assets/tablier.png'
-import imgVase from '../assets/vase4.png'
-import imgTasse from '../assets/tasse1.png'
+import imgVase1 from '../assets/vase1.png'
+import imgVerre from '../assets/verre.png'
 
 import img1 from '../assets/2.jpg'
 import img2 from '../assets/3.jpg'
@@ -62,12 +61,11 @@ export default function Boutique() {
             </Reveal>
           </div>
 
-          {/* Tablier + illustrations */}
+          {/* Vase1 + Verre en biais */}
           <Reveal direction="left" delay={0.15}>
             <div className="relative h-[40rem] hidden lg:block">
-              <img src={imgTablier} alt="Tablier de céramiste" className="absolute inset-0 m-auto w-[26rem] h-[34rem] object-contain mix-blend-multiply contrast-[1.1]" style={{ imageRendering: '-webkit-optimize-contrast' }} />
-              <img src={imgVase} alt="Vase en céramique" className="absolute bottom-8 right-0 w-52 h-52 rotate-6 object-contain mix-blend-multiply contrast-[1.1] pointer-events-none" style={{ imageRendering: '-webkit-optimize-contrast' }} />
-              <img src={imgTasse} alt="Tasse en céramique" className="absolute top-8 left-0 w-44 h-44 -rotate-4 object-contain mix-blend-multiply contrast-[1.1] pointer-events-none" style={{ imageRendering: '-webkit-optimize-contrast' }} />
+              <img src={imgVase1} alt="Vase en céramique" className="absolute top-4 left-8 w-72 h-72 -rotate-12 object-contain mix-blend-multiply contrast-[1.1] pointer-events-none" style={{ imageRendering: '-webkit-optimize-contrast' }} />
+              <img src={imgVerre} alt="Verre en céramique" className="absolute bottom-8 right-4 w-80 h-80 rotate-[18deg] object-contain mix-blend-multiply contrast-[1.1] pointer-events-none" style={{ imageRendering: '-webkit-optimize-contrast' }} />
             </div>
           </Reveal>
         </div>
@@ -146,7 +144,7 @@ export default function Boutique() {
       </section>
 
       {/* CUISSONS */}
-      <section className="py-16 relative overflow-hidden">
+      <section className="py-16">
         <div className="px-6 md:px-16 lg:px-24 max-w-7xl mx-auto">
           <Reveal>
             <div className="bg-[#F2A0A8]/20 border border-[#F2A0A8]/40 rounded-3xl p-8 md:px-16 md:py-16 flex flex-col md:flex-row items-center justify-between gap-8">
@@ -157,19 +155,17 @@ export default function Boutique() {
                   Tu as modelé des pièces ailleurs et tu cherches un four ? Je propose des cuissons pour des projets extérieurs. Contacte-moi pour les tarifs et conditions.
                 </p>
               </div>
+              <img
+                src={imgFourMarron}
+                alt="Illustration d'un four de céramiste"
+                className="w-40 md:w-56 object-contain mix-blend-multiply contrast-[1.1] shrink-0 pointer-events-none"
+                style={{ imageRendering: '-webkit-optimize-contrast' }}
+              />
               <a href="mailto:contact.atelierlvy@gmail.com?subject=Cuisson extérieure" className={`${btn.dark} shrink-0`}>Me contacter</a>
             </div>
           </Reveal>
         </div>
-        {/* Four positionné sur le fond beige, en bas à droite */}
-
       </section>
-      <img
-        src={imgFourMarron}
-        alt="Illustration d'un four de céramiste"
-        className="absolute bottom-[-140rem] right-0 w-64 md:w-[28rem] object-contain pointer-events-none mix-blend-multiply contrast-[1.1]"
-        style={{ imageRendering: '-webkit-optimize-contrast' }}
-      />
     </div>
   )
 }

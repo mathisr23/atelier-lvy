@@ -379,7 +379,7 @@ export default function Initiation() {
                 Un moment unique à partager en famille ! Venez créer ensemble pendant 2 heures de modelage, pour les enfants à partir de 3 ans.
               </p>
               <div className="bg-[#FBF5E9] rounded-2xl p-5 inline-block">
-                <p className="font-display font-bold text-3xl text-[#2A1506] mb-1">70 – 80 €</p>
+                <p className="font-display font-bold text-3xl text-[#2A1506] mb-1">70 €</p>
                 <p className="font-ui text-sm text-[#2A1506]/60">pour 1 adulte + 1 enfant (dès 3 ans)</p>
                 <p className="font-ui text-sm text-[#E87040] font-semibold mt-2">+ 20 € par enfant supplémentaire</p>
               </div>

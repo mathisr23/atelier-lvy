@@ -6,6 +6,7 @@ import Reveal from '../components/Reveal'
 import { supabase } from '../lib/supabase'
 import imgOutils2 from '../assets/outils_marron_2.png'
 import imgPince from '../assets/pince_marron.png'
+import imgTablier from '../assets/tablier.png'
 
 function FaqSection({ items }) {
   const [open, setOpen] = useState(null)
@@ -166,8 +167,9 @@ export default function Cours() {
           </div>
           <Reveal direction="left" delay={0.15}>
             <div className="relative h-[36rem] hidden lg:block">
-              <img src={imgOutils2} alt="Outils de céramiste" className="absolute top-0 right-4 w-80 h-80 rotate-2 object-contain mix-blend-multiply contrast-[1.1] pointer-events-none" style={{ imageRendering: '-webkit-optimize-contrast' }} />
-              <img src={imgPince} alt="Pince de céramiste" className="absolute bottom-0 left-8 w-64 h-64 -rotate-3 object-contain mix-blend-multiply contrast-[1.1] pointer-events-none" style={{ imageRendering: '-webkit-optimize-contrast' }} />
+              <img src={imgTablier} alt="Tablier de céramiste" className="absolute inset-0 m-auto w-[22rem] h-[28rem] object-contain mix-blend-multiply contrast-[1.1] pointer-events-none" style={{ imageRendering: '-webkit-optimize-contrast' }} />
+              <img src={imgOutils2} alt="Outils de céramiste" className="absolute top-0 right-4 w-64 h-64 rotate-2 object-contain mix-blend-multiply contrast-[1.1] pointer-events-none" style={{ imageRendering: '-webkit-optimize-contrast' }} />
+              <img src={imgPince} alt="Pince de céramiste" className="absolute bottom-0 left-8 w-52 h-52 -rotate-3 object-contain mix-blend-multiply contrast-[1.1] pointer-events-none" style={{ imageRendering: '-webkit-optimize-contrast' }} />
             </div>
           </Reveal>
         </div>

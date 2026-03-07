@@ -167,9 +167,8 @@ export default function Cours() {
           </div>
           <Reveal direction="left" delay={0.15}>
             <div className="relative h-[36rem] hidden lg:block">
-              <img src={imgTablier} alt="Tablier de céramiste" className="absolute inset-0 m-auto w-[22rem] h-[28rem] object-contain mix-blend-multiply contrast-[1.1] pointer-events-none" style={{ imageRendering: '-webkit-optimize-contrast' }} />
-              <img src={imgOutils2} alt="Outils de céramiste" className="absolute top-0 right-4 w-64 h-64 rotate-2 object-contain mix-blend-multiply contrast-[1.1] pointer-events-none" style={{ imageRendering: '-webkit-optimize-contrast' }} />
-              <img src={imgPince} alt="Pince de céramiste" className="absolute bottom-0 left-8 w-52 h-52 -rotate-3 object-contain mix-blend-multiply contrast-[1.1] pointer-events-none" style={{ imageRendering: '-webkit-optimize-contrast' }} />
+              <img src={imgTablier} alt="Tablier de céramiste" className="absolute inset-0 m-auto w-[36rem] h-[36rem] top-72 rotate-12 object-contain mix-blend-multiply contrast-[1.1] pointer-events-none" style={{ imageRendering: '-webkit-optimize-contrast' }} />
+              <img src={imgPince} alt="Pince de céramiste" className="absolute top-0 -right-20 w-72 h-72 -rotate-60 object-contain mix-blend-multiply contrast-[1.1] pointer-events-none" style={{ imageRendering: '-webkit-optimize-contrast' }} />
             </div>
           </Reveal>
         </div>

@@ -151,7 +151,7 @@ export default function Boutique() {
       <section className="py-16">
         <div className="px-6 md:px-16 lg:px-24 max-w-7xl mx-auto">
           <Reveal>
-            <div className="bg-[#F2A0A8]/20 border border-[#F2A0A8]/40 rounded-3xl p-8 md:px-16 md:py-16 flex flex-col md:flex-row items-center justify-between gap-8">
+            <div className="bg-[#F2A0A8]/20 border border-[#F2A0A8]/40 rounded-3xl md:px-16  flex flex-col md:flex-row items-center justify-between gap-8">
               <div>
                 <p className="font-ui text-xs uppercase tracking-[0.3em] text-[#D97080] mb-3">Services</p>
                 <h2 className="font-display font-bold text-3xl md:text-4xl text-[#2A1506] mb-4 leading-tight">Cuissons extérieures</h2>
@@ -162,7 +162,7 @@ export default function Boutique() {
               <img
                 src={imgFourMarron}
                 alt="Illustration d'un four de céramiste"
-                className="w-40 md:w-56 object-contain mix-blend-multiply contrast-[1.1] shrink-0 pointer-events-none"
+                className="w-72 object-contain mix-blend-multiply contrast-[1.1] shrink-0 pointer-events-none"
                 style={{ imageRendering: '-webkit-optimize-contrast' }}
               />
               <a href="mailto:contact.atelierlvy@gmail.com?subject=Cuisson extérieure" className={`${btn.dark} shrink-0`}>Me contacter</a>

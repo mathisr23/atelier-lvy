@@ -2,10 +2,12 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import useSEO from '../hooks/useSEO'
 import { Cake, Wine, Gem, Building2, Palette, Sparkles, Mail } from 'lucide-react'
-import { Asterisk } from '../components/Deco'
 import Reveal from '../components/Reveal'
 import imgOutils from '../assets/outils_marron.png'
 import imgTablier2 from '../assets/tablier_2_marron.png'
+import imgRessort from '../assets/ressort_marron.png'
+import imgOutils3 from '../assets/outils_marron_3.png'
+import imgPinceau from '../assets/pinceau_marron.png'
 import { supabase } from '../lib/supabase'
 
 function FaqSection({ items }) {
@@ -163,10 +165,13 @@ export default function Initiation() {
         <div className="max-w-7xl mx-auto">
           <Reveal>
             <p className="font-ui text-xs uppercase tracking-[0.3em] text-[#2A1506]/50 mt-12 mb-4">Format ①</p>
-            <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mt-12 mb-12">
-              <h2 className="font-display font-black text-5xl md:text-6xl text-[#2A1506] leading-tight flex-shrink-0">
-                Dans<br /><span className="italic">mon atelier</span>
-              </h2>
+            <div className="flex flex-col md:flex-row md:items-start md:justify-around gap-4 mt-12 mb-12">
+              <div className="flex-shrink-0">
+                <h2 className="font-display font-black text-5xl md:text-6xl text-[#2A1506] leading-tight ">
+                  Dans<br /><span className="italic">mon atelier</span>
+                </h2>
+                <img src={imgOutils} alt="Outils de céramiste" className="w-96 h-96 -rotate-90 object-contain mix-blend-multiply contrast-[1.1] pointer-events-none hidden md:block" style={{ imageRendering: '-webkit-optimize-contrast' }} />
+              </div>
               <div className="font-ui text-[#2A1506]/70 text-base leading-relaxed max-w-xl">
                 <p className="mb-3">
                   Venez seul·e ou accompagné·e pour découvrir la céramique pendant une initiation au modelage de 2h. Créez une à deux pièces en grès selon leurs formes et leurs grandeurs, puis, décorez les à l'aide d'engobe coloré ! Je vous guide tout au long du processus pour vous aider à mettre en forme vos idées.
@@ -325,53 +330,48 @@ export default function Initiation() {
         className="px-6 md:px-16 lg:px-24 py-24 scroll-mt-20 relative overflow-hidden"
         style={{ backgroundColor: '#F5D060', backgroundImage: 'linear-gradient(rgba(42,21,6,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(42,21,6,0.06) 1px, transparent 1px)', backgroundSize: '28px 28px' }}
       >
-        <Asterisk size={36} color="rgba(42,21,6,0.1)" className="absolute top-10 right-16 rotate-6" />
-        <Asterisk size={20} color="rgba(42,21,6,0.08)" className="absolute bottom-12 left-6 -rotate-12" />
+        {/* Illustrations décoratives */}
+        <img src={imgRessort} alt="" aria-hidden="true" className="absolute -top-50 right-100 w-[34rem] -rotate-45 object-contain mix-blend-multiply contrast-[1.1] pointer-events-none hidden lg:block" style={{ imageRendering: '-webkit-optimize-contrast' }} />
+        <img src={imgOutils3} alt="" aria-hidden="true" className="absolute top-70 right-120 w-80 object-contain mix-blend-multiply contrast-[1.1] pointer-events-none hidden lg:block rotate-12" style={{ imageRendering: '-webkit-optimize-contrast' }} />
+        <img src={imgPinceau} alt="" aria-hidden="true" className="absolute bottom-0 right-96 -rotate-110 w-72 object-contain mix-blend-multiply contrast-[1.1] pointer-events-none hidden lg:block -rotate-6" style={{ imageRendering: '-webkit-optimize-contrast' }} />
+        <div className="absolute bottom-12 right-8 bg-[#FBF5E9] rounded-2xl p-4 shadow-lg hidden lg:block z-20">
+          <p className="font-display font-bold text-2xl text-[#2A1506]">2 – 10</p>
+          <p className="font-ui text-xs text-[#2A1506]/60">participants</p>
+        </div>
+
         <div className="max-w-7xl mx-auto relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <div>
-              <Reveal><p className="font-ui text-xs uppercase tracking-[0.3em] text-[#2A1506]/50 mb-4">Format ②</p></Reveal>
-              <Reveal delay={0.1}>
-                <h2 className="font-display font-black text-5xl md:text-6xl text-[#2A1506] leading-tight mb-6">
-                  Un événement<br /><span className="italic">à domicile</span>
-                </h2>
-              </Reveal>
-              <Reveal delay={0.2}>
-                <p className="font-body text-[#2A1506]/70 text-lg leading-relaxed mb-8 max-w-md">
-                  Je viens animer un atelier de modelage chez vous — 2 heures de modelage, de rires, de créativité et de partage. Idéal pour une occasion un peu spéciale ! Faites moi part de vos inspirations pour que j'adapte le matériel à vos besoins. <em>Frais de déplacement applicables selon la distance.</em>
-                </p>
-                <div className="flex flex-wrap gap-2 mb-10">
-                  {evenements.map(({ icon: Icon, label }) => (
-                    <span key={label} className="font-ui text-sm bg-[#2A1506]/10 text-[#2A1506] px-4 py-2 rounded-lg flex items-center gap-2">
-                      <Icon size={16} strokeWidth={2} className="text-[#E87040]" /> {label}
-                    </span>
-                  ))}
-                </div>
-                <div className="bg-[#2A1506] rounded-3xl p-6 mb-6">
-                  <p className="font-ui text-xs uppercase tracking-widest text-[#FBF5E9]/40 mb-3">Ce que ça comprend</p>
-                  <ul className="space-y-2">
-                    {['Matériel/Argile/Engobe fournis', "Encadrement tout au long de l'atelier", 'Cuisson des pièces incluse (première cuisson, émaillage + deuxième cuisson)', "Récupération des créations 1 mois minimum après l'initiation (livraison possible sur devis)"].map((item) => (
-                      <li key={item} className="flex items-start gap-2 text-[#FBF5E9]/80 font-ui text-sm">
-                        <span className="text-[#F5D060] mt-0.5">✓</span>{item}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <p className="font-ui text-sm text-[#2A1506]/70 mb-6">
-                  Des frais de déplacement s'appliquent selon la distance et le lieu.
-                </p>
-                <Link to="/contact?type=initiation" className={btn.dark}>Faire une demande →</Link>
-              </Reveal>
-            </div>
-            <Reveal direction="left" delay={0.15}>
-              <div className="relative h-[42rem] hidden lg:block">
-                <img src={imgTablier2} alt="Tablier de céramiste" className="absolute top-0 right-0 w-96 h-96 rotate-3 object-contain mix-blend-multiply contrast-[1.1]" style={{ imageRendering: '-webkit-optimize-contrast' }} />
-                <img src={imgOutils} alt="Outils de céramiste" className="absolute bottom-4 left-0 w-80 h-80 -rotate-2 object-contain mix-blend-multiply contrast-[1.1]" style={{ imageRendering: '-webkit-optimize-contrast' }} />
-                <div className="absolute bottom-6 right-0 bg-[#FBF5E9] rounded-2xl p-4 shadow-lg">
-                  <p className="font-display font-bold text-2xl text-[#2A1506]">2 – 10</p>
-                  <p className="font-ui text-xs text-[#2A1506]/60">participants</p>
-                </div>
+          <div className="max-w-xl">
+            <Reveal><p className="font-ui text-xs uppercase tracking-[0.3em] text-[#2A1506]/50 mb-4">Format ②</p></Reveal>
+            <Reveal delay={0.1}>
+              <h2 className="font-display font-black text-5xl md:text-6xl text-[#2A1506] leading-tight mb-6">
+                Un événement<br /><span className="italic">à domicile</span>
+              </h2>
+            </Reveal>
+            <Reveal delay={0.2}>
+              <p className="font-body text-[#2A1506]/70 text-lg leading-relaxed mb-8 max-w-md">
+                Je viens animer un atelier de modelage chez vous — 2 heures de modelage, de rires, de créativité et de partage. Idéal pour une occasion un peu spéciale ! Faites moi part de vos inspirations pour que j'adapte le matériel à vos besoins. <em>Frais de déplacement applicables selon la distance.</em>
+              </p>
+              <div className="flex flex-wrap gap-2 mb-10">
+                {evenements.map(({ icon: Icon, label }) => (
+                  <span key={label} className="font-ui text-sm bg-[#2A1506]/10 text-[#2A1506] px-4 py-2 rounded-lg flex items-center gap-2">
+                    <Icon size={16} strokeWidth={2} className="text-[#E87040]" /> {label}
+                  </span>
+                ))}
               </div>
+              <div className="bg-[#2A1506] rounded-3xl p-6 mb-6">
+                <p className="font-ui text-xs uppercase tracking-widest text-[#FBF5E9]/40 mb-3">Ce que ça comprend</p>
+                <ul className="space-y-2">
+                  {['Matériel/Argile/Engobe fournis', "Encadrement tout au long de l'atelier", 'Cuisson des pièces incluse (première cuisson, émaillage + deuxième cuisson)', "Récupération des créations 1 mois minimum après l'initiation (livraison possible sur devis)"].map((item) => (
+                    <li key={item} className="flex items-start gap-2 text-[#FBF5E9]/80 font-ui text-sm">
+                      <span className="text-[#F5D060] mt-0.5">✓</span>{item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <p className="font-ui text-sm text-[#2A1506]/70 mb-6">
+                Des frais de déplacement s'appliquent selon la distance et le lieu.
+              </p>
+              <Link to="/contact?type=initiation" className={btn.dark}>Faire une demande →</Link>
             </Reveal>
           </div>
         </div>

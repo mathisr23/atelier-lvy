@@ -5,9 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Squiggle } from '../components/Deco'
 import Reveal from '../components/Reveal'
 import { supabase } from '../lib/supabase'
-import imgPinceau from '../assets/pinceau_marron.png'
-import imgRessort from '../assets/ressort_marron.png'
-import imgvase3 from '../assets/vas3.png'
+import imgCouteaux from '../assets/couteaux_marrons.png'
 
 const EDGE_FUNCTION_URL = import.meta.env.VITE_ADMIN_EDGE_FUNCTION_URL
 
@@ -179,9 +177,7 @@ export default function Contact() {
       {/* ─── HERO ─── */}
       <section className="px-6 md:px-16 lg:px-24 py-20 max-w-7xl mx-auto relative overflow-hidden">
         <div className="absolute top-20 right-10 w-64 h-64 rounded-full bg-[#E87040]/10 blur-3xl pointer-events-none" />
-        <img src={imgPinceau} alt="" aria-hidden="true" className="absolute top-8 right-8 w-72 h-72 -rotate-6 object-contain contrast-[1.1] pointer-events-none hidden lg:block" style={{ imageRendering: '-webkit-optimize-contrast' }} />
-        <img src={imgRessort} alt="" aria-hidden="true" className="absolute bottom-8 right-16 w-96 h-96 rotate-3 object-contain contrast-[1.1] pointer-events-none hidden lg:block" style={{ imageRendering: '-webkit-optimize-contrast' }} />
-        <img src={imgvase3} alt="" aria-hidden="true" className="absolute bottom-30 right-80 w-72 h-72 -rotate-3 object-contain contrast-[1.1] pointer-events-none hidden lg:block" style={{ imageRendering: '-webkit-optimize-contrast' }} />
+        <img src={imgCouteaux} alt="" aria-hidden="true" className="absolute top-4 right-40 w-[24rem] object-contain mix-blend-multiply contrast-[1.1] pointer-events-none hidden lg:block" style={{ imageRendering: '-webkit-optimize-contrast' }} />
 
         <Reveal><p className="font-ui text-xs uppercase tracking-[0.3em] text-[#E87040] mb-4">Contact</p></Reveal>
         <Reveal delay={0.1}>

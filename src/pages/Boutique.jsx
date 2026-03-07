@@ -107,7 +107,7 @@ export default function Boutique() {
               </div>
               <p className="font-display italic text-3xl md:text-5xl text-[#2A1506] max-w-lg leading-tight">La collection arrive bientôt...</p>
               <p className="font-body text-[#2A1506]/60 text-base max-w-sm">En attendant, tu peux me contacter pour une pièce sur mesure ou suivre mes créations sur Instagram.</p>
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className={btn.orange}>Suivre sur Instagram</a>
+              <a href="https://instagram.com/atelier_lvy" target="_blank" rel="noopener noreferrer" className={btn.orange}>Suivre sur Instagram</a>
             </div>
           </div>
         </Reveal>
@@ -151,7 +151,7 @@ export default function Boutique() {
       <section className="py-16">
         <div className="px-6 md:px-16 lg:px-24 max-w-7xl mx-auto">
           <Reveal>
-            <div className="bg-[#F2A0A8]/20 border border-[#F2A0A8]/40 rounded-3xl md:px-16  flex flex-col md:flex-row items-center justify-between gap-8">
+            <div className="bg-[#F2A0A8]/20 border border-[#F2A0A8]/40 rounded-3xl p-8 md:px-12 md:py-10 flex flex-col md:flex-row items-center justify-between gap-8">
               <div>
                 <p className="font-ui text-xs uppercase tracking-[0.3em] text-[#D97080] mb-3">Services</p>
                 <h2 className="font-display font-bold text-3xl md:text-4xl text-[#2A1506] mb-4 leading-tight">Cuissons extérieures</h2>

@@ -109,9 +109,9 @@ export default function Initiation() {
     <div className="bg-[#FBF5E9] pt-20">
 
       {/* HERO */}
-      <section className="px-6  py-20 max-w-7xl mx-auto">
+      <section className="px-6 py-20 max-w-7xl mx-auto">
         <div className="flex items-center justify-between pb-12">
-          <div className="shrink-0 max-w-[55%]">
+          <div className="shrink-0 w-full lg:max-w-[55%]">
             <Reveal><p className="font-ui text-xs uppercase tracking-[0.3em] text-[#E87040] mb-4">Initiation</p></Reveal>
             <Reveal delay={0.1}>
               <h1 className="font-display font-black leading-[0.9] mb-8" style={{ fontSize: 'clamp(3.5rem, 10vw, 9rem)' }}>

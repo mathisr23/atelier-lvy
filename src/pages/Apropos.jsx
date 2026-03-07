@@ -21,12 +21,9 @@ import imgIMG4869 from '../assets/IMG_4869.JPG'
 import imgIMG4948 from '../assets/IMG_4948.JPG'
 import imgIMG4959 from '../assets/IMG_4959.JPG'
 import imgIMG5065 from '../assets/IMG_5065.JPG'
-import imgIMG5071 from '../assets/IMG_5071.JPG'
 import imgIMG4982 from '../assets/IMG_4982.JPG'
 import imgIMG4984 from '../assets/IMG_4984.JPG'
 import imgIMG5006 from '../assets/IMG_5006.JPG'
-import imgIMG5020 from '../assets/IMG_5020.JPG'
-import imgIMG5029 from '../assets/IMG_5029.JPG'
 import imgEtagere from '../assets/etagère_marron.png'
 
 // Classes boutons partagées

@@ -151,7 +151,7 @@ export default function Boutique() {
       <section className="py-16">
         <div className="px-6 md:px-16 lg:px-24 max-w-7xl mx-auto">
           <Reveal>
-            <div className="bg-[#F2A0A8]/20 border border-[#F2A0A8]/40 rounded-3xl p-8 md:px-12 md:py-10 flex flex-col md:flex-row items-center justify-between gap-8">
+            <div className="bg-[#F2A0A8]/20 border border-[#F2A0A8]/40 rounded-3xl px-6 py-3 md:px-8 md:py-2 flex flex-col md:flex-row items-center justify-between gap-6">
               <div>
                 <p className="font-ui text-xs uppercase tracking-[0.3em] text-[#D97080] mb-3">Services</p>
                 <h2 className="font-display font-bold text-3xl md:text-4xl text-[#2A1506] mb-4 leading-tight">Cuissons extérieures</h2>

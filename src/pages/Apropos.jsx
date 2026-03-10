@@ -213,16 +213,12 @@ export default function Apropos() {
           <Reveal direction="left" delay={0.15}>
             <div className="relative h-[520px]">
               {/* Photo 1 — haut gauche */}
-              <div className="absolute top-0 left-0 w-48 h-60 rounded-2xl overflow-hidden shadow-xl rotate-[-3deg]">
+              <div className="absolute top-0 left-0 w-64 h-80 rounded-2xl overflow-hidden shadow-xl rotate-[-3deg]">
                 <img src={imgLea1} alt="Léa céramiste" className="w-full h-full object-cover object-top" />
               </div>
-              {/* Photo 2 — centre */}
-              <div className="absolute top-16 left-1/2 -translate-x-1/2 w-52 h-64 rounded-2xl overflow-hidden shadow-2xl rotate-[1.5deg] z-10">
+              {/* Photo 2 — bas droite */}
+              <div className="absolute bottom-0 right-0 w-64 h-80 rounded-2xl overflow-hidden shadow-2xl rotate-[3deg] z-10">
                 <img src={imgLea2} alt="Léa à l'atelier" className="w-full h-full object-cover object-center" />
-              </div>
-              {/* Photo 3 — bas droite */}
-              <div className="absolute bottom-0 right-0 w-48 h-60 rounded-2xl overflow-hidden shadow-xl rotate-[4deg]">
-                <img src={imgLea3} alt="Léa et la céramique" className="w-full h-full object-cover object-center" />
               </div>
               <div className="absolute -bottom-6 left-4 bg-[#F5D060] text-[#2A1506] rounded-2xl p-4 max-w-[160px] shadow-xl z-20">
                 <p className="font-display font-bold text-2xl">5 ans</p>

@@ -125,7 +125,7 @@ export default function Initiation() {
             </Reveal>
           </div>
           <Reveal direction="left" delay={0.15}>
-            <div className="hidden lg:flex items-center justify-end -mr-24">
+            <div className="hidden lg:flex items-center justify-end -mr-8">
               <img src={imgTablier2} alt="Tablier de céramiste" className="w-[28rem] h-auto object-contain mix-blend-multiply contrast-[1.1] pointer-events-none" style={{ imageRendering: '-webkit-optimize-contrast' }} />
             </div>
           </Reveal>
@@ -331,9 +331,9 @@ export default function Initiation() {
         style={{ backgroundColor: '#F5D060', backgroundImage: 'linear-gradient(rgba(42,21,6,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(42,21,6,0.06) 1px, transparent 1px)', backgroundSize: '28px 28px' }}
       >
         {/* Illustrations décoratives */}
-        <img src={imgRessort} alt="" aria-hidden="true" className="absolute -top-50 right-100 w-[34rem] -rotate-45 object-contain mix-blend-multiply contrast-[1.1] pointer-events-none hidden lg:block" style={{ imageRendering: '-webkit-optimize-contrast' }} />
-        <img src={imgOutils3} alt="" aria-hidden="true" className="absolute top-70 right-120 w-80 object-contain mix-blend-multiply contrast-[1.1] pointer-events-none hidden lg:block rotate-12" style={{ imageRendering: '-webkit-optimize-contrast' }} />
-        <img src={imgPinceau} alt="" aria-hidden="true" className="absolute bottom-0 right-96 -rotate-110 w-72 object-contain mix-blend-multiply contrast-[1.1] pointer-events-none hidden lg:block -rotate-6" style={{ imageRendering: '-webkit-optimize-contrast' }} />
+        <img src={imgRessort} alt="" aria-hidden="true" className="absolute -top-50 right-60 w-[34rem] -rotate-45 object-contain mix-blend-multiply contrast-[1.1] pointer-events-none hidden lg:block" style={{ imageRendering: '-webkit-optimize-contrast' }} />
+        <img src={imgOutils3} alt="" aria-hidden="true" className="absolute top-70 right-140 w-80 object-contain mix-blend-multiply contrast-[1.1] pointer-events-none hidden lg:block rotate-12" style={{ imageRendering: '-webkit-optimize-contrast' }} />
+        <img src={imgPinceau} alt="" aria-hidden="true" className="absolute bottom-0 right-60 w-72 object-contain mix-blend-multiply contrast-[1.1] pointer-events-none hidden lg:block -rotate-6" style={{ imageRendering: '-webkit-optimize-contrast' }} />
         <div className="absolute bottom-12 right-8 bg-[#FBF5E9] rounded-2xl p-4 shadow-lg hidden lg:block z-20">
           <p className="font-display font-bold text-2xl text-[#2A1506]">2 – 10</p>
           <p className="font-ui text-xs text-[#2A1506]/60">participants</p>
@@ -394,7 +394,7 @@ export default function Initiation() {
               </div>
             </div>
             <div className="self-center">
-              <Link to="/contact?type=initiation" className={btn.dark}>Réserver →</Link>
+              <Link to="/contact?type=initiation" className={btn.dark}>Me contacter si intéressé →</Link>
             </div>
           </div>
         </Reveal>

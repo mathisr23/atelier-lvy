@@ -12,11 +12,12 @@ const EDGE_FUNCTION_URL = import.meta.env.VITE_ADMIN_EDGE_FUNCTION_URL
 const ROW = (label, value) =>
   `<tr><td style="padding:10px 0;border-bottom:1px solid rgba(42,21,6,0.05)"><strong>${label}</strong></td><td style="padding:10px 0;border-bottom:1px solid rgba(42,21,6,0.05);text-align:right">${value}</td></tr>`
 
-function buildRecap({ date, places, seances }) {
+function buildRecap({ date, places, seances, total }) {
   const rows = [
     date && ROW('Créneau', date),
     places && ROW('Places', places),
     seances && seances !== '1' && ROW('Pack séances', `${seances} séances`),
+    total && ROW('Total estimé', total),
   ].filter(Boolean)
   if (!rows.length) return ''
   return `<table style="width:100%;border-collapse:collapse;font-size:14px">${rows.join('')}</table>`
@@ -125,6 +126,11 @@ export default function Contact() {
 
       if (!error) {
         const typeLabel = types.find(t => t.value === form.type)?.label || form.type
+        const places = parseInt(form.places) || 1
+        const seances = parseInt(form.seances) || 1
+        let total = null
+        if (form.type === 'initiation' && form.places) total = `${50 * places} €`
+        else if (form.type === 'cours' && seances > 1) total = `${(seances >= 10 ? 500 : 275) * places} €`
         const emailParams = {
           service_id: 'service_dqskaks',
           user_id: 'hY4_VKEndRIZ__zMW',
@@ -137,7 +143,8 @@ export default function Contact() {
             date: form.date || '',
             places: form.places || '',
             seances: form.seances || '',
-            recap: buildRecap({ date: form.date, places: form.places, seances: form.seances }),
+            recap: buildRecap({ date: form.date, places: form.places, seances: form.seances, total }),
+            total: total || '',
             message: form.message.trim() || 'Aucun message',
           }
         }
@@ -163,6 +170,7 @@ export default function Contact() {
             },
           }),
         })
+
       }
 
       setStatus(error ? 'error' : 'success')

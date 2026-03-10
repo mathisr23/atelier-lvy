@@ -3,18 +3,6 @@ import { supabase } from '../lib/supabase'
 
 const EDGE_FUNCTION_URL = import.meta.env.VITE_ADMIN_EDGE_FUNCTION_URL
 
-const ROW_ADMIN = (label, value) =>
-  `<tr><td style="padding:10px 0;border-bottom:1px solid rgba(42,21,6,0.05)"><strong>${label}</strong></td><td style="padding:10px 0;border-bottom:1px solid rgba(42,21,6,0.05);text-align:right">${value}</td></tr>`
-
-function buildRecapAdmin({ date, places, seances }) {
-  const rows = [
-    date && ROW_ADMIN('Créneau', date),
-    places && ROW_ADMIN('Places', String(places)),
-    seances && seances > 1 && ROW_ADMIN('Pack séances', `${seances} séances`),
-  ].filter(Boolean)
-  if (!rows.length) return ''
-  return `<table style="width:100%;border-collapse:collapse;font-size:14px">${rows.join('')}</table>`
-}
 
 const JOURS_FR = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi']
 const MONTHS_FR = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre']
@@ -85,8 +73,7 @@ function computeTotal(r) {
   if (r.type === 'cours') {
     const seances = r.nb_seances
     if (!seances || seances === 1) return null
-    const isSamedi = (r.date_session || '').toLowerCase().includes('samedi')
-    const packPrice = seances >= 10 ? (isSamedi ? 650 : 550) : (isSamedi ? 350 : 275)
+    const packPrice = seances >= 10 ? 500 : 275
     return `${packPrice * places} €`
   }
   return null
@@ -134,40 +121,6 @@ function ReservationCard({ r, sessions, onAction }) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ reservationId: r.id, action, type: r.type }),
     })
-
-    // Email de confirmation au client via EmailJS
-    if (action === 'accept' && r.email) {
-      const typeLabel = typeConfig[r.type]?.label || r.type
-      const introMap = {
-        initiation: `Bonne nouvelle ! Ton initiation est confirmée. Prépare-toi à mettre les mains dans l'argile !`,
-        cours: `Bonne nouvelle ! Ton inscription aux cours est confirmée. À très vite à l'atelier !`,
-        commande: `Bonne nouvelle ! Ta commande sur mesure est confirmée. Je vais me mettre au travail !`,
-        autre: `J'ai bien pris note de ta demande et je te confirme ma réponse. N'hésite pas à me recontacter si besoin.`,
-      }
-      await fetch('https://api.emailjs.com/api/v1.0/email/send', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          service_id: 'service_dqskaks',
-          user_id: 'hY4_VKEndRIZ__zMW',
-          template_id: 'template_6u26s73',
-          template_params: {
-            titre: `✅ Ta demande de ${typeLabel} est confirmée — Atelier LVY`,
-            intro: introMap[r.type] || introMap.autre,
-            type_demande: typeLabel,
-            user_prenom: r.prenom,
-            user_nom: r.nom,
-            user_email: r.email,
-            user_tel: r.telephone || 'Non renseigné',
-            date: r.date_session || '',
-            places: r.nb_places ? String(r.nb_places) : '',
-            seances: r.nb_seances ? String(r.nb_seances) : '',
-            recap: buildRecapAdmin({ date: r.date_session, places: r.nb_places, seances: r.nb_seances }),
-            message: r.message || '',
-          },
-        }),
-      })
-    }
 
     onAction(r.id, newStatus)
     setLoading(null)
@@ -463,6 +416,8 @@ export default function Admin() {
   const [sessions, setSessions] = useState([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState('pending')
+  const [filterType, setFilterType] = useState('all')
+  const [filterSessionType, setFilterSessionType] = useState('all')
   const [activeTab, setActiveTab] = useState('reservations')
 
   useEffect(() => {
@@ -493,7 +448,10 @@ export default function Admin() {
 
   if (!session) return <LoginForm />
 
-  const filtered = filter === 'all' ? reservations : reservations.filter(r => r.status === filter)
+  const filtered = reservations
+    .filter(r => filter === 'all' || r.status === filter)
+    .filter(r => filterType === 'all' || r.type === filterType)
+  const filteredSessions = filterSessionType === 'all' ? sessions : sessions.filter(s => (s.type || 'initiation') === filterSessionType)
   const counts = {
     pending: reservations.filter(r => r.status === 'pending').length,
     accepted: reservations.filter(r => r.status === 'accepted').length,
@@ -528,7 +486,7 @@ export default function Admin() {
           <p className="font-ui text-[#2A1506]/40 text-sm">Chargement…</p>
         ) : activeTab === 'reservations' ? (
           <>
-            <div className="flex flex-wrap gap-2 mb-6">
+            <div className="flex flex-wrap gap-2 mb-3">
               {[
                 { key: 'pending', label: 'En attente', count: counts.pending, color: 'bg-[#F5D060]' },
                 { key: 'accepted', label: 'Acceptées', count: counts.accepted, color: 'bg-[#9BBF90]' },
@@ -538,6 +496,20 @@ export default function Admin() {
                 <button key={key} onClick={() => setFilter(key)}
                   className={`font-ui text-sm font-semibold px-4 py-2 rounded-xl border-2 transition-all duration-150 flex items-center gap-2 ${filter === key ? 'bg-[#2A1506] border-[#2A1506] text-[#FBF5E9]' : 'bg-white border-[#2A1506]/10 text-[#2A1506]/70 hover:border-[#2A1506]/25'}`}>
                   <span className={`w-5 h-5 rounded-md flex items-center justify-center text-xs font-bold ${filter === key ? 'bg-white/15 text-[#FBF5E9]' : `${color} text-[#2A1506]`}`}>{count}</span>
+                  {label}
+                </button>
+              ))}
+            </div>
+            <div className="flex flex-wrap gap-2 mb-6">
+              {[
+                { key: 'all', label: 'Tous types' },
+                { key: 'initiation', label: 'Initiation' },
+                { key: 'cours', label: 'Cours' },
+                { key: 'commande', label: 'Commande' },
+                { key: 'autre', label: 'Autre' },
+              ].map(({ key, label }) => (
+                <button key={key} onClick={() => setFilterType(key)}
+                  className={`font-ui text-xs font-semibold px-3 py-1.5 rounded-lg border transition-all duration-150 ${filterType === key ? 'bg-[#E87040] border-[#E87040] text-[#2A1506]' : 'bg-white border-[#2A1506]/10 text-[#2A1506]/50 hover:border-[#2A1506]/25'}`}>
                   {label}
                 </button>
               ))}
@@ -559,11 +531,23 @@ export default function Admin() {
               <p className="font-ui text-sm text-[#2A1506]/50 mt-1">Les créneaux apparaissent automatiquement sur la page Initiation.</p>
             </div>
             <AddSessionForm onAdd={handleSessionAdd} />
-            {sessions.length === 0 ? (
+            <div className="flex flex-wrap gap-2 mb-6">
+              {[
+                { key: 'all', label: 'Tous' },
+                { key: 'initiation', label: 'Initiation' },
+                { key: 'cours', label: 'Cours' },
+              ].map(({ key, label }) => (
+                <button key={key} onClick={() => setFilterSessionType(key)}
+                  className={`font-ui text-xs font-semibold px-3 py-1.5 rounded-lg border transition-all duration-150 ${filterSessionType === key ? 'bg-[#E87040] border-[#E87040] text-[#2A1506]' : 'bg-white border-[#2A1506]/10 text-[#2A1506]/50 hover:border-[#2A1506]/25'}`}>
+                  {label}
+                </button>
+              ))}
+            </div>
+            {filteredSessions.length === 0 ? (
               <p className="font-ui text-[#2A1506]/30 text-sm text-center py-12 italic">Aucun créneau pour l'instant.</p>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {sessions.map(s => <SessionCard key={s.id} s={s} onDelete={handleSessionDelete} onEdit={handleSessionEdit} />)}
+                {filteredSessions.map(s => <SessionCard key={s.id} s={s} onDelete={handleSessionDelete} onEdit={handleSessionEdit} />)}
               </div>
             )}
           </>

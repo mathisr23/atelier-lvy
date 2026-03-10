@@ -48,9 +48,9 @@ const btn = {
 }
 
 const packPrices = {
-  mardi: { 5: '275€', 10: '550€' },
-  jeudi: { 5: '275€', 10: '550€' },
-  samedi: { 5: '350€', 10: '650€' },
+  mardi: { 5: '275€', 10: '500€' },
+  jeudi: { 5: '275€', 10: '500€' },
+  samedi: { 5: '275€', 10: '500€' },
 }
 
 function SessionCard({ c, selected, onClick }) {
@@ -227,7 +227,7 @@ export default function Cours() {
                   <div className="bg-[#2A1506]/10 rounded-2xl px-5 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                     <div className="font-ui text-sm text-[#2A1506]/70">
                       <p className="text-[#2A1506] font-semibold mb-1">Pack 5 séances : 275€</p>
-                      <p>Pack 10 séances : 550€</p>
+                      <p>Pack 10 séances : 500€</p>
                       <p className="text-[#2A1506]/60 text-xs mt-1.5">Je te recontacte par mail pour valider ton inscription.</p>
                     </div>
                     <a href="#planning-mardi" className="bg-[#2A1506] text-[#FBF5E9] border-2 border-[#2A1506] font-ui font-semibold text-sm px-5 py-2.5 rounded-xl hover:bg-[#FBF5E9] hover:text-[#2A1506] transition-all duration-200 whitespace-nowrap">
@@ -249,7 +249,7 @@ export default function Cours() {
                   <div className="bg-[#FBF5E9]/10 rounded-2xl px-5 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                     <div className="font-ui text-sm text-[#FBF5E9]/70">
                       <p className="text-[#FBF5E9] font-semibold mb-1">Pack 5 séances : 275€</p>
-                      <p>Pack 10 séances : 550€</p>
+                      <p>Pack 10 séances : 500€</p>
                       <p className="text-[#F5D060]/80 text-xs mt-1.5">Présence à chaque jeudi requise. Je te recontacte par mail pour valider ton inscription.</p>
                     </div>
                     <a href="#planning-jeudi" className="bg-[#F5D060] text-[#2A1506] border-2 border-[#F5D060] font-ui font-semibold text-sm px-5 py-2.5 rounded-xl hover:bg-[#2A1506] hover:text-[#FBF5E9] hover:border-[#2A1506] transition-all duration-200 whitespace-nowrap">
@@ -270,8 +270,8 @@ export default function Cours() {
                   </div>
                   <div className="bg-[#2A1506]/5 rounded-2xl px-5 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                     <div className="font-ui text-sm text-[#2A1506]/70">
-                      <p className="text-[#2A1506] font-semibold mb-1">Pack 5 séances : 350€</p>
-                      <p>Pack 10 séances : 650€</p>
+                      <p className="text-[#2A1506] font-semibold mb-1">Pack 5 séances : 275€</p>
+                      <p>Pack 10 séances : 500€</p>
                     </div>
                     <a href="#planning-samedi" className={btn.orange.replace('px-8 py-3.5', 'px-5 py-2.5')}>Voir les dates →</a>
                   </div>
@@ -434,7 +434,7 @@ export default function Cours() {
                 Des séances adaptées aux petits curieux, pour découvrir la céramique en s'amusant. Planning en cours de construction, reste connecté·e !
               </p>
             </div>
-            <Link to="/contact?type=cours" className={btn.outline}>Me prévenir</Link>
+            <Link to="/contact?type=cours" className={btn.outline}>Me contacter si intéressé →</Link>
           </div>
         </Reveal>
       </section>

@@ -48,9 +48,9 @@ const btn = {
 }
 
 const packPrices = {
-  mardi: { 5: '275€', 10: '500€' },
-  jeudi: { 5: '275€', 10: '500€' },
-  samedi: { 5: '275€', 10: '500€' },
+  mardi: { 1: '60€', 5: '275€', 10: '500€' },
+  jeudi: { 1: '60€', 5: '275€', 10: '500€' },
+  samedi: { 1: '60€', 5: '275€', 10: '500€' },
 }
 
 function SessionCard({ c, selected, onClick }) {

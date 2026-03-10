@@ -335,8 +335,8 @@ function TypeSelector({ value, onChange }) {
                 type="button"
                 onClick={() => { onChange(o.value); setOpen(false) }}
                 className={`w-full text-left px-3 py-2.5 font-ui text-sm transition-colors ${o.value === value
-                    ? 'bg-[#E87040]/10 text-[#E87040] font-semibold'
-                    : 'text-[#FBF5E9]/70 hover:bg-[#FBF5E9]/5 hover:text-[#FBF5E9]'
+                  ? 'bg-[#E87040]/10 text-[#E87040] font-semibold'
+                  : 'text-[#FBF5E9]/70 hover:bg-[#FBF5E9]/5 hover:text-[#FBF5E9]'
                   }`}
               >
                 {o.label}
@@ -451,7 +451,36 @@ export default function Admin() {
   const filtered = reservations
     .filter(r => filter === 'all' || r.status === filter)
     .filter(r => filterType === 'all' || r.type === filterType)
-  const filteredSessions = filterSessionType === 'all' ? sessions : sessions.filter(s => (s.type || 'initiation') === filterSessionType)
+
+  const enhancedSessions = sessions.map(s => {
+    if (s.type === 'cours') {
+      let reserved = 0
+      const dayPrefix = s.jour
+      const sTypeSessions = sessions.filter(x => x.type === 'cours' && x.jour.toLowerCase() === dayPrefix.toLowerCase())
+      const currentIndex = sTypeSessions.findIndex(x => x.id === s.id)
+
+      reservations.forEach(r => {
+        if (r.type === 'cours' && r.status === 'accepted') {
+          if (r.date_session && r.date_session.toLowerCase().startsWith(dayPrefix.toLowerCase())) {
+            const startDate = r.date_session.replace(new RegExp(`^${dayPrefix} `, 'i'), '')
+            const startIndex = sTypeSessions.findIndex(x => x.date === startDate)
+            if (startIndex !== -1) {
+              const numPlaces = r.nb_places || 1
+              const nbSns = r.nb_seances || 5
+              if (currentIndex >= startIndex && currentIndex < startIndex + nbSns) {
+                reserved += numPlaces
+              }
+            }
+          }
+        }
+      })
+      return { ...s, places_restantes: Math.max(0, s.places_total - reserved) }
+    }
+    return s
+  })
+
+  const filteredSessions = filterSessionType === 'all' ? enhancedSessions : enhancedSessions.filter(s => (s.type || 'initiation') === filterSessionType)
+
   const counts = {
     pending: reservations.filter(r => r.status === 'pending').length,
     accepted: reservations.filter(r => r.status === 'accepted').length,
@@ -520,7 +549,7 @@ export default function Admin() {
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {filtered.map(r => <ReservationCard key={r.id} r={r} sessions={sessions} onAction={handleReservationAction} />)}
+                {filtered.map(r => <ReservationCard key={r.id} r={r} sessions={enhancedSessions} onAction={handleReservationAction} />)}
               </div>
             )}
           </>

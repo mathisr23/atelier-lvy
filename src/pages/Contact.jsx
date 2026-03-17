@@ -128,8 +128,8 @@ export default function Contact() {
         if (form.type === 'initiation' && form.places) total = `${50 * places} €`
         else if (form.type === 'cours' && seances > 1) total = `${(seances >= 10 ? 500 : 275) * places} €`
         const emailParams = {
-          service_id: 'service_dqskaks',
-          user_id: 'hY4_VKEndRIZ__zMW',
+          service_id: 'service_263neen',
+          user_id: 'ACjZWpVavc0biX8Y3',
           template_params: {
             type_demande: typeLabel,
             user_prenom: form.prenom.trim(),
@@ -149,7 +149,7 @@ export default function Contact() {
         await fetch('https://api.emailjs.com/api/v1.0/email/send', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ...emailParams, template_id: 'template_u9ltpku' }),
+          body: JSON.stringify({ ...emailParams, template_id: 'template_39831u7' }),
         })
 
         // 2. Envoi du mail de récap automatique pour LE CLIENT
@@ -158,7 +158,7 @@ export default function Contact() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             ...emailParams,
-            template_id: 'template_6u26s73',
+            template_id: 'template_apxutah',
             template_params: {
               ...emailParams.template_params,
               titre: `Récap de ta demande — ${typeLabel}`,

@@ -4,7 +4,6 @@ import useSEO from '../hooks/useSEO'
 import { Baby } from 'lucide-react'
 import Reveal from '../components/Reveal'
 import { supabase } from '../lib/supabase'
-import imgOutils2 from '../assets/outils_marron_2.png'
 import imgPince from '../assets/pince_marron.png'
 import imgTablier from '../assets/tablier.png'
 
@@ -47,23 +46,23 @@ const btn = {
   sage: 'inline-block font-ui font-semibold text-sm px-8 py-3.5 bg-[#9BBF90] text-[#2A1506] border-2 border-[#9BBF90] rounded-xl hover:bg-[#E87040] hover:text-[#FBF5E9] hover:border-[#E87040] transition-all duration-200 whitespace-nowrap',
 }
 
-const packPrices = {
-  mardi: { 1: '60€', 5: '275€', 10: '500€' },
-  jeudi: { 1: '60€', 5: '275€', 10: '500€' },
-  samedi: { 1: '60€', 5: '275€', 10: '500€' },
-}
+const packPrices = { 1: '60€', 5: '275€', 10: '500€' }
 
-function SessionCard({ c, selected, onClick }) {
+function SessionCard({ c, selected, onClick, maxReached }) {
+  const disabled = !c.dispo || (maxReached && !selected)
   return (
     <button
-      disabled={!c.dispo}
+      disabled={disabled}
       onClick={onClick}
-      className={`rounded-xl p-4 text-left transition-all duration-150 border-2 w-full ${!c.dispo
-        ? 'opacity-40 cursor-not-allowed bg-[#2A1506]/5 border-transparent'
-        : selected
-          ? 'bg-[#2A1506] border-[#2A1506] text-[#FBF5E9] translate-x-[2px] translate-y-[2px]'
-          : 'bg-[#FBF5E9] border-[#2A1506]/15 shadow-[2px_2px_0px_rgba(42,21,6,0.15)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]'
-        }`}
+      className={`rounded-xl p-4 text-left transition-all duration-150 border-2 w-full ${
+        !c.dispo
+          ? 'opacity-40 cursor-not-allowed bg-[#2A1506]/5 border-transparent'
+          : disabled
+            ? 'opacity-25 cursor-not-allowed bg-[#2A1506]/5 border-transparent'
+            : selected
+              ? 'bg-[#2A1506] border-[#2A1506] text-[#FBF5E9] translate-x-[2px] translate-y-[2px]'
+              : 'bg-[#FBF5E9] border-[#2A1506]/15 shadow-[2px_2px_0px_rgba(42,21,6,0.15)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]'
+      }`}
     >
       <p className={`font-display font-bold text-lg ${selected ? 'text-[#FBF5E9]' : 'text-[#2A1506]'}`}>{c.date}</p>
       <p className={`font-ui text-sm ${selected ? 'text-[#FBF5E9]/70' : 'text-[#2A1506]/60'}`}>{c.heure}</p>
@@ -80,9 +79,8 @@ export default function Cours() {
     description: "Cours réguliers de céramique proposés en packs. Progressez semaine après semaine dans un petit groupe chaleureux.",
   })
 
-  const [selectedMardi, setSelectedMardi] = useState(null)
-  const [selectedJeudi, setSelectedJeudi] = useState(null)
-  const [selectedSamedi, setSelectedSamedi] = useState(null)
+  // [{key: 'Mardi 25 mars', jour: 'Mardi', date: '25 mars', heure: '18h30 – 21h'}]
+  const [selectedSessions, setSelectedSessions] = useState([])
   const [nbSeances, setNbSeances] = useState(5)
   const [nbPlaces, setNbPlaces] = useState(1)
 
@@ -112,20 +110,40 @@ export default function Cours() {
       })
   }, [])
 
-  const computePlaces = (baseArray, dayPrefix) => {
-    return baseArray.map((c, i) => {
+  // Si on réduit le pack, on retire les séances en trop
+  useEffect(() => {
+    if (selectedSessions.length > nbSeances) {
+      setSelectedSessions(prev => prev.slice(0, nbSeances))
+    }
+  }, [nbSeances])
+
+  const computePlaces = (baseArray, jourLabel) => {
+    return baseArray.map((c) => {
       let reserved = 0
       reservations.forEach(r => {
-        if (r.date_session && r.date_session.toLowerCase().startsWith(dayPrefix.toLowerCase())) {
-          const startDate = r.date_session.replace(new RegExp(`^${dayPrefix} `, 'i'), '')
-          const startIndex = baseArray.findIndex(x => x.date === startDate)
-          if (startIndex !== -1) {
-            const numPlaces = r.nb_places || 1
-            const nbSns = r.nb_seances || 5
-            if (i >= startIndex && i < startIndex + nbSns) {
-              reserved += numPlaces
+        if (!r.date_session) return
+        let dates = []
+        try {
+          const parsed = JSON.parse(r.date_session)
+          if (Array.isArray(parsed)) {
+            dates = parsed
+          }
+        } catch {
+          // Ancien format : "Mardi 25 mars" avec nb_seances consécutives (rétrocompatibilité)
+          if (r.date_session.toLowerCase().startsWith(jourLabel.toLowerCase())) {
+            const startDate = r.date_session.replace(new RegExp(`^${jourLabel} `, 'i'), '')
+            const startIndex = baseArray.findIndex(x => x.date === startDate)
+            if (startIndex !== -1) {
+              const idx = baseArray.findIndex(x => x.date === c.date)
+              if (idx >= startIndex && idx < startIndex + (r.nb_seances || 5)) {
+                reserved += r.nb_places || 1
+              }
             }
           }
+          return
+        }
+        if (dates.includes(`${jourLabel} ${c.date}`)) {
+          reserved += r.nb_places || 1
         }
       })
       const places_restantes = Math.max(0, c.places_total - reserved)
@@ -137,14 +155,32 @@ export default function Cours() {
   const coursJeudi = computePlaces(dbJeudi, 'Jeudi')
   const coursSamedi = computePlaces(dbSamedi, 'Samedi')
 
-  const selectedSession =
-    selectedMardi !== null ? `Mardi ${coursMardi[selectedMardi].date}`
-      : selectedJeudi !== null ? `Jeudi ${coursJeudi[selectedJeudi].date}`
-        : selectedSamedi !== null ? `Samedi ${coursSamedi[selectedSamedi].date}`
-          : null
+  const toggleSession = (jour, session) => {
+    const key = `${jour} ${session.date}`
+    const exists = selectedSessions.find(s => s.key === key)
+    if (exists) {
+      setSelectedSessions(prev => prev.filter(s => s.key !== key))
+    } else if (selectedSessions.length < nbSeances) {
+      setSelectedSessions(prev => [...prev, { key, jour, date: session.date, heure: session.heure }])
+    }
+  }
 
-  const selectedDay = selectedMardi !== null ? 'mardi' : selectedJeudi !== null ? 'jeudi' : selectedSamedi !== null ? 'samedi' : null
-  const selectedObj = selectedMardi !== null ? coursMardi[selectedMardi] : selectedJeudi !== null ? coursJeudi[selectedJeudi] : selectedSamedi !== null ? coursSamedi[selectedSamedi] : null
+  const maxReached = selectedSessions.length >= nbSeances
+  const isSelected = (jour, date) => selectedSessions.some(s => s.key === `${jour} ${date}`)
+
+  // Places max = minimum disponible parmi les séances sélectionnées
+  const minAvailablePlaces = selectedSessions.length > 0
+    ? Math.min(...selectedSessions.map(s => {
+        const arr = s.jour === 'Mardi' ? coursMardi : s.jour === 'Jeudi' ? coursJeudi : coursSamedi
+        return arr.find(c => c.date === s.date)?.places || 1
+      }))
+    : 1
+
+  const datesForContact = encodeURIComponent(selectedSessions.map(s => s.key).join(','))
+  const ready = selectedSessions.length === nbSeances
+  const contactUrl = ready
+    ? `/contact?type=cours&dates=${datesForContact}&seances=${nbSeances}&places=${nbPlaces}`
+    : '/contact?type=cours'
 
   return (
     <div className="bg-[#FBF5E9] pt-20">
@@ -189,7 +225,7 @@ export default function Cours() {
                 <div className="font-ui text-[#2A1506]/70 text-base leading-relaxed mb-6 space-y-3">
                   <p>Vous souhaitez aller plus loin dans l'apprentissage du modelage ? Les cours réguliers sont la meilleure solution ! Vous pouvez réaliser des projets plus complexes qui demandent plus de technique et de temps, séance après séance, dans un petit groupe soudé.</p>
                   <p>C'est pourquoi les cours sont proposés en packs de 5 ou 10 séances. Tu peux créer différentes pièces avec plus de liberté dans leurs formats <span className="text-[#2A1506]/50 text-sm">(dans la limite de 10 kg par personne)</span>.</p>
-                  <p>Choisis ton créneau, ta présence sera requise à chaque séance après ton inscription !</p>
+                  <p>Achète ton pack et réserve tes créneaux en fonction des dates disponibles ci-dessous ! L'idéal est de venir 1 fois par semaine (pour pas que ta pièce ne tombe dans l'oubli 😄)</p>
                 </div>
                 <div className="bg-[#2A1506]/10 rounded-2xl p-5 font-ui text-sm text-[#2A1506]/70 mb-8">
                   <p className="font-semibold text-[#2A1506] mb-2">Inclus :</p>
@@ -250,7 +286,7 @@ export default function Cours() {
                     <div className="font-ui text-sm text-[#FBF5E9]/70">
                       <p className="text-[#FBF5E9] font-semibold mb-1">Pack 5 séances : 275€</p>
                       <p>Pack 10 séances : 500€</p>
-                      <p className="text-[#F5D060]/80 text-xs mt-1.5">Présence à chaque jeudi requise. Je te recontacte par mail pour valider ton inscription.</p>
+                      <p className="text-[#F5D060]/80 text-xs mt-1.5">Je te recontacte par mail pour valider ton inscription.</p>
                     </div>
                     <a href="#planning-jeudi" className="bg-[#F5D060] text-[#2A1506] border-2 border-[#F5D060] font-ui font-semibold text-sm px-5 py-2.5 rounded-xl hover:bg-[#2A1506] hover:text-[#FBF5E9] hover:border-[#2A1506] transition-all duration-200 whitespace-nowrap">
                       Voir les dates →
@@ -282,8 +318,65 @@ export default function Cours() {
         </div>
       </section>
 
+      {/* CHOIX DU PACK */}
+      <section id="choix-pack" className="px-6 md:px-16 lg:px-24 pt-20 pb-4 max-w-7xl mx-auto">
+        <Reveal>
+          <div className="flex flex-col items-center text-center mb-10">
+            <p className="font-ui text-xs uppercase tracking-[0.3em] text-[#9BBF90] mb-3">Étape 1</p>
+            <h2 className="font-display font-bold text-3xl md:text-4xl mb-2">Choisis ton pack</h2>
+            <p className="font-ui text-[#2A1506]/50 text-sm">Ensuite, sélectionne exactement {nbSeances} date{nbSeances > 1 ? 's' : ''} dans le planning ci-dessous — tous jours confondus.</p>
+          </div>
+        </Reveal>
+        <Reveal delay={0.1}>
+          <div className="flex flex-wrap justify-center gap-4">
+            {[1, 5, 10].map(n => (
+              <button
+                key={n}
+                onClick={() => setNbSeances(n)}
+                className={`font-ui font-semibold px-10 py-5 rounded-2xl border-2 transition-all duration-150 flex flex-col items-center min-w-[9rem] ${
+                  nbSeances === n
+                    ? 'bg-[#2A1506] border-[#2A1506] text-[#FBF5E9]'
+                    : 'bg-[#FBF5E9] border-[#2A1506]/15 shadow-[2px_2px_0px_rgba(42,21,6,0.15)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] text-[#2A1506]'
+                }`}
+              >
+                <span className="text-2xl font-black font-display">{n === 1 ? '1 cours' : `Pack ${n}`}</span>
+                <span className={`text-sm font-normal mt-1 ${nbSeances === n ? 'text-[#FBF5E9]/60' : 'text-[#2A1506]/50'}`}>{packPrices[n]}</span>
+              </button>
+            ))}
+          </div>
+        </Reveal>
+      </section>
+
+      {/* COMPTEUR */}
+      <div className="px-6 md:px-16 lg:px-24 py-6 max-w-7xl mx-auto">
+        <div className={`rounded-2xl px-6 py-4 flex items-center justify-between gap-4 transition-all duration-300 ${
+          ready ? 'bg-[#9BBF90]/30 border-2 border-[#9BBF90]' : 'bg-[#2A1506]/5 border-2 border-transparent'
+        }`}>
+          <div className="flex items-center gap-3 flex-wrap">
+            <p className="font-ui font-semibold text-[#2A1506]">
+              Étape 2 — {selectedSessions.length} / {nbSeances} séance{nbSeances > 1 ? 's' : ''} sélectionnée{nbSeances > 1 ? 's' : ''}
+            </p>
+            <div className="flex gap-1.5">
+              {Array.from({ length: nbSeances }).map((_, i) => (
+                <span
+                  key={i}
+                  className={`w-3 h-3 rounded-full transition-all duration-200 ${
+                    i < selectedSessions.length ? 'bg-[#2A1506]' : 'bg-[#2A1506]/20'
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
+          {ready && (
+            <p className="font-ui text-sm text-[#2A1506]/70 hidden sm:block">
+              ✓ Parfait ! Descends pour confirmer →
+            </p>
+          )}
+        </div>
+      </div>
+
       {/* PLANNING MARDI */}
-      <section id="planning-mardi" className="px-6 md:px-16 lg:px-24 py-20 max-w-7xl mx-auto scroll-mt-24">
+      <section id="planning-mardi" className="px-6 md:px-16 lg:px-24 py-12 max-w-7xl mx-auto scroll-mt-24">
         <Reveal>
           <div className="flex items-center gap-4 mb-8 flex-wrap">
             <h2 className="font-display font-bold text-3xl md:text-4xl">Mardis soir</h2>
@@ -297,7 +390,13 @@ export default function Cours() {
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-4">
               {coursMardi.map((c, i) => (
-                <SessionCard key={c.id || i} c={c} selected={selectedMardi === i} onClick={() => { setSelectedMardi(selectedMardi === i ? null : i); setSelectedJeudi(null); setSelectedSamedi(null); setNbPlaces(1) }} />
+                <SessionCard
+                  key={c.id || i}
+                  c={c}
+                  selected={isSelected('Mardi', c.date)}
+                  onClick={() => toggleSession('Mardi', c)}
+                  maxReached={maxReached}
+                />
               ))}
             </div>
           )}
@@ -305,7 +404,7 @@ export default function Cours() {
       </section>
 
       {/* PLANNING JEUDI */}
-      <section id="planning-jeudi" className="px-6 md:px-16 lg:px-24 py-20 max-w-7xl mx-auto scroll-mt-24">
+      <section id="planning-jeudi" className="px-6 md:px-16 lg:px-24 py-12 max-w-7xl mx-auto scroll-mt-24">
         <Reveal>
           <div className="flex items-center gap-4 mb-8 flex-wrap">
             <h2 className="font-display font-bold text-3xl md:text-4xl">Jeudis soir</h2>
@@ -319,7 +418,13 @@ export default function Cours() {
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-4">
               {coursJeudi.map((c, i) => (
-                <SessionCard key={c.id || i} c={c} selected={selectedJeudi === i} onClick={() => { setSelectedJeudi(selectedJeudi === i ? null : i); setSelectedSamedi(null); setSelectedMardi(null); setNbPlaces(1) }} />
+                <SessionCard
+                  key={c.id || i}
+                  c={c}
+                  selected={isSelected('Jeudi', c.date)}
+                  onClick={() => toggleSession('Jeudi', c)}
+                  maxReached={maxReached}
+                />
               ))}
             </div>
           )}
@@ -327,7 +432,7 @@ export default function Cours() {
       </section>
 
       {/* PLANNING SAMEDI */}
-      <section id="planning-samedi" className="px-6 md:px-16 lg:px-24 pb-20 max-w-7xl mx-auto scroll-mt-24">
+      <section id="planning-samedi" className="px-6 md:px-16 lg:px-24 py-12 max-w-7xl mx-auto scroll-mt-24">
         <Reveal>
           <div className="flex items-center gap-4 mb-8 flex-wrap">
             <h2 className="font-display font-bold text-3xl md:text-4xl">Samedis</h2>
@@ -341,7 +446,13 @@ export default function Cours() {
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-4">
               {coursSamedi.map((c, i) => (
-                <SessionCard key={c.id || i} c={c} selected={selectedSamedi === i} onClick={() => { setSelectedSamedi(selectedSamedi === i ? null : i); setSelectedJeudi(null); setSelectedMardi(null); setNbPlaces(1) }} />
+                <SessionCard
+                  key={c.id || i}
+                  c={c}
+                  selected={isSelected('Samedi', c.date)}
+                  onClick={() => toggleSession('Samedi', c)}
+                  maxReached={maxReached}
+                />
               ))}
             </div>
           )}
@@ -353,57 +464,65 @@ export default function Cours() {
         <Reveal>
           <div className="max-w-3xl mx-auto text-center">
             <p className="font-ui text-xs uppercase tracking-[0.3em] text-[#FBF5E9]/40 mb-4">Inscription</p>
-            <h2 className="font-display font-bold text-4xl md:text-5xl text-[#FBF5E9] mb-4 leading-tight">
-              {selectedSession
-                ? <>Tu as choisi : <span className="italic text-[#F5D060]">{selectedSession}</span></>
-                : <>Choisis une <span className="italic text-[#9BBF90]">date</span></>}
+            <h2 className="font-display font-bold text-4xl md:text-5xl text-[#FBF5E9] mb-8 leading-tight">
+              {ready
+                ? <><span className="italic text-[#9BBF90]">{nbSeances} séance{nbSeances > 1 ? 's' : ''}</span> choisies ✓</>
+                : <>Choisis tes <span className="italic text-[#9BBF90]">séances</span></>
+              }
             </h2>
 
-            {selectedSession && (
-              <div className="mb-8 flex flex-col items-center">
-                <p className="font-ui text-[#FBF5E9]/60 text-sm mb-4">Quel nombre de séances souhaites-tu ?</p>
-                <div className="flex justify-center gap-3 mb-8">
-                  {[1, 5, 10].map((n) => (
-                    <button
-                      key={n}
-                      onClick={() => setNbSeances(n)}
-                      className={`font-ui font-semibold text-sm px-6 py-3 rounded-xl border-2 transition-all duration-150 flex flex-col items-center ${nbSeances === n
-                        ? 'bg-[#9BBF90] border-[#9BBF90] text-[#2A1506]'
-                        : 'bg-transparent border-[#FBF5E9]/20 text-[#FBF5E9]/60 hover:border-[#FBF5E9]/50'
-                        }`}
-                    >
-                      <span>{n === 1 ? '1 cours' : `Pack ${n}`}</span>
-                      {selectedDay && packPrices[selectedDay]?.[n] && (
-                        <span className={`text-xs font-normal mt-0.5 ${nbSeances === n ? 'text-[#2A1506]/70' : 'text-[#FBF5E9]/40'}`}>
-                          {packPrices[selectedDay][n]}
-                        </span>
-                      )}
-                    </button>
-                  ))}
+            {selectedSessions.length > 0 && (
+              <div className="mb-8">
+                <div className="bg-[#FBF5E9]/8 rounded-2xl p-5 mb-6 text-left inline-block w-full max-w-md mx-auto">
+                  <p className="font-ui text-xs uppercase tracking-widest text-[#FBF5E9]/40 mb-3">Tes dates</p>
+                  <ul className="space-y-2">
+                    {selectedSessions.map((s, i) => (
+                      <li key={s.key} className="flex items-center gap-3">
+                        <span className="font-display font-bold text-[#9BBF90] text-sm w-5 text-right">{i + 1}.</span>
+                        <span className="font-ui text-[#FBF5E9] text-sm">{s.key}</span>
+                        <span className="font-ui text-[#FBF5E9]/40 text-xs ml-auto">{s.heure}</span>
+                      </li>
+                    ))}
+                    {Array.from({ length: nbSeances - selectedSessions.length }).map((_, i) => (
+                      <li key={`empty-${i}`} className="flex items-center gap-3">
+                        <span className="font-display font-bold text-[#FBF5E9]/20 text-sm w-5 text-right">{selectedSessions.length + i + 1}.</span>
+                        <span className="font-ui text-[#FBF5E9]/20 text-sm italic">à sélectionner...</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
 
-                <div className="bg-[#FBF5E9]/10 rounded-2xl p-5 inline-block">
-                  <div className="flex items-center gap-4">
-                    <span className="font-ui text-sm text-[#FBF5E9]/70">Personnes :</span>
-                    <div className="flex items-center gap-2">
-                      <button onClick={() => setNbPlaces(n => Math.max(1, n - 1))} className="w-8 h-8 rounded-lg bg-[#FBF5E9]/10 hover:bg-[#FBF5E9]/20 flex items-center justify-center font-bold text-[#FBF5E9] transition-colors">−</button>
-                      <span className="font-display font-bold text-2xl w-10 text-center text-[#FBF5E9]">{nbPlaces}</span>
-                      <button onClick={() => setNbPlaces(n => Math.min(selectedObj?.places || 1, n + 1))} className="w-8 h-8 rounded-lg bg-[#FBF5E9]/10 hover:bg-[#FBF5E9]/20 flex items-center justify-center font-bold text-[#FBF5E9] transition-colors">+</button>
+                {ready && (
+                  <div className="flex flex-col items-center">
+                    <p className="font-ui text-[#FBF5E9]/60 text-sm mb-4">Nombre de personnes :</p>
+                    <div className="bg-[#FBF5E9]/10 rounded-2xl p-5 inline-block mb-6">
+                      <div className="flex items-center gap-4">
+                        <button onClick={() => setNbPlaces(n => Math.max(1, n - 1))} className="w-8 h-8 rounded-lg bg-[#FBF5E9]/10 hover:bg-[#FBF5E9]/20 flex items-center justify-center font-bold text-[#FBF5E9] transition-colors">−</button>
+                        <span className="font-display font-bold text-2xl w-10 text-center text-[#FBF5E9]">{nbPlaces}</span>
+                        <button onClick={() => setNbPlaces(n => Math.min(minAvailablePlaces, n + 1))} className="w-8 h-8 rounded-lg bg-[#FBF5E9]/10 hover:bg-[#FBF5E9]/20 flex items-center justify-center font-bold text-[#FBF5E9] transition-colors">+</button>
+                      </div>
                     </div>
                   </div>
-                </div>
-
-                <p className="font-ui text-[#FBF5E9]/40 text-xs mt-6 max-w-sm">
-                  Tu seras inscrit·e aux séances qui suivent cette date selon le nombre de séances et de places choisis.
-                </p>
+                )}
               </div>
+            )}
+
+            {!selectedSessions.length && (
+              <p className="font-ui text-[#FBF5E9]/40 text-sm mb-10">
+                Remonte sélectionner ton pack et tes {nbSeances} date{nbSeances > 1 ? 's' : ''} dans le planning ci-dessus.
+              </p>
             )}
 
             <p className="font-ui text-[#FBF5E9]/50 text-sm mb-10">
               Une fois ta demande effectuée, je te recontacte par mail pour finaliser ton inscription.
             </p>
             <div className="flex justify-center">
-              <Link to={selectedSession ? `/contact?type=cours&date=${selectedSession}&seances=${nbSeances}&places=${nbPlaces}` : '/contact?type=cours'} className={btn.sage}>M'inscrire par mail →</Link>
+              <Link
+                to={contactUrl}
+                className={`${btn.sage} ${!ready ? 'opacity-50 pointer-events-none' : ''}`}
+              >
+                M'inscrire par mail →
+              </Link>
             </div>
           </div>
         </Reveal>

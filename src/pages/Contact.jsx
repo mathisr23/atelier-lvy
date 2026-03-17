@@ -42,26 +42,22 @@ export default function Contact() {
   const [searchParams] = useSearchParams()
   const defaultType = searchParams.get('type') || 'autre'
   const defaultDate = searchParams.get('date') || ''
+  const defaultDatesRaw = searchParams.get('dates') || '' // nouveau format cours : CSV
+  const defaultDates = defaultDatesRaw ? defaultDatesRaw.split(',') : []
   const defaultPlaces = searchParams.get('places') || ''
   const defaultSeances = searchParams.get('seances') || ''
   const defaultSessionId = searchParams.get('session_id') || ''
 
   // Calcul du prix selon le type de réservation
   const prixRecap = (() => {
-    if (!defaultDate) return null
     const places = parseInt(defaultPlaces) || 1
-    if (defaultType === 'initiation') {
+    if (defaultType === 'initiation' && defaultDate) {
       return { total: places * 50, detail: `${places} pers. × 50 €` }
     }
-    if (defaultType === 'cours') {
+    if (defaultType === 'cours' && defaultDates.length > 0) {
       const seances = parseInt(defaultSeances)
       if (!seances || seances === 1) return null
-      const jourLower = defaultDate.split(' ')[0].toLowerCase()
-      const tarifs = jourLower === 'samedi'
-        ? { 5: 350, 10: 650 }
-        : { 5: 275, 10: 550 }
-      const prix = tarifs[seances]
-      if (!prix) return null
+      const prix = seances >= 10 ? 500 : 275
       return { total: prix * places, detail: `${places > 1 ? `${places} pers. × ` : ''}Pack ${seances} séances${places > 1 ? ` (${prix} €/pers.)` : ''}` }
     }
     return null
@@ -116,7 +112,7 @@ export default function Contact() {
         nom: form.nom.trim(),
         email: form.email.trim(),
         telephone: form.telephone.trim() || null,
-        date_session: form.date || null,
+        date_session: defaultDates.length > 0 ? JSON.stringify(defaultDates) : form.date || null,
         jour,
         nb_seances: form.seances ? parseInt(form.seances) : null,
         nb_places: form.places ? parseInt(form.places) : null,
@@ -140,7 +136,7 @@ export default function Contact() {
             user_nom: form.nom.trim(),
             user_email: form.email.trim(),
             user_tel: form.telephone.trim() || 'Non renseigné',
-            date: form.date || '',
+            date: defaultDates.length > 0 ? defaultDates.join(', ') : form.date || '',
             places: form.places || '',
             seances: form.seances || '',
             recap: buildRecap({ date: form.date, places: form.places, seances: form.seances, total }),
@@ -234,7 +230,26 @@ export default function Contact() {
                     onSubmit={handleSubmit}
                     className="space-y-6"
                   >
-                    {form.date && (
+                    {defaultDates.length > 0 && (
+                      <div className="flex items-start gap-3 bg-[#E87040]/15 border border-[#E87040]/40 rounded-xl px-4 py-3">
+                        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" className="shrink-0 text-[#E87040] mt-1">
+                          <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="1.8" />
+                          <path d="M16 2v4M8 2v4M3 10h18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+                        </svg>
+                        <div className="flex-1">
+                          <p className="font-ui text-sm font-semibold text-[#E87040] mb-1">
+                            {defaultSeances === '1' ? '1 cours' : `Pack ${defaultSeances} séances`}
+                            {defaultPlaces > 1 && ` · ${defaultPlaces} personnes`}
+                          </p>
+                          <ul className="space-y-0.5">
+                            {defaultDates.map((d, i) => (
+                              <li key={i} className="font-ui text-xs text-[#FBF5E9]/70">{d}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    )}
+                    {form.date && !defaultDates.length && (
                       <div className="flex items-start gap-3 bg-[#E87040]/15 border border-[#E87040]/40 rounded-xl px-4 py-3">
                         <svg width="16" height="16" fill="none" viewBox="0 0 24 24" className="shrink-0 text-[#E87040] mt-0.5">
                           <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="1.8" />
@@ -247,11 +262,6 @@ export default function Contact() {
                           {form.places && (
                             <p className="font-ui text-xs text-[#FBF5E9]/50 mt-0.5">
                               {form.places} place{form.places > 1 ? 's' : ''} souhaitée{form.places > 1 ? 's' : ''}
-                            </p>
-                          )}
-                          {form.seances && (
-                            <p className="font-ui text-xs text-[#FBF5E9]/50 mt-0.5">
-                              {form.seances === '1' ? '1 cours' : `Pack ${form.seances} séances`}
                             </p>
                           )}
                         </div>
@@ -371,7 +381,23 @@ export default function Contact() {
                 <div className="bg-[#2A1506] rounded-2xl p-6">
                   <p className="font-ui text-xs uppercase tracking-[0.3em] text-[#FBF5E9]/40 mb-4">Récap de ta réservation</p>
                   <div className="space-y-3">
-                    {defaultDate && (
+                    {defaultDates.length > 0 && (
+                      <div className="flex items-start gap-2">
+                        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" className="shrink-0 text-[#E87040] mt-0.5">
+                          <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="1.8" />
+                          <path d="M16 2v4M8 2v4M3 10h18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+                        </svg>
+                        <div>
+                          <p className="font-ui text-xs text-[#FBF5E9]/40 uppercase tracking-wider mb-1">Séances</p>
+                          <ul className="space-y-0.5">
+                            {defaultDates.map((d, i) => (
+                              <li key={i} className="font-ui text-sm font-semibold text-[#FBF5E9]">{d}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    )}
+                    {defaultDate && !defaultDates.length && (
                       <div className="flex items-start gap-2">
                         <svg width="14" height="14" fill="none" viewBox="0 0 24 24" className="shrink-0 text-[#E87040] mt-0.5">
                           <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="1.8" />

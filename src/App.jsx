@@ -70,7 +70,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/atelier-gestion-lvy" element={<Admin />} />
+        <Route path="/k4w9-lvy-m2r6x" element={<Admin />} />
         <Route path="*" element={<MainApp />} />
       </Routes>
     </BrowserRouter>

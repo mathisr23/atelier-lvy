@@ -301,7 +301,7 @@ export default function Initiation() {
                         <div className="flex items-center gap-2">
                           <button onClick={() => setNbPlaces(n => Math.max(1, n - 1))} className="w-7 h-7 rounded-lg bg-[#2A1506]/10 hover:bg-[#2A1506]/20 flex items-center justify-center font-bold text-[#2A1506] transition-colors">−</button>
                           <span className="font-display font-bold text-xl w-8 text-center text-[#2A1506]">{nbPlaces}</span>
-                          <button onClick={() => setNbPlaces(n => Math.min(selectedSession.places_restantes, n + 1))} className="w-7 h-7 rounded-lg bg-[#2A1506]/10 hover:bg-[#2A1506]/20 flex items-center justify-center font-bold text-[#2A1506] transition-colors">+</button>
+                          <button onClick={() => setNbPlaces(n => Math.min(Math.min(selectedSession.places_restantes, 6), n + 1))} className="w-7 h-7 rounded-lg bg-[#2A1506]/10 hover:bg-[#2A1506]/20 flex items-center justify-center font-bold text-[#2A1506] transition-colors">+</button>
                         </div>
                       </div>
                     </>

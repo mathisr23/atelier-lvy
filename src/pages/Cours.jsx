@@ -233,13 +233,13 @@ export default function Cours() {
                     <li>• 10 kg maximum de terre par personne</li>
                     <li>• Engobes, outils et matériel fournis</li>
                     <li>• Cuissons + émaillage inclus</li>
-                    <li>• Groupe de 6 personnes maximum</li>
+                    <li>• Groupe de 4 personnes maximum</li>
                   </ul>
                 </div>
               </Reveal>
               <Reveal delay={0.15}>
                 <div className="flex flex-wrap gap-3">
-                  {['Petit groupe (6 pers. max)', 'Tous niveaux bienvenus', 'Matériel fourni', 'Cuissons incluses'].map(item => (
+                  {['Petit groupe (4 pers. max)', 'Tous niveaux bienvenus', 'Matériel fourni', 'Cuissons incluses'].map(item => (
                     <span key={item} className="font-ui text-sm bg-[#2A1506]/10 text-[#2A1506] px-4 py-2 rounded-xl">
                       {item}
                     </span>
@@ -248,68 +248,57 @@ export default function Cours() {
               </Reveal>
             </div>
 
-            {/* Les créneaux */}
+            {/* Les packs */}
             <div className="flex flex-col gap-4">
               <Reveal delay={0.02}>
-                <div className="bg-[#E87040] text-[#2A1506] rounded-3xl p-6 md:p-8">
+                <div className="bg-[#FBF5E9] border-2 border-[#2A1506]/10 rounded-3xl p-6 md:p-8">
                   <div className="flex items-start justify-between mb-4">
                     <div>
-                      <p className="font-ui text-xs uppercase tracking-widest text-[#2A1506]/50 mb-1">En semaine</p>
-                      <h3 className="font-display font-black text-4xl">Mardi soir</h3>
-                      <p className="font-ui text-[#2A1506] text-base font-medium mt-1">18h30 – 21h</p>
+                      <p className="font-ui text-xs uppercase tracking-widest text-[#2A1506]/40 mb-1">Pour tester</p>
+                      <h3 className="font-display font-black text-4xl text-[#2A1506]">1 séance</h3>
+                      <p className="font-ui text-[#E87040] text-base font-semibold mt-1">60 €</p>
                     </div>
-                    <span className="font-display italic text-6xl text-[#2A1506]/10 select-none leading-none">M</span>
+                    <span className="font-display italic text-6xl text-[#2A1506]/5 select-none leading-none">1</span>
                   </div>
-                  <div className="bg-[#2A1506]/10 rounded-2xl px-5 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                    <div className="font-ui text-sm text-[#2A1506]/70">
-                      <p className="text-[#2A1506] font-semibold mb-1">Pack 5 séances : 275€</p>
-                      <p>Pack 10 séances : 500€</p>
-                      <p className="text-[#2A1506]/60 text-xs mt-1.5">Je te recontacte par mail pour valider ton inscription.</p>
-                    </div>
-                    <a href="#planning-mardi" className="bg-[#2A1506] text-[#FBF5E9] border-2 border-[#2A1506] font-ui font-semibold text-sm px-5 py-2.5 rounded-xl hover:bg-[#FBF5E9] hover:text-[#2A1506] transition-all duration-200 whitespace-nowrap">
-                      Voir les dates →
-                    </a>
+                  <div className="bg-[#2A1506]/5 rounded-2xl px-5 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <p className="font-ui text-sm text-[#2A1506]/60">Idéal pour découvrir les cours avant de s'engager sur un pack.</p>
+                    <a href="#choix-pack" className={btn.orange.replace('px-8 py-3.5', 'px-5 py-2.5')}>Choisir →</a>
                   </div>
                 </div>
               </Reveal>
               <Reveal delay={0.05}>
-                <div className="bg-[#2A1506] text-[#FBF5E9] rounded-3xl p-6 md:p-8">
+                <div className="bg-[#E87040] text-[#2A1506] rounded-3xl p-6 md:p-8">
                   <div className="flex items-start justify-between mb-4">
                     <div>
-                      <p className="font-ui text-xs uppercase tracking-widest text-[#FBF5E9]/40 mb-1">En semaine</p>
-                      <h3 className="font-display font-black text-4xl">Jeudi soir</h3>
-                      <p className="font-ui text-[#F5D060] text-base font-medium mt-1">18h30 – 21h</p>
+                      <p className="font-ui text-xs uppercase tracking-widest text-[#2A1506]/50 mb-1">Le plus populaire</p>
+                      <h3 className="font-display font-black text-4xl">Pack 5 séances</h3>
+                      <p className="font-ui text-[#2A1506] text-base font-semibold mt-1">275 € <span className="font-normal text-[#2A1506]/60 text-sm">— 55 €/séance</span></p>
                     </div>
-                    <span className="font-display italic text-6xl text-[#FBF5E9]/10 select-none leading-none">J</span>
+                    <span className="font-display italic text-6xl text-[#2A1506]/10 select-none leading-none">5</span>
                   </div>
-                  <div className="bg-[#FBF5E9]/10 rounded-2xl px-5 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                    <div className="font-ui text-sm text-[#FBF5E9]/70">
-                      <p className="text-[#FBF5E9] font-semibold mb-1">Pack 5 séances : 275€</p>
-                      <p>Pack 10 séances : 500€</p>
-                      <p className="text-[#F5D060]/80 text-xs mt-1.5">Je te recontacte par mail pour valider ton inscription.</p>
-                    </div>
-                    <a href="#planning-jeudi" className="bg-[#F5D060] text-[#2A1506] border-2 border-[#F5D060] font-ui font-semibold text-sm px-5 py-2.5 rounded-xl hover:bg-[#2A1506] hover:text-[#FBF5E9] hover:border-[#2A1506] transition-all duration-200 whitespace-nowrap">
-                      Voir les dates →
+                  <div className="bg-[#2A1506]/10 rounded-2xl px-5 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <p className="font-ui text-sm text-[#2A1506]/70">5 séances à réserver librement selon les disponibilités.</p>
+                    <a href="#choix-pack" className="bg-[#2A1506] text-[#FBF5E9] border-2 border-[#2A1506] font-ui font-semibold text-sm px-5 py-2.5 rounded-xl hover:bg-[#FBF5E9] hover:text-[#2A1506] transition-all duration-200 whitespace-nowrap">
+                      Choisir →
                     </a>
                   </div>
                 </div>
               </Reveal>
               <Reveal delay={0.1}>
-                <div className="bg-[#FBF5E9] border-2 border-[#2A1506]/10 rounded-3xl p-6 md:p-8">
+                <div className="bg-[#2A1506] text-[#FBF5E9] rounded-3xl p-6 md:p-8">
                   <div className="flex items-start justify-between mb-4">
                     <div>
-                      <p className="font-ui text-xs uppercase tracking-widest text-[#2A1506]/40 mb-1">Week-end</p>
-                      <h3 className="font-display font-black text-4xl text-[#2A1506]">Samedi</h3>
-                      <p className="font-ui text-[#E87040] text-base font-medium mt-1">10h – 12h30</p>
+                      <p className="font-ui text-xs uppercase tracking-widest text-[#FBF5E9]/40 mb-1">Meilleure valeur</p>
+                      <h3 className="font-display font-black text-4xl">Pack 10 séances</h3>
+                      <p className="font-ui text-[#F5D060] text-base font-semibold mt-1">500 € <span className="font-normal text-[#FBF5E9]/50 text-sm">— 50 €/séance</span></p>
                     </div>
-                    <span className="font-display italic text-6xl text-[#2A1506]/5 select-none leading-none">S</span>
+                    <span className="font-display italic text-6xl text-[#FBF5E9]/10 select-none leading-none">10</span>
                   </div>
-                  <div className="bg-[#2A1506]/5 rounded-2xl px-5 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                    <div className="font-ui text-sm text-[#2A1506]/70">
-                      <p className="text-[#2A1506] font-semibold mb-1">Pack 5 séances : 275€</p>
-                      <p>Pack 10 séances : 500€</p>
-                    </div>
-                    <a href="#planning-samedi" className={btn.orange.replace('px-8 py-3.5', 'px-5 py-2.5')}>Voir les dates →</a>
+                  <div className="bg-[#FBF5E9]/10 rounded-2xl px-5 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <p className="font-ui text-sm text-[#FBF5E9]/60">10 séances pour s'investir vraiment dans la céramique.</p>
+                    <a href="#choix-pack" className="bg-[#F5D060] text-[#2A1506] border-2 border-[#F5D060] font-ui font-semibold text-sm px-5 py-2.5 rounded-xl hover:bg-[#2A1506] hover:text-[#FBF5E9] hover:border-[#2A1506] transition-all duration-200 whitespace-nowrap">
+                      Choisir →
+                    </a>
                   </div>
                 </div>
               </Reveal>
@@ -499,7 +488,7 @@ export default function Cours() {
                       <div className="flex items-center gap-4">
                         <button onClick={() => setNbPlaces(n => Math.max(1, n - 1))} className="w-8 h-8 rounded-lg bg-[#FBF5E9]/10 hover:bg-[#FBF5E9]/20 flex items-center justify-center font-bold text-[#FBF5E9] transition-colors">−</button>
                         <span className="font-display font-bold text-2xl w-10 text-center text-[#FBF5E9]">{nbPlaces}</span>
-                        <button onClick={() => setNbPlaces(n => Math.min(minAvailablePlaces, n + 1))} className="w-8 h-8 rounded-lg bg-[#FBF5E9]/10 hover:bg-[#FBF5E9]/20 flex items-center justify-center font-bold text-[#FBF5E9] transition-colors">+</button>
+                        <button onClick={() => setNbPlaces(n => Math.min(Math.min(minAvailablePlaces, 4), n + 1))} className="w-8 h-8 rounded-lg bg-[#FBF5E9]/10 hover:bg-[#FBF5E9]/20 flex items-center justify-center font-bold text-[#FBF5E9] transition-colors">+</button>
                       </div>
                     </div>
                   </div>

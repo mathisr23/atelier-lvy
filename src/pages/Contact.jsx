@@ -469,7 +469,7 @@ export default function Contact() {
                 </div>
               </div>
 
-              <div className="bg-[#F5D060]/30 border border-[#F5D060]/50 rounded-2xl p-6">
+              <div className="bg-[#F3D07A]/30 border border-[#F3D07A]/50 rounded-2xl p-6">
                 <p className="font-display font-bold text-xl text-[#2A1506] mb-2">Délai de réponse</p>
                 <p className="font-ui text-sm text-[#2A1506]/70 leading-relaxed">
                   Je réponds généralement sous <strong>48h</strong>, souvent plus vite. Pour les demandes urgentes, écris-moi directement sur Instagram.

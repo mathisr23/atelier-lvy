@@ -290,13 +290,13 @@ export default function Cours() {
                     <div>
                       <p className="font-ui text-xs uppercase tracking-widest text-[#FBF5E9]/40 mb-1">Meilleure valeur</p>
                       <h3 className="font-display font-black text-4xl">Pack 10 séances</h3>
-                      <p className="font-ui text-[#F5D060] text-base font-semibold mt-1">500 € <span className="font-normal text-[#FBF5E9]/50 text-sm">— 50 €/séance</span></p>
+                      <p className="font-ui text-[#F3D07A] text-base font-semibold mt-1">500 € <span className="font-normal text-[#FBF5E9]/50 text-sm">— 50 €/séance</span></p>
                     </div>
                     <span className="font-display italic text-6xl text-[#FBF5E9]/10 select-none leading-none">10</span>
                   </div>
                   <div className="bg-[#FBF5E9]/10 rounded-2xl px-5 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                     <p className="font-ui text-sm text-[#FBF5E9]/60">10 séances pour s'investir vraiment dans la céramique.</p>
-                    <a href="#choix-pack" className="bg-[#F5D060] text-[#2A1506] border-2 border-[#F5D060] font-ui font-semibold text-sm px-5 py-2.5 rounded-xl hover:bg-[#2A1506] hover:text-[#FBF5E9] hover:border-[#2A1506] transition-all duration-200 whitespace-nowrap">
+                    <a href="#choix-pack" className="bg-[#F3D07A] text-[#2A1506] border-2 border-[#F3D07A] font-ui font-semibold text-sm px-5 py-2.5 rounded-xl hover:bg-[#2A1506] hover:text-[#FBF5E9] hover:border-[#2A1506] transition-all duration-200 whitespace-nowrap">
                       Choisir →
                     </a>
                   </div>
@@ -397,7 +397,7 @@ export default function Cours() {
         <Reveal>
           <div className="flex items-center gap-4 mb-8 flex-wrap">
             <h2 className="font-display font-bold text-3xl md:text-4xl">Jeudis soir</h2>
-            <span className="font-ui text-xs bg-[#F5D060] text-[#2A1506] px-3 py-1 rounded-lg uppercase tracking-widest">18h30 – 21h</span>
+            <span className="font-ui text-xs bg-[#F3D07A] text-[#2A1506] px-3 py-1 rounded-lg uppercase tracking-widest">18h30 – 21h</span>
             <span className="font-ui text-xs text-[#2A1506]/40 bg-[#2A1506]/5 px-3 py-1 rounded-lg">Mars – Avril 2026</span>
           </div>
         </Reveal>

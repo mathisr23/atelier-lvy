@@ -8,14 +8,14 @@ const JOURS_FR = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi',
 const MONTHS_FR = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre']
 
 const statusConfig = {
-  pending: { bg: 'bg-[#F5D060]', text: 'text-[#2A1506]', label: 'En attente' },
+  pending: { bg: 'bg-[#F3D07A]', text: 'text-[#2A1506]', label: 'En attente' },
   accepted: { bg: 'bg-[#9BBF90]', text: 'text-[#2A1506]', label: 'Acceptée' },
   refused: { bg: 'bg-[#F2A0A8]', text: 'text-[#2A1506]', label: 'Refusée' },
 }
 const typeConfig = {
   cours: { bg: 'bg-[#E87040]', text: 'text-white', label: 'Cours' },
   initiation: { bg: 'bg-[#F2A0A8]', text: 'text-[#2A1506]', label: 'Initiation' },
-  commande: { bg: 'bg-[#F5D060]', text: 'text-[#2A1506]', label: 'Commande' },
+  commande: { bg: 'bg-[#F3D07A]', text: 'text-[#2A1506]', label: 'Commande' },
   autre: { bg: 'bg-[#9BBF90]/60', text: 'text-[#2A1506]', label: 'Autre' },
 }
 
@@ -126,7 +126,7 @@ function ReservationCard({ r, sessions, onAction }) {
     setLoading(null)
   }
 
-  const borderColor = r.status === 'pending' ? 'border-[#F5D060]' : r.status === 'accepted' ? 'border-[#9BBF90]/60' : 'border-[#F2A0A8]/60'
+  const borderColor = r.status === 'pending' ? 'border-[#F3D07A]' : r.status === 'accepted' ? 'border-[#9BBF90]/60' : 'border-[#F2A0A8]/60'
 
   return (
     <div className={`bg-white rounded-2xl border-2 ${borderColor} p-5 flex flex-col gap-3`}>
@@ -167,7 +167,7 @@ function ReservationCard({ r, sessions, onAction }) {
       <div className="flex items-center justify-between">
         <p className="font-ui text-xs text-[#2A1506]/25">{date}</p>
         {total && (
-          <span className="font-ui text-sm font-bold bg-[#2A1506] text-[#F5D060] px-3 py-1 rounded-lg">
+          <span className="font-ui text-sm font-bold bg-[#2A1506] text-[#F3D07A] px-3 py-1 rounded-lg">
             Total : {total}
           </span>
         )}
@@ -201,7 +201,7 @@ function SessionCard({ s, onDelete, onEdit }) {
   const [saving, setSaving] = useState(false)
   const [editForm, setEditForm] = useState({ heure: s.heure, places_total: s.places_total })
   const pct = s.places_total > 0 ? Math.round((s.places_restantes / s.places_total) * 100) : 0
-  const barColor = pct === 0 ? 'bg-[#F2A0A8]' : pct < 50 ? 'bg-[#F5D060]' : 'bg-[#9BBF90]'
+  const barColor = pct === 0 ? 'bg-[#F2A0A8]' : pct < 50 ? 'bg-[#F3D07A]' : 'bg-[#9BBF90]'
 
   const handleDelete = async () => {
     if (!confirm(`Supprimer le créneau du ${s.jour} ${s.date} ?`)) return
@@ -409,11 +409,57 @@ function AddSessionForm({ onAdd }) {
   )
 }
 
+/* ─── COMMENTAIRE CARD ─── */
+function CommentaireCard({ c, onAction }) {
+  const [loading, setLoading] = useState(null)
+
+  const handleAction = async (action) => {
+    setLoading(action)
+    const newStatut = action === 'approuver' ? 'approuve' : 'refuse'
+    await supabase.from('commentaires').update({ statut: newStatut }).eq('id', c.id)
+    onAction(c.id, newStatut)
+    setLoading(null)
+  }
+
+  const statColor = c.statut === 'pending' ? 'bg-[#F3D07A] text-[#2A1506]' : c.statut === 'approuve' ? 'bg-[#9BBF90] text-[#2A1506]' : 'bg-[#F2A0A8] text-[#2A1506]'
+  const statLabel = c.statut === 'pending' ? 'En attente' : c.statut === 'approuve' ? 'Approuvé' : 'Refusé'
+  const date = new Date(c.created_at).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })
+
+  return (
+    <div className={`bg-white rounded-2xl border-2 p-5 flex flex-col gap-3 ${c.statut === 'pending' ? 'border-[#F3D07A]' : c.statut === 'approuve' ? 'border-[#9BBF90]/60' : 'border-[#F2A0A8]/60'}`}>
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="font-display font-bold text-xl text-[#2A1506]">{c.nom}</p>
+          <span className={`inline-block font-ui text-xs font-semibold px-2.5 py-0.5 rounded-lg mt-1 ${c.type === 'initiation' ? 'bg-[#F2A0A8] text-[#2A1506]' : 'bg-[#F3D07A] text-[#2A1506]'}`}>
+            {c.type === 'initiation' ? 'Initiation' : 'Création'}
+          </span>
+        </div>
+        <span className={`font-ui text-xs font-bold px-3 py-1 rounded-lg whitespace-nowrap ${statColor}`}>{statLabel}</span>
+      </div>
+      <p className="font-body text-sm text-[#2A1506]/70 italic leading-relaxed border-l-2 border-[#E87040]/30 pl-3">{c.texte}</p>
+      <p className="font-ui text-xs text-[#2A1506]/25">{date}</p>
+      {c.statut === 'pending' && (
+        <div className="flex gap-2">
+          <button onClick={() => handleAction('approuver')} disabled={!!loading}
+            className="flex-1 font-ui font-bold text-sm py-2.5 rounded-xl bg-[#9BBF90] text-[#2A1506] hover:bg-[#7aab6e] transition-colors disabled:opacity-50">
+            {loading === 'approuver' ? '…' : '✓ Approuver'}
+          </button>
+          <button onClick={() => handleAction('refuser')} disabled={!!loading}
+            className="flex-1 font-ui font-bold text-sm py-2.5 rounded-xl bg-[#F2A0A8] text-[#2A1506] hover:bg-[#d97080] hover:text-white transition-colors disabled:opacity-50">
+            {loading === 'refuser' ? '…' : '✕ Refuser'}
+          </button>
+        </div>
+      )}
+    </div>
+  )
+}
+
 /* ─── MAIN ─── */
 export default function Admin() {
   const [session, setSession] = useState(null)
   const [reservations, setReservations] = useState([])
   const [sessions, setSessions] = useState([])
+  const [commentaires, setCommentaires] = useState([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState('pending')
   const [filterType, setFilterType] = useState('all')
@@ -432,15 +478,20 @@ export default function Admin() {
     Promise.all([
       supabase.from('reservations').select('*').order('created_at', { ascending: false }),
       supabase.from('sessions').select('*').order('annee').order('mois').order('day'),
-    ]).then(([resData, sessData]) => {
+      supabase.from('commentaires').select('*').order('created_at', { ascending: false }),
+    ]).then(([resData, sessData, commData]) => {
       setReservations(resData.data || [])
       setSessions(sessData.data || [])
+      setCommentaires(commData.data || [])
       setLoading(false)
     })
   }, [session])
 
   const handleReservationAction = (id, newStatus) => {
     setReservations(prev => prev.map(r => r.id === id ? { ...r, status: newStatus } : r))
+  }
+  const handleCommentaireAction = (id, newStatut) => {
+    setCommentaires(prev => prev.map(c => c.id === id ? { ...c, statut: newStatut } : c))
   }
   const handleSessionAdd = (s) => setSessions(prev => [...prev, s].sort((a, b) => a.annee - b.annee || a.mois - b.mois || a.day - b.day))
   const handleSessionDelete = (id) => setSessions(prev => prev.filter(s => s.id !== id))
@@ -486,6 +537,7 @@ export default function Admin() {
     accepted: reservations.filter(r => r.status === 'accepted').length,
     refused: reservations.filter(r => r.status === 'refused').length,
   }
+  const commentsPending = commentaires.filter(c => c.statut === 'pending').length
 
   return (
     <div className="min-h-screen bg-[#FBF5E9]">
@@ -496,6 +548,7 @@ export default function Admin() {
             {[
               { key: 'reservations', label: counts.pending > 0 ? `Réservations · ${counts.pending} en attente` : 'Réservations' },
               { key: 'sessions', label: `Créneaux · ${sessions.length}` },
+              { key: 'commentaires', label: commentsPending > 0 ? `Avis · ${commentsPending} en attente` : 'Avis' },
             ].map(({ key, label }) => (
               <button key={key} onClick={() => setActiveTab(key)}
                 className={`font-ui text-sm font-semibold px-5 py-5 border-b-2 transition-all ${activeTab === key ? 'text-[#E87040] border-[#E87040]' : 'text-[#FBF5E9]/40 border-transparent hover:text-[#FBF5E9]/70'}`}>
@@ -517,7 +570,7 @@ export default function Admin() {
           <>
             <div className="flex flex-wrap gap-2 mb-3">
               {[
-                { key: 'pending', label: 'En attente', count: counts.pending, color: 'bg-[#F5D060]' },
+                { key: 'pending', label: 'En attente', count: counts.pending, color: 'bg-[#F3D07A]' },
                 { key: 'accepted', label: 'Acceptées', count: counts.accepted, color: 'bg-[#9BBF90]' },
                 { key: 'refused', label: 'Refusées', count: counts.refused, color: 'bg-[#F2A0A8]' },
                 { key: 'all', label: 'Toutes', count: reservations.length, color: 'bg-[#2A1506]/15' },
@@ -553,7 +606,7 @@ export default function Admin() {
               </div>
             )}
           </>
-        ) : (
+        ) : activeTab === 'sessions' ? (
           <>
             <div className="mb-5">
               <h2 className="font-display font-bold text-2xl text-[#2A1506]">Gérer les créneaux</h2>
@@ -580,7 +633,23 @@ export default function Admin() {
               </div>
             )}
           </>
-        )}
+        ) : activeTab === 'commentaires' ? (
+          <>
+            <div className="mb-5">
+              <h2 className="font-display font-bold text-2xl text-[#2A1506]">Modération des avis</h2>
+              <p className="font-ui text-sm text-[#2A1506]/50 mt-1">Les avis approuvés sont visibles publiquement sur la page À propos.</p>
+            </div>
+            {commentaires.length === 0 ? (
+              <div className="text-center py-24">
+                <p className="font-display italic text-4xl text-[#2A1506]/15">Aucun avis</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {commentaires.map(c => <CommentaireCard key={c.id} c={c} onAction={handleCommentaireAction} />)}
+              </div>
+            )}
+          </>
+        ) : null}
       </main>
     </div>
   )

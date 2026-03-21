@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import useSEO from '../hooks/useSEO'
+import { supabase } from '../lib/supabase'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Asterisk, Squiggle, patterns } from '../components/Deco'
 import Reveal from '../components/Reveal'
@@ -33,23 +34,10 @@ const btn = {
   orange: 'inline-block font-ui font-semibold text-sm px-8 py-3.5 bg-[#E87040] text-[#2A1506] border-2 border-[#E87040] rounded-xl hover:bg-[#2A1506] hover:text-[#FBF5E9] hover:border-[#2A1506] transition-all duration-200',
 }
 
-// ✏️ Remplacer par de vrais témoignages
-const testimonials = [
-  {
-    name: 'Camille R.',
-    text: "Une expérience magique ! Léa met tellement à l'aise que même les moins manuels créent quelque chose dont ils sont fiers. Je recommande les yeux fermés.",
-    type: 'initiation',
-  },
-  {
-    name: 'Sophie & Marc',
-    text: "On a offert une initiation à notre fille pour son anniversaire. Elle en parle encore des mois après. Léa est pédagogue, patiente et passionnée.",
-    type: 'initiation',
-  },
-  {
-    name: 'Julie T.',
-    text: "J'ai commandé un bol sur mesure pour offrir. Léa a parfaitement compris ce que je voulais et le résultat est au-delà de mes attentes. Une vraie artiste.",
-    type: 'creation',
-  },
+const FALLBACK_TESTIMONIALS = [
+  { id: 'f1', nom: 'Camille R.', texte: "Une expérience magique ! Léa met tellement à l'aise que même les moins manuels créent quelque chose dont ils sont fiers. Je recommande les yeux fermés.", type: 'initiation' },
+  { id: 'f2', nom: 'Sophie & Marc', texte: "On a offert une initiation à notre fille pour son anniversaire. Elle en parle encore des mois après. Léa est pédagogue, patiente et passionnée.", type: 'initiation' },
+  { id: 'f3', nom: 'Julie T.', texte: "J'ai commandé un bol sur mesure pour offrir. Léa a parfaitement compris ce que je voulais et le résultat est au-delà de mes attentes. Une vraie artiste.", type: 'creation' },
 ]
 
 const projects = [
@@ -81,7 +69,7 @@ const projects = [
     id: 4,
     name: 'Sand',
     subtitle: 'Pièces réalisées en modelage et tournage',
-    color: '#F5D060',
+    color: '#F3D07A',
     preview: imgIMG4982,
     images: [imgIMG4982, imgIMG4984, imgIMG5006],
   },
@@ -95,6 +83,37 @@ export default function Apropos() {
 
   const [openProject, setOpenProject] = useState(null)
   const [lightboxIndex, setLightboxIndex] = useState(null)
+  const [commentaires, setCommentaires] = useState(null)
+  const [commentForm, setCommentForm] = useState({ nom: '', texte: '', type: 'initiation' })
+  const [commentStatus, setCommentStatus] = useState(null)
+  const [typeDropdownOpen, setTypeDropdownOpen] = useState(false)
+
+  useEffect(() => {
+    supabase
+      .from('commentaires')
+      .select('id, nom, texte, type, created_at')
+      .eq('statut', 'approuve')
+      .order('created_at', { ascending: false })
+      .then(({ data }) => setCommentaires(data || []))
+  }, [])
+
+  const handleCommentSubmit = async (e) => {
+    e.preventDefault()
+    if (!commentForm.nom.trim() || !commentForm.texte.trim()) return
+    setCommentStatus('loading')
+    const { error } = await supabase.from('commentaires').insert([{
+      nom: commentForm.nom.trim(),
+      texte: commentForm.texte.trim(),
+      type: commentForm.type,
+      statut: 'pending',
+    }])
+    if (error) {
+      setCommentStatus('error')
+    } else {
+      setCommentStatus('success')
+      setCommentForm({ nom: '', texte: '', type: 'initiation' })
+    }
+  }
 
   useEffect(() => {
     const handler = (e) => {
@@ -127,7 +146,7 @@ export default function Apropos() {
           <Asterisk size={18} color="#9BBF90" />
         </motion.div>
         <motion.div animate={{ rotate: 360 }} transition={{ duration: 24, repeat: Infinity, ease: 'linear' }} className="absolute top-1/2 right-16 opacity-25">
-          <Asterisk size={34} color="#F5D060" />
+          <Asterisk size={34} color="#F3D07A" />
         </motion.div>
 
         <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center py-20">
@@ -166,7 +185,7 @@ export default function Apropos() {
             <motion.div initial={{ opacity: 0, rotate: 0 }} animate={{ opacity: 1, rotate: 3 }} transition={{ delay: 0.3, duration: 0.6 }} className="absolute top-0 right-8 w-56 h-64 overflow-hidden shadow-xl" style={{ backgroundColor: '#E87040', borderRadius: '40% 60% 70% 30% / 40% 50% 60% 50%' }} />
             <motion.div initial={{ opacity: 0, rotate: 0 }} animate={{ opacity: 1, rotate: -6 }} transition={{ delay: 0.4, duration: 0.6 }} className="absolute top-16 left-0 w-44 h-44 overflow-hidden shadow-xl" style={{ backgroundColor: '#9BBF90', borderRadius: '50% 50% 40% 60% / 60% 40% 50% 50%' }} />
             <motion.div initial={{ opacity: 0, rotate: 0 }} animate={{ opacity: 1, rotate: -2 }} transition={{ delay: 0.5, duration: 0.6 }} className="absolute bottom-0 right-0 w-48 h-56 overflow-hidden shadow-xl" style={{ backgroundColor: '#F2A0A8', borderRadius: '60% 40% 50% 50% / 50% 60% 40% 50%' }} />
-            <motion.div initial={{ opacity: 0, rotate: 0 }} animate={{ opacity: 1, rotate: 6 }} transition={{ delay: 0.6, duration: 0.6 }} className="absolute bottom-8 left-12 w-36 h-36 overflow-hidden shadow-xl" style={{ backgroundColor: '#F5D060', borderRadius: '30% 70% 70% 30% / 30% 30% 70% 70%' }} />
+            <motion.div initial={{ opacity: 0, rotate: 0 }} animate={{ opacity: 1, rotate: 6 }} transition={{ delay: 0.6, duration: 0.6 }} className="absolute bottom-8 left-12 w-36 h-36 overflow-hidden shadow-xl" style={{ backgroundColor: '#F3D07A', borderRadius: '30% 70% 70% 30% / 30% 30% 70% 70%' }} />
             {/* illustration3 centrée entre les formes */}
             <motion.img
               src={imgEtagere}
@@ -193,7 +212,7 @@ export default function Apropos() {
 
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 items-center relative z-10">
           <div>
-            <Reveal><p className="font-ui text-xs uppercase tracking-[0.3em] text-[#F5D060] mb-4">Qui suis-je ?</p></Reveal>
+            <Reveal><p className="font-ui text-xs uppercase tracking-[0.3em] text-[#F3D07A] mb-4">Qui suis-je ?</p></Reveal>
             <Reveal delay={0.1}>
               <h2 className="font-display font-bold text-5xl md:text-6xl leading-tight mb-8">
                 Artiste et céramiste<br /><span className="italic text-[#F2A0A8]">passionnée</span>
@@ -220,7 +239,7 @@ export default function Apropos() {
               <div className="absolute bottom-0 right-0 w-64 h-80 rounded-2xl overflow-hidden shadow-2xl rotate-[3deg] z-10">
                 <img src={imgLea2} alt="Léa à l'atelier" className="w-full h-full object-cover object-center" />
               </div>
-              <div className="absolute -bottom-6 left-4 bg-[#F5D060] text-[#2A1506] rounded-2xl p-4 max-w-[160px] shadow-xl z-20">
+              <div className="absolute -bottom-6 left-4 bg-[#F3D07A] text-[#2A1506] rounded-2xl p-4 max-w-[160px] shadow-xl z-20">
                 <p className="font-display font-bold text-2xl">5 ans</p>
                 <p className="font-ui text-xs">d'expérience</p>
               </div>
@@ -245,7 +264,7 @@ export default function Apropos() {
                   rel="noopener noreferrer"
                   className="inline-block border-b-2 border-orange pb-1 font-ui text-sm font-semibold text-orange hover:text-brown hover:border-brown transition-colors"
                 >
-                  Voir mon book →
+                  Voir mes créations →
                 </a>
                 <Link to="/boutique" className="inline-block border-b-2 border-brown pb-1 font-ui text-sm font-semibold hover:text-orange hover:border-orange transition-colors">
                   Voir la boutique →
@@ -304,7 +323,7 @@ export default function Apropos() {
             {[
               { color: '#E87040', title: 'Un lieu de partage et de rencontre', text: 'De nos jours, il est difficile de faire de nouvelles rencontres. C’est pourquoi, à travers ces initiations, je souhaite créer un espace d’échange, permettant de rencontrer d’autres personnes partageant les mêmes passions.', tag: 'Ateliers' },
               { color: '#9BBF90', title: 'Cours enfants', text: 'Des séances adaptées aux petits, pour leur faire découvrir le plaisir de l\'argile entre leurs mains. Laisser parler leur imagination pour stimuler leur confiance en eux et leur créativité !', tag: 'Futur' },
-              { color: '#F5D060', title: 'Prochainement : l\'art thérapie', text: 'Mettre l’art au service de la personne est un de mes objectifs futurs ! Me former à cette pratique me permettrait de créer une bulle pour ceux qui ont besoin d’aide pour mieux se comprendre et s’exprimer.', tag: 'Futur' },
+              { color: '#F3D07A', title: 'Prochainement : l\'art thérapie', text: 'Mettre l’art au service de la personne est un de mes objectifs futurs ! Me former à cette pratique me permettrait de créer une bulle pour ceux qui ont besoin d’aide pour mieux se comprendre et s’exprimer.', tag: 'Futur' },
             ].map(({ color, title, text, tag }, i) => (
               <Reveal key={title} delay={i * 0.1} direction="up">
                 <div className="bg-[#FBF5E9] rounded-3xl p-8 border border-[#2A1506]/10 hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
@@ -322,27 +341,116 @@ export default function Apropos() {
       <section className="px-6 md:px-16 lg:px-24 py-24 bg-[#2A1506]">
         <div className="max-w-7xl mx-auto">
           <Reveal>
-            <p className="font-ui text-xs uppercase tracking-[0.3em] text-[#F5D060] mb-4">Ils témoignent</p>
+            <p className="font-ui text-xs uppercase tracking-[0.3em] text-[#F3D07A] mb-4">Ils témoignent</p>
             <h2 className="font-display font-bold text-5xl md:text-6xl text-[#FBF5E9] leading-tight mb-16">
               Ce qu'ils<br /><span className="italic text-[#F2A0A8]">en disent</span>
             </h2>
           </Reveal>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {testimonials.map(({ name, text, type }, i) => (
-              <Reveal key={name} delay={i * 0.1} direction="up">
-                <div className={`rounded-3xl p-8 flex flex-col gap-6 h-full ${i === 1 ? 'bg-[#E87040]' : 'bg-[#FBF5E9]/5 border border-[#FBF5E9]/10'}`}>
-                  <span className="font-display text-5xl leading-none select-none opacity-40" style={{ color: i === 1 ? '#2A1506' : '#F5D060' }}>"</span>
-                  <p className={`font-body text-base leading-relaxed flex-1 ${i === 1 ? 'text-[#2A1506]' : 'text-[#FBF5E9]/80'}`}>{text}</p>
-                  <div className="flex items-center justify-between">
-                    <p className={`font-ui font-semibold text-sm ${i === 1 ? 'text-[#2A1506]' : 'text-[#FBF5E9]'}`}>{name}</p>
-                    <span className={`font-ui text-xs px-3 py-1 rounded-lg ${i === 1 ? 'bg-[#2A1506]/15 text-[#2A1506]' : type === 'initiation' ? 'bg-[#9BBF90]/20 text-[#9BBF90]' : 'bg-[#F5D060]/20 text-[#F5D060]'}`}>
-                      {type === 'initiation' ? 'Initiation' : 'Création'}
-                    </span>
-                  </div>
+
+          {/* Commentaires */}
+          {(() => {
+            const displayed = commentaires !== null && commentaires.length > 0 ? commentaires : FALLBACK_TESTIMONIALS
+            return (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+                {displayed.map(({ id, nom, texte, type }, i) => (
+                  <Reveal key={id} delay={i * 0.1} direction="up">
+                    <div className={`rounded-3xl p-8 flex flex-col gap-6 h-full ${i === 1 ? 'bg-[#E87040]' : 'bg-[#FBF5E9]/5 border border-[#FBF5E9]/10'}`}>
+                      <span className="font-display text-5xl leading-none select-none opacity-40" style={{ color: i === 1 ? '#2A1506' : '#F3D07A' }}>"</span>
+                      <p className={`font-body text-base leading-relaxed flex-1 ${i === 1 ? 'text-[#2A1506]' : 'text-[#FBF5E9]/80'}`}>{texte}</p>
+                      <div className="flex items-center justify-between">
+                        <p className={`font-ui font-semibold text-sm ${i === 1 ? 'text-[#2A1506]' : 'text-[#FBF5E9]'}`}>{nom}</p>
+                        <span className={`font-ui text-xs px-3 py-1 rounded-lg ${i === 1 ? 'bg-[#2A1506]/15 text-[#2A1506]' : type === 'initiation' ? 'bg-[#9BBF90]/20 text-[#9BBF90]' : type === 'cours' ? 'bg-[#F2A0A8]/20 text-[#F2A0A8]' : 'bg-[#F3D07A]/20 text-[#F3D07A]'}`}>
+                          {{ initiation: 'Initiation', cours: 'Cours', autre: 'Autre', creation: 'Création' }[type] ?? type}
+                        </span>
+                      </div>
+                    </div>
+                  </Reveal>
+                ))}
+              </div>
+            )
+          })()}
+
+          {/* Formulaire laisser un commentaire */}
+          <Reveal delay={0.2}>
+            <div className="bg-[#FBF5E9]/5 border border-[#FBF5E9]/10 rounded-3xl p-8">
+              <p className="font-ui text-xs uppercase tracking-[0.3em] text-[#F3D07A] mb-3">Votre tour</p>
+              <h3 className="font-display font-bold text-2xl text-[#FBF5E9] mb-6">Laisser un témoignage</h3>
+              {commentStatus === 'success' ? (
+                <div className="text-center py-6">
+                  <p className="font-display italic text-2xl text-[#9BBF90] mb-2">Merci !</p>
+                  <p className="font-ui text-sm text-[#FBF5E9]/50">Votre témoignage est en cours de validation et apparaîtra prochainement.</p>
+                  <button onClick={() => setCommentStatus(null)} className="mt-4 font-ui text-xs text-[#FBF5E9]/30 hover:text-[#FBF5E9]/60 transition-colors underline">
+                    Laisser un autre témoignage
+                  </button>
                 </div>
-              </Reveal>
-            ))}
-          </div>
+              ) : (
+                <form onSubmit={handleCommentSubmit} className="flex flex-col gap-4">
+                  <div className="flex flex-col sm:flex-row gap-4">
+                    <div className="flex-1">
+                      <label className="font-ui text-xs uppercase tracking-widest text-[#FBF5E9]/40 block mb-1.5">Votre prénom / nom</label>
+                      <input
+                        type="text"
+                        value={commentForm.nom}
+                        onChange={e => setCommentForm(f => ({ ...f, nom: e.target.value }))}
+                        required
+                        maxLength={60}
+                        placeholder="Camille R."
+                        className="w-full font-ui text-sm bg-[#FBF5E9]/8 border-2 border-[#FBF5E9]/10 focus:border-[#E87040] outline-none rounded-xl px-4 py-2.5 text-[#FBF5E9] placeholder:text-[#FBF5E9]/20 transition-colors"
+                      />
+                    </div>
+                    <div className="sm:w-44 relative">
+                      <label className="font-ui text-xs uppercase tracking-widest text-[#FBF5E9]/40 block mb-1.5">Contexte</label>
+                      <button
+                        type="button"
+                        onClick={() => setTypeDropdownOpen(o => !o)}
+                        className="w-full font-ui text-sm bg-[#FBF5E9]/8 border-2 border-[#FBF5E9]/10 focus:border-[#E87040] outline-none rounded-xl px-4 py-2.5 text-[#FBF5E9] transition-colors flex items-center justify-between"
+                      >
+                        <span>{{ initiation: 'Initiation', cours: 'Cours', autre: 'Autre' }[commentForm.type]}</span>
+                        <svg className={`w-4 h-4 text-[#FBF5E9]/40 transition-transform duration-200 ${typeDropdownOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                      </button>
+                      {typeDropdownOpen && (
+                        <>
+                          <div className="fixed inset-0 z-10" onClick={() => setTypeDropdownOpen(false)} />
+                          <div className="absolute top-[110%] left-0 w-full bg-[#2A1506] border-2 border-[#FBF5E9]/10 rounded-xl overflow-hidden z-20 shadow-2xl flex flex-col">
+                            {[{ v: 'initiation', l: 'Initiation' }, { v: 'cours', l: 'Cours' }, { v: 'autre', l: 'Autre' }].map(({ v, l }) => (
+                              <button key={v} type="button"
+                                onClick={() => { setCommentForm(f => ({ ...f, type: v })); setTypeDropdownOpen(false) }}
+                                className={`w-full text-left px-4 py-2.5 font-ui text-sm transition-colors ${v === commentForm.type ? 'bg-[#E87040]/15 text-[#E87040] font-semibold' : 'text-[#FBF5E9]/70 hover:bg-[#FBF5E9]/5 hover:text-[#FBF5E9]'}`}>
+                                {l}
+                              </button>
+                            ))}
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                  <div>
+                    <label className="font-ui text-xs uppercase tracking-widest text-[#FBF5E9]/40 block mb-1.5">Votre témoignage</label>
+                    <textarea
+                      value={commentForm.texte}
+                      onChange={e => setCommentForm(f => ({ ...f, texte: e.target.value }))}
+                      required
+                      maxLength={400}
+                      rows={3}
+                      placeholder="Partagez votre expérience avec l'atelier…"
+                      className="w-full font-ui text-sm bg-[#FBF5E9]/8 border-2 border-[#FBF5E9]/10 focus:border-[#E87040] outline-none rounded-xl px-4 py-2.5 text-[#FBF5E9] placeholder:text-[#FBF5E9]/20 transition-colors resize-none"
+                    />
+                    <p className="font-ui text-xs text-[#FBF5E9]/20 mt-1 text-right">{commentForm.texte.length}/400</p>
+                  </div>
+                  {commentStatus === 'error' && (
+                    <p className="font-ui text-xs text-[#F2A0A8]">Une erreur est survenue, veuillez réessayer.</p>
+                  )}
+                  <div className="flex items-center gap-4">
+                    <button type="submit" disabled={commentStatus === 'loading'}
+                      className="font-ui font-semibold text-sm px-8 py-3.5 bg-[#E87040] text-[#2A1506] rounded-xl hover:bg-[#FBF5E9] transition-colors disabled:opacity-50">
+                      {commentStatus === 'loading' ? 'Envoi…' : 'Envoyer →'}
+                    </button>
+                    <p className="font-ui text-xs text-[#FBF5E9]/25">Les témoignages sont vérifiés avant publication.</p>
+                  </div>
+                </form>
+              )}
+            </div>
+          </Reveal>
         </div>
       </section>
 

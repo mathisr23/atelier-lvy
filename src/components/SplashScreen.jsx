@@ -26,7 +26,7 @@ export default function SplashScreen({ onDone }) {
             transition={{ duration: 10, repeat: Infinity, ease: 'linear' }}
             className="absolute top-12 left-12 opacity-30"
           >
-            <Asterisk size={28} color="#F5D060" />
+            <Asterisk size={28} color="#F3D07A" />
           </motion.div>
           <motion.div
             animate={{ rotate: -360 }}

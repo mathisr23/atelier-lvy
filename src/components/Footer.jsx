@@ -26,7 +26,7 @@ export default function Footer() {
               <NavLink
                 key={to}
                 to={to}
-                className="text-[#FBF5E9]/70 hover:text-[#F5D060] transition-colors text-sm"
+                className="text-[#FBF5E9]/70 hover:text-[#F3D07A] transition-colors text-sm"
               >
                 {label}
               </NavLink>
@@ -37,7 +37,7 @@ export default function Footer() {
         {/* Contact */}
         <div>
           <p className="font-ui text-xs uppercase tracking-widest text-[#FBF5E9]/40 mb-4">Contact</p>
-          <a href="mailto:contact.atelierlvy@gmail.com" className="text-[#FBF5E9]/70 hover:text-[#F5D060] transition-colors text-sm block mb-2">contact.atelierlvy@gmail.com</a>
+          <a href="mailto:contact.atelierlvy@gmail.com" className="text-[#FBF5E9]/70 hover:text-[#F3D07A] transition-colors text-sm block mb-2">contact.atelierlvy@gmail.com</a>
           <a
             href="https://instagram.com/atelier_lvy"
             target="_blank"

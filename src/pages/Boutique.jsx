@@ -81,7 +81,7 @@ export default function Boutique() {
           <div className="mb-10">
             <div className="flex items-center justify-between flex-wrap gap-4 mb-4">
               <h2 className="font-display font-bold text-3xl md:text-4xl">Mes pièces</h2>
-              <span className="font-ui text-xs font-semibold bg-[#F5D060] text-[#2A1506] px-4 py-2 rounded-lg uppercase tracking-widest">Coming soon</span>
+              <span className="font-ui text-xs font-semibold bg-[#F3D07A] text-[#2A1506] px-4 py-2 rounded-lg uppercase tracking-widest">Coming soon</span>
             </div>
             <p className="font-body text-[#2A1506]/70 text-lg max-w-2xl">
               Des créations faites à la main en grès, des pièces uniques ou en petites séries !

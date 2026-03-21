@@ -144,7 +144,7 @@ export default function Initiation() {
               </div>
               <span className="ml-auto font-ui text-xl">→</span>
             </a>
-            <a href="#domicile" className="group flex items-center gap-4 bg-[#F5D060] text-[#2A1506] border-2 border-[#2A1506] rounded-xl px-4 md:px-8 py-5 shadow-[3px_3px_0px_rgba(42,21,6,0.25)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] transition-all duration-150">
+            <a href="#domicile" className="group flex items-center gap-4 bg-[#F3D07A] text-[#2A1506] border-2 border-[#2A1506] rounded-xl px-4 md:px-8 py-5 shadow-[3px_3px_0px_rgba(42,21,6,0.25)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] transition-all duration-150">
               <span className="font-display font-black text-3xl">②</span>
               <div>
                 <p className="font-ui font-semibold text-base">À domicile</p>
@@ -261,7 +261,7 @@ export default function Initiation() {
                           </span>
                           {session && (
                             <span className={`text-[0.65rem] md:text-xs leading-none mt-1 font-ui font-semibold
-                              ${isSel ? 'text-[#F5D060]' : dispo ? 'text-[#E87040]' : 'text-[#2A1506]/30'}`}>
+                              ${isSel ? 'text-[#F3D07A]' : dispo ? 'text-[#E87040]' : 'text-[#2A1506]/30'}`}>
                               {dispo ? `${session.places_restantes} place${session.places_restantes > 1 ? 's' : ''}` : '✕'}
                             </span>
                           )}
@@ -328,13 +328,13 @@ export default function Initiation() {
       <section
         id="domicile"
         className="px-6 md:px-16 lg:px-24 py-24 scroll-mt-20 relative overflow-hidden"
-        style={{ backgroundColor: '#F5D060', backgroundImage: 'linear-gradient(rgba(42,21,6,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(42,21,6,0.06) 1px, transparent 1px)', backgroundSize: '28px 28px' }}
+        style={{ backgroundColor: '#F3D07A', backgroundImage: 'linear-gradient(rgba(42,21,6,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(42,21,6,0.06) 1px, transparent 1px)', backgroundSize: '28px 28px' }}
       >
-        {/* Illustrations décoratives */}
-        <img src={imgRessort} alt="" aria-hidden="true" className="absolute -top-50 right-60 w-[34rem] -rotate-45 object-contain mix-blend-multiply contrast-[1.1] pointer-events-none hidden lg:block" style={{ imageRendering: '-webkit-optimize-contrast' }} />
-        <img src={imgOutils3} alt="" aria-hidden="true" className="absolute top-70 right-140 w-80 object-contain mix-blend-multiply contrast-[1.1] pointer-events-none hidden lg:block rotate-12" style={{ imageRendering: '-webkit-optimize-contrast' }} />
-        <img src={imgPinceau} alt="" aria-hidden="true" className="absolute bottom-0 right-60 w-72 object-contain mix-blend-multiply contrast-[1.1] pointer-events-none hidden lg:block -rotate-6" style={{ imageRendering: '-webkit-optimize-contrast' }} />
-        <div className="absolute bottom-12 right-8 bg-[#FBF5E9] rounded-2xl p-4 shadow-lg hidden lg:block z-20">
+        {/* Illustrations décoratives — visibles uniquement >= 1590px */}
+        <img src={imgRessort} alt="" aria-hidden="true" className="absolute -top-50 right-60 w-[34rem] -rotate-45 object-contain mix-blend-multiply contrast-[1.1] pointer-events-none hidden [@media(min-width:1590px)]:block" style={{ imageRendering: '-webkit-optimize-contrast' }} />
+        <img src={imgOutils3} alt="" aria-hidden="true" className="absolute top-70 right-140 w-80 object-contain mix-blend-multiply contrast-[1.1] pointer-events-none hidden [@media(min-width:1590px)]:block rotate-12" style={{ imageRendering: '-webkit-optimize-contrast' }} />
+        <img src={imgPinceau} alt="" aria-hidden="true" className="absolute bottom-0 right-60 w-72 object-contain mix-blend-multiply contrast-[1.1] pointer-events-none hidden [@media(min-width:1590px)]:block -rotate-6" style={{ imageRendering: '-webkit-optimize-contrast' }} />
+        <div className="absolute bottom-12 right-8 bg-[#FBF5E9] rounded-2xl p-4 shadow-lg hidden [@media(min-width:1590px)]:block z-20">
           <p className="font-display font-bold text-2xl text-[#2A1506]">2 – 10</p>
           <p className="font-ui text-xs text-[#2A1506]/60">participants</p>
         </div>
@@ -363,7 +363,7 @@ export default function Initiation() {
                 <ul className="space-y-2">
                   {['Matériel/Argile/Engobe fournis', "Encadrement tout au long de l'atelier", 'Cuisson des pièces incluse (première cuisson, émaillage + deuxième cuisson)', "Récupération des créations 1 mois minimum après l'initiation (livraison possible sur devis)"].map((item) => (
                     <li key={item} className="flex items-start gap-2 text-[#FBF5E9]/80 font-ui text-sm">
-                      <span className="text-[#F5D060] mt-0.5">✓</span>{item}
+                      <span className="text-[#F3D07A] mt-0.5">✓</span>{item}
                     </li>
                   ))}
                 </ul>
@@ -380,9 +380,9 @@ export default function Initiation() {
       {/* INITIATION PONCTUELLE */}
       <section className="px-6 md:px-16 lg:px-24 py-16 max-w-7xl mx-auto">
         <Reveal>
-          <div className="bg-[#F5D060]/30 border border-[#F5D060]/50 rounded-3xl p-10 md:p-12 flex flex-col md:flex-row items-start gap-8">
+          <div className="bg-[#F3D07A]/30 border border-[#F3D07A]/50 rounded-3xl p-10 md:p-12 flex flex-col md:flex-row items-start gap-8">
             <div className="flex-1">
-              <span className="inline-block font-ui text-xs uppercase tracking-widest bg-[#F5D060] text-[#2A1506] px-3 py-1 rounded-lg mb-4">Offre spéciale</span>
+              <span className="inline-block font-ui text-xs uppercase tracking-widest bg-[#F3D07A] text-[#2A1506] px-3 py-1 rounded-lg mb-4">Offre spéciale</span>
               <h3 className="font-display font-bold text-2xl md:text-3xl text-[#2A1506] mb-3">Initiation parent / enfant</h3>
               <p className="font-ui text-[#2A1506]/60 text-sm leading-relaxed max-w-md mb-4">
                 Un moment unique à partager en famille ! Venez créer ensemble pendant 2 heures de modelage, pour les enfants à partir de 3 ans.

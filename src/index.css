@@ -8,7 +8,7 @@
   --color-rose-dark: #D97080;
   --color-sage: #9BBF90;
   --color-sage-dark: #6A9960;
-  --color-yellow: #F5D060;
+  --color-yellow: #F3D07A;
   --color-orange: #E87040;
   --color-brown: #2A1506;
   --color-brown-light: #6B3E20;
@@ -25,10 +25,12 @@
 
   html {
     scroll-behavior: smooth;
+    overflow-x: hidden;
   }
 
   body {
     margin: 0;
+    overflow-x: hidden;
     font-family: var(--font-body);
     font-size: 1.05rem;
     background-color: var(--color-cream);

@@ -529,28 +529,28 @@ function AddSessionForm({ onAdd }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="bg-[#2A1506] rounded-2xl p-5 flex flex-col sm:flex-row gap-3 items-end mb-6">
+    <form onSubmit={handleSubmit} className="bg-[#2A1506] rounded-2xl p-5 flex flex-col sm:flex-row gap-3 sm:items-end mb-6">
       <div className="flex-1">
         <label className="font-ui text-xs uppercase tracking-widest text-[#FBF5E9]/40 block mb-1.5">Date</label>
         <input type="date" value={form.date} onChange={e => setForm(f => ({ ...f, date: e.target.value }))} required className={inpDark} />
       </div>
-      <div className="flex-1 min-w-[120px]">
+      <div className="flex-1 sm:min-w-[120px]">
         <label className="font-ui text-xs uppercase tracking-widest text-[#FBF5E9]/40 block mb-1.5">Type</label>
         <TypeSelector
           value={form.type}
           onChange={val => setForm(f => ({ ...f, type: val, places: val === 'cours' ? 6 : 8 }))}
         />
       </div>
-      <div className="flex-1 min-w-[120px]">
+      <div className="flex-1 sm:min-w-[120px]">
         <label className="font-ui text-xs uppercase tracking-widest text-[#FBF5E9]/40 block mb-1.5">Horaires</label>
         <input type="text" value={form.heure} onChange={e => setForm(f => ({ ...f, heure: e.target.value }))} placeholder="18h30 – 20h30" required className={inpDark} />
       </div>
-      <div className="w-20">
+      <div className="w-full sm:w-20">
         <label className="font-ui text-xs uppercase tracking-widest text-[#FBF5E9]/40 block mb-1.5">Places</label>
         <input type="number" min={1} max={20} value={form.places} onChange={e => setForm(f => ({ ...f, places: parseInt(e.target.value) }))} className={inpDark} />
       </div>
       <button type="submit" disabled={loading}
-        className="font-ui font-bold text-sm px-5 py-2.5 bg-[#E87040] text-[#2A1506] rounded-xl hover:bg-[#FBF5E9] transition-colors disabled:opacity-50 whitespace-nowrap">
+        className="w-full sm:w-auto font-ui font-bold text-sm px-5 py-2.5 bg-[#E87040] text-[#2A1506] rounded-xl hover:bg-[#FBF5E9] transition-colors disabled:opacity-50 whitespace-nowrap">
         {loading ? '…' : '+ Ajouter'}
       </button>
     </form>

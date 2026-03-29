@@ -179,7 +179,8 @@ export default function Cours() {
     : 1
 
   const datesForContact = encodeURIComponent(selectedSessions.map(s => s.key).join(','))
-  const ready = selectedSessions.length === nbSeances
+  // Pour les packs 5 et 10 : prêt dès 1 séance sélectionnée, le reste se planifie par mail
+  const ready = nbSeances === 1 ? selectedSessions.length === 1 : selectedSessions.length >= 1
   const contactUrl = ready
     ? `/contact?type=cours&dates=${datesForContact}&seances=${nbSeances}&places=${nbPlaces}`
     : '/contact?type=cours'
@@ -279,7 +280,7 @@ export default function Cours() {
                     <span className="font-display italic text-6xl text-[#2A1506]/10 select-none leading-none">5</span>
                   </div>
                   <div className="bg-[#2A1506]/10 rounded-2xl px-5 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                    <p className="font-ui text-sm text-[#2A1506]/70">5 séances à réserver librement selon les disponibilités.</p>
+                    <p className="font-ui text-sm text-[#2A1506]/70">Réserve ta 1ère séance en ligne — Léa planifie les 4 suivantes avec toi par mail.</p>
                     <a href="#choix-pack" className="bg-[#2A1506] text-[#FBF5E9] border-2 border-[#2A1506] font-ui font-semibold text-sm px-5 py-2.5 rounded-xl hover:bg-[#FBF5E9] hover:text-[#2A1506] transition-all duration-200 whitespace-nowrap">
                       Choisir →
                     </a>
@@ -297,7 +298,7 @@ export default function Cours() {
                     <span className="font-display italic text-6xl text-[#FBF5E9]/10 select-none leading-none">10</span>
                   </div>
                   <div className="bg-[#FBF5E9]/10 rounded-2xl px-5 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                    <p className="font-ui text-sm text-[#FBF5E9]/60">10 séances pour s'investir vraiment dans la céramique.</p>
+                    <p className="font-ui text-sm text-[#FBF5E9]/60">Réserve ta 1ère séance en ligne — Léa planifie les 9 suivantes avec toi par mail.</p>
                     <a href="#choix-pack" className="bg-[#F3D07A] text-[#2A1506] border-2 border-[#F3D07A] font-ui font-semibold text-sm px-5 py-2.5 rounded-xl hover:bg-[#2A1506] hover:text-[#FBF5E9] hover:border-[#2A1506] transition-all duration-200 whitespace-nowrap">
                       Choisir →
                     </a>
@@ -315,7 +316,12 @@ export default function Cours() {
           <div className="flex flex-col items-center text-center mb-10">
             <p className="font-ui text-xs uppercase tracking-[0.3em] text-[#9BBF90] mb-3">Étape 1</p>
             <h2 className="font-display font-bold text-3xl md:text-4xl mb-2">Choisis ton pack</h2>
-            <p className="font-ui text-[#2A1506]/50 text-sm">Ensuite, sélectionne exactement {nbSeances} date{nbSeances > 1 ? 's' : ''} dans le planning ci-dessous — tous jours confondus.</p>
+            <p className="font-ui text-[#2A1506]/50 text-sm">
+              {nbSeances === 1
+                ? 'Sélectionne 1 date dans le planning ci-dessous.'
+                : `Sélectionne au moins ta première séance — Léa planifie les ${nbSeances - 1} autres avec toi directement par mail.`
+              }
+            </p>
           </div>
         </Reveal>
         <Reveal delay={0.1}>
@@ -360,7 +366,7 @@ export default function Cours() {
           </div>
           {ready && (
             <p className="font-ui text-sm text-[#2A1506]/70 hidden sm:block">
-              ✓ Parfait ! Descends pour confirmer →
+              {nbSeances === 1 ? '✓ Parfait ! Descends pour confirmer →' : '✓ Bonne date ! Descends pour s\'inscrire →'}
             </p>
           )}
         </div>
@@ -457,7 +463,9 @@ export default function Cours() {
             <p className="font-ui text-xs uppercase tracking-[0.3em] text-[#FBF5E9]/40 mb-4">Inscription</p>
             <h2 className="font-display font-bold text-4xl md:text-5xl text-[#FBF5E9] mb-8 leading-tight">
               {ready
-                ? <><span className="italic text-[#9BBF90]">{nbSeances} séance{nbSeances > 1 ? 's' : ''}</span> choisies ✓</>
+                ? nbSeances === 1
+                  ? <><span className="italic text-[#9BBF90]">1 séance</span> choisie ✓</>
+                  : <><span className="italic text-[#9BBF90]">{selectedSessions.length} séance{selectedSessions.length > 1 ? 's' : ''}</span> pour démarrer ✓</>
                 : <>Choisis tes <span className="italic text-[#9BBF90]">séances</span></>
               }
             </h2>
@@ -477,7 +485,9 @@ export default function Cours() {
                     {Array.from({ length: nbSeances - selectedSessions.length }).map((_, i) => (
                       <li key={`empty-${i}`} className="flex items-center gap-3">
                         <span className="font-display font-bold text-[#FBF5E9]/20 text-sm w-5 text-right">{selectedSessions.length + i + 1}.</span>
-                        <span className="font-ui text-[#FBF5E9]/20 text-sm italic">à sélectionner...</span>
+                        <span className="font-ui text-[#FBF5E9]/30 text-sm italic">
+                          {nbSeances === 1 ? 'à sélectionner...' : 'à planifier avec Léa par mail'}
+                        </span>
                       </li>
                     ))}
                   </ul>

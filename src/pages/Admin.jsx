@@ -692,7 +692,30 @@ export default function Admin() {
   return (
     <div className="min-h-screen bg-[#FBF5E9]">
       <header className="bg-[#2A1506] sticky top-0 z-10">
-        <div className="max-w-6xl mx-auto px-6 md:px-10 flex items-center justify-between">
+        {/* Mobile */}
+        <div className="md:hidden">
+          <div className="flex items-center justify-between px-4 pt-3 pb-2">
+            <p className="font-display italic font-bold text-[#E87040] text-xl">Atelier LVY</p>
+            <button onClick={() => supabase.auth.signOut()}
+              className="font-ui text-xs text-[#FBF5E9]/40 hover:text-[#FBF5E9] transition-colors">
+              Déconnexion
+            </button>
+          </div>
+          <nav className="flex border-t border-[#FBF5E9]/5">
+            {[
+              { key: 'reservations', label: counts.pending > 0 ? `Rés. · ${counts.pending}` : 'Rés.' },
+              { key: 'sessions', label: `Créneaux · ${sessions.length}` },
+              { key: 'commentaires', label: commentsPending > 0 ? `Avis · ${commentsPending}` : 'Avis' },
+            ].map(({ key, label }) => (
+              <button key={key} onClick={() => setActiveTab(key)}
+                className={`flex-1 font-ui text-xs font-semibold px-1 py-3 border-b-2 transition-all text-center ${activeTab === key ? 'text-[#E87040] border-[#E87040]' : 'text-[#FBF5E9]/40 border-transparent'}`}>
+                {label}
+              </button>
+            ))}
+          </nav>
+        </div>
+        {/* Desktop */}
+        <div className="hidden md:flex max-w-6xl mx-auto px-10 items-center justify-between">
           <p className="font-display italic font-bold text-[#E87040] text-xl py-4">Atelier LVY</p>
           <nav className="flex items-center gap-0">
             {[

@@ -280,7 +280,7 @@ export default function Cours() {
                     <span className="font-display italic text-6xl text-[#2A1506]/10 select-none leading-none">5</span>
                   </div>
                   <div className="bg-[#2A1506]/10 rounded-2xl px-5 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                    <p className="font-ui text-sm text-[#2A1506]/70">Réserve ta 1ère séance en ligne — Léa planifie les 4 suivantes avec toi par mail.</p>
+                    <p className="font-ui text-sm text-[#2A1506]/70">Pas besoin de connaître toutes tes dispos à l'avance — choisis ce que tu veux maintenant et planifie le reste directement avec Léa.</p>
                     <a href="#choix-pack" className="bg-[#2A1506] text-[#FBF5E9] border-2 border-[#2A1506] font-ui font-semibold text-sm px-5 py-2.5 rounded-xl hover:bg-[#FBF5E9] hover:text-[#2A1506] transition-all duration-200 whitespace-nowrap">
                       Choisir →
                     </a>
@@ -298,7 +298,7 @@ export default function Cours() {
                     <span className="font-display italic text-6xl text-[#FBF5E9]/10 select-none leading-none">10</span>
                   </div>
                   <div className="bg-[#FBF5E9]/10 rounded-2xl px-5 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                    <p className="font-ui text-sm text-[#FBF5E9]/60">Réserve ta 1ère séance en ligne — Léa planifie les 9 suivantes avec toi par mail.</p>
+                    <p className="font-ui text-sm text-[#FBF5E9]/60">Pas besoin de connaître toutes tes dispos à l'avance — choisis ce que tu veux maintenant et planifie le reste directement avec Léa.</p>
                     <a href="#choix-pack" className="bg-[#F3D07A] text-[#2A1506] border-2 border-[#F3D07A] font-ui font-semibold text-sm px-5 py-2.5 rounded-xl hover:bg-[#2A1506] hover:text-[#FBF5E9] hover:border-[#2A1506] transition-all duration-200 whitespace-nowrap">
                       Choisir →
                     </a>
@@ -319,7 +319,7 @@ export default function Cours() {
             <p className="font-ui text-[#2A1506]/50 text-sm">
               {nbSeances === 1
                 ? 'Sélectionne 1 date dans le planning ci-dessous.'
-                : `Sélectionne au moins ta première séance — Léa planifie les ${nbSeances - 1} autres avec toi directement par mail.`
+                : 'Choisis autant de séances que tu veux — pas besoin de tout planifier maintenant, tu peux prévoir le reste avec Léa directement par mail.'
               }
             </p>
           </div>

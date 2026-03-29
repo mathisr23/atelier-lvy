@@ -103,7 +103,9 @@ export default function Cours() {
       .eq('type', 'cours')
       .order('annee').order('mois').order('day')
       .then(({ data }) => {
-        const sorted = data || []
+        const today = new Date()
+        today.setHours(0, 0, 0, 0)
+        const sorted = (data || []).filter(s => new Date(s.annee, s.mois, s.day) >= today)
         setDbMardi(sorted.filter(s => s.jour.toLowerCase() === 'mardi'))
         setDbJeudi(sorted.filter(s => s.jour.toLowerCase() === 'jeudi'))
         setDbSamedi(sorted.filter(s => s.jour.toLowerCase() === 'samedi'))

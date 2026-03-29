@@ -657,19 +657,30 @@ export default function Admin() {
     if (s.type === 'cours') {
       let reserved = 0
       const dayPrefix = s.jour
+      const dateKey = `${s.jour} ${s.date}`
       const sTypeSessions = sessions.filter(x => x.type === 'cours' && x.jour.toLowerCase() === dayPrefix.toLowerCase())
       const currentIndex = sTypeSessions.findIndex(x => x.id === s.id)
 
       reservations.forEach(r => {
         if (r.type === 'cours' && r.status === 'accepted') {
-          if (r.date_session && r.date_session.toLowerCase().startsWith(dayPrefix.toLowerCase())) {
+          if (!r.date_session) return
+          // Nouveau format : JSON array ["Mardi 25 mars", ...]
+          try {
+            const dates = JSON.parse(r.date_session)
+            if (Array.isArray(dates)) {
+              if (dates.includes(dateKey)) reserved += r.nb_places || 1
+              return
+            }
+          } catch {
+            // Ancien format : "Mardi 25 mars" avec séances consécutives
+          }
+          if (r.date_session.toLowerCase().startsWith(dayPrefix.toLowerCase())) {
             const startDate = r.date_session.replace(new RegExp(`^${dayPrefix} `, 'i'), '')
             const startIndex = sTypeSessions.findIndex(x => x.date === startDate)
             if (startIndex !== -1) {
-              const numPlaces = r.nb_places || 1
               const nbSns = r.nb_seances || 5
               if (currentIndex >= startIndex && currentIndex < startIndex + nbSns) {
-                reserved += numPlaces
+                reserved += r.nb_places || 1
               }
             }
           }

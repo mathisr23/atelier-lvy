@@ -338,13 +338,13 @@ export default function Initiation() {
       >
         {/* Illustrations décoratives */}
         <img src={imgRessort} alt="" aria-hidden="true"
-          className="absolute -top-10 right-0 w-48 -rotate-45 object-contain mix-blend-multiply contrast-[1.1] pointer-events-none hidden md:block lg:-top-28 lg:right-8 lg:w-64 [@media(min-width:1590px)]:-top-50 [@media(min-width:1590px)]:right-60 [@media(min-width:1590px)]:w-[34rem]"
+          className="absolute top-8 right-0 w-48 -rotate-45 object-contain mix-blend-multiply contrast-[1.1] pointer-events-none hidden md:block lg:top-16 lg:right-8 lg:w-64 [@media(min-width:1590px)]:-top-50 [@media(min-width:1590px)]:right-60 [@media(min-width:1590px)]:w-[34rem]"
           style={{ imageRendering: '-webkit-optimize-contrast' }} />
         <img src={imgOutils3} alt="" aria-hidden="true"
           className="absolute top-28 -right-8 w-44 rotate-12 object-contain mix-blend-multiply contrast-[1.1] pointer-events-none hidden md:block lg:top-44 lg:right-40 lg:w-60 [@media(min-width:1590px)]:top-70 [@media(min-width:1590px)]:right-140 [@media(min-width:1590px)]:w-80"
           style={{ imageRendering: '-webkit-optimize-contrast' }} />
         <img src={imgPinceau} alt="" aria-hidden="true"
-          className="absolute bottom-0 -right-4 w-36 -rotate-6 object-contain mix-blend-multiply contrast-[1.1] pointer-events-none hidden md:block lg:bottom-0 lg:right-12 lg:w-52 [@media(min-width:1590px)]:right-60 [@media(min-width:1590px)]:w-72"
+          className="absolute -bottom-8 -right-4 w-36 -rotate-6 object-contain mix-blend-multiply contrast-[1.1] pointer-events-none hidden md:block lg:-bottom-10 lg:right-12 lg:w-52 [@media(min-width:1590px)]:bottom-0 [@media(min-width:1590px)]:right-60 [@media(min-width:1590px)]:w-72"
           style={{ imageRendering: '-webkit-optimize-contrast' }} />
         <div className="absolute bottom-12 right-8 bg-[#FBF5E9] rounded-2xl p-4 shadow-lg hidden [@media(min-width:1590px)]:block z-20">
           <p className="font-display font-bold text-2xl text-[#2A1506]">2 – 10</p>

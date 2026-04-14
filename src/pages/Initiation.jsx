@@ -288,10 +288,11 @@ export default function Initiation() {
                             {day}
                           </span>
                           {hasAny && (
-                            <span className={`text-[0.55rem] leading-none mt-0.5 font-ui font-semibold
+                            <span className={`leading-none mt-0.5 font-ui font-semibold text-center px-0.5
+                              ${isMulti ? 'text-[0.6rem] md:text-[0.7rem]' : 'text-[0.55rem]'}
                               ${isSel ? 'text-[#F3D07A]' : isExp ? 'text-[#FBF5E9]/80' : anyDispo ? 'text-[#E87040]' : 'text-[#2A1506]/30'}`}>
                               {isMulti
-                                ? `×${daySessions.length}`
+                                ? `${daySessions.length} séances`
                                 : anyDispo
                                   ? `${daySessions[0].places_restantes}pl`
                                   : '✕'}

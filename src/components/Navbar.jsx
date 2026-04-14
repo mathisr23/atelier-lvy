@@ -15,10 +15,10 @@ export default function Navbar() {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-[#FBF5E9]/90 backdrop-blur-sm border-b border-[#2A1506]/10">
-      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-6 py-2 md:py-4 flex items-center justify-between">
         {/* Logo */}
         <NavLink to="/" className="hover:opacity-80 transition-opacity">
-          <img src={logo1} alt="Léa — Artiste céramiste" className="h-20 w-auto" />
+          <img src={logo1} alt="Léa — Artiste céramiste" className="h-12 md:h-20 w-auto" />
         </NavLink>
 
         {/* Desktop nav */}

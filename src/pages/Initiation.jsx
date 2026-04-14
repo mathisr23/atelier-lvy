@@ -78,6 +78,7 @@ export default function Initiation() {
   const [currentYear, setCurrentYear] = useState(now.getFullYear())
   const [sessions, setSessions] = useState([])
   const [loadingSessions, setLoadingSessions] = useState(true)
+  const [expandedDay, setExpandedDay] = useState(null)
 
   useEffect(() => {
     setLoadingSessions(true)
@@ -93,10 +94,12 @@ export default function Initiation() {
   }, [currentMonth, currentYear])
 
   const prevMonth = () => {
+    setExpandedDay(null); setSelected(null)
     if (currentMonth === 0) { setCurrentMonth(11); setCurrentYear(y => y - 1) }
     else setCurrentMonth(m => m - 1)
   }
   const nextMonth = () => {
+    setExpandedDay(null); setSelected(null)
     if (currentMonth === 11) { setCurrentMonth(0); setCurrentYear(y => y + 1) }
     else setCurrentMonth(m => m + 1)
   }
@@ -240,29 +243,52 @@ export default function Initiation() {
                     {Array.from({ length: Math.ceil((offset + daysInMonth) / 7) * 7 }, (_, i) => {
                       const day = i - offset + 1
                       if (day < 1 || day > daysInMonth) return <div key={i} className="w-full aspect-square" />
-                      const session = sessions.find(s => s.day === day)
-                      const isSel = session && selected === session.id
-                      const dispo = session && session.places_restantes > 0
+                      const daySessions = sessions.filter(s => s.day === day)
+                      const isMulti = daySessions.length > 1
+                      const selectedFromDay = daySessions.find(s => s.id === selected)
+                      const isSel = !!selectedFromDay
+                      const isExp = expandedDay === day
+                      const anyDispo = daySessions.some(s => s.places_restantes > 0)
+                      const hasAny = daySessions.length > 0
                       return (
                         <button
                           key={i}
-                          disabled={!session || !dispo}
-                          onClick={() => { if (session && dispo) { setSelected(isSel ? null : session.id); setNbPlaces(1) } }}
-                          className={`w-full aspect-square rounded-lg flex flex-col items-center justify-center transition-all duration-150 text-xs
-                            ${!session ? 'cursor-default' : ''}
-                            ${session && !dispo ? 'bg-[#2A1506]/10 cursor-not-allowed' : ''}
-                            ${session && dispo && !isSel ? 'bg-[#E87040]/20 border border-[#E87040] hover:bg-[#E87040] cursor-pointer' : ''}
+                          disabled={!hasAny || !anyDispo}
+                          onClick={() => {
+                            if (!hasAny || !anyDispo) return
+                            if (isMulti) {
+                              setExpandedDay(isExp ? null : day)
+                              setSelected(null)
+                              setNbPlaces(1)
+                            } else {
+                              const s = daySessions[0]
+                              if (s.places_restantes > 0) {
+                                setSelected(isSel ? null : s.id)
+                                setExpandedDay(null)
+                                setNbPlaces(1)
+                              }
+                            }
+                          }}
+                          className={`w-full aspect-square rounded-lg flex flex-col items-center justify-center transition-all duration-150 text-xs relative
+                            ${!hasAny ? 'cursor-default' : ''}
+                            ${hasAny && !anyDispo ? 'bg-[#2A1506]/10 cursor-not-allowed' : ''}
+                            ${hasAny && anyDispo && !isSel && !isExp ? 'bg-[#E87040]/20 border border-[#E87040] hover:bg-[#E87040] cursor-pointer' : ''}
+                            ${isExp ? 'bg-[#E87040] border border-[#E87040] scale-110 shadow-md z-10' : ''}
                             ${isSel ? 'bg-[#2A1506] scale-110 shadow-md z-10' : ''}
                           `}
                         >
                           <span className={`font-display font-bold text-base md:text-lg leading-none
-                            ${!session ? 'text-[#2A1506]/25' : isSel ? 'text-[#FBF5E9]' : dispo ? 'text-[#2A1506]' : 'text-[#2A1506]/35'}`}>
+                            ${!hasAny ? 'text-[#2A1506]/25' : isSel ? 'text-[#FBF5E9]' : isExp ? 'text-[#FBF5E9]' : anyDispo ? 'text-[#2A1506]' : 'text-[#2A1506]/35'}`}>
                             {day}
                           </span>
-                          {session && (
-                            <span className={`text-[0.65rem] md:text-xs leading-none mt-1 font-ui font-semibold
-                              ${isSel ? 'text-[#F3D07A]' : dispo ? 'text-[#E87040]' : 'text-[#2A1506]/30'}`}>
-                              {dispo ? `${session.places_restantes} place${session.places_restantes > 1 ? 's' : ''}` : '✕'}
+                          {hasAny && (
+                            <span className={`text-[0.55rem] leading-none mt-0.5 font-ui font-semibold
+                              ${isSel ? 'text-[#F3D07A]' : isExp ? 'text-[#FBF5E9]/80' : anyDispo ? 'text-[#E87040]' : 'text-[#2A1506]/30'}`}>
+                              {isMulti
+                                ? `×${daySessions.length}`
+                                : anyDispo
+                                  ? `${daySessions[0].places_restantes}pl`
+                                  : '✕'}
                             </span>
                           )}
                         </button>
@@ -284,6 +310,40 @@ export default function Initiation() {
                   </div>
                 </div>
               </div>
+
+              {/* Sélection multi-créneaux */}
+              {expandedDay && (() => {
+                const parseH = (h) => parseInt(h?.match(/(\d+)/)?.[1] || '0', 10)
+                const dayS = sessions.filter(s => s.day === expandedDay).sort((a, b) => parseH(a.heure) - parseH(b.heure))
+                return (
+                  <div className="mb-5 p-4 bg-[#E87040]/10 border border-[#E87040]/30 rounded-2xl">
+                    <p className="font-ui text-xs uppercase tracking-widest text-[#E87040] mb-3">
+                      {dayS.length} créneaux disponibles ce jour — choisis-en un
+                    </p>
+                    <div className="flex flex-col sm:flex-row gap-2">
+                      {dayS.map(s => (
+                        <button
+                          key={s.id}
+                          disabled={s.places_restantes <= 0}
+                          onClick={() => { setSelected(s.id); setExpandedDay(null); setNbPlaces(1) }}
+                          className={`flex-1 text-left rounded-xl px-4 py-3 border-2 transition-all duration-150 ${
+                            s.places_restantes <= 0
+                              ? 'opacity-40 cursor-not-allowed bg-[#2A1506]/5 border-transparent'
+                              : 'bg-[#FBF5E9] border-[#E87040]/40 hover:border-[#E87040] hover:shadow-sm cursor-pointer'
+                          }`}
+                        >
+                          <p className="font-display font-bold text-lg text-[#2A1506]">{s.heure}</p>
+                          <p className="font-ui text-xs text-[#2A1506]/50 mt-0.5">
+                            {s.places_restantes > 0
+                              ? `${s.places_restantes} place${s.places_restantes > 1 ? 's' : ''} restante${s.places_restantes > 1 ? 's' : ''}`
+                              : 'Complet'}
+                          </p>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )
+              })()}
 
               {/* Sélection + réservation */}
               <div className="border-t border-[#2A1506]/10 pt-5 flex flex-col md:flex-row items-start md:items-center gap-4 justify-between">

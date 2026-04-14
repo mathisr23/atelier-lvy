@@ -84,9 +84,7 @@ export default function Cours() {
   const [nbSeances, setNbSeances] = useState(5)
   const [nbPlaces, setNbPlaces] = useState(1)
 
-  const [dbMardi, setDbMardi] = useState([])
-  const [dbJeudi, setDbJeudi] = useState([])
-  const [dbSamedi, setDbSamedi] = useState([])
+  const [dbByJour, setDbByJour] = useState({})
   const [reservations, setReservations] = useState([])
 
   useEffect(() => {
@@ -104,9 +102,12 @@ export default function Cours() {
       .order('annee').order('mois').order('day')
       .then(({ data }) => {
         const sorted = data || []
-        setDbMardi(sorted.filter(s => s.jour.toLowerCase() === 'mardi'))
-        setDbJeudi(sorted.filter(s => s.jour.toLowerCase() === 'jeudi'))
-        setDbSamedi(sorted.filter(s => s.jour.toLowerCase() === 'samedi'))
+        const grouped = {}
+        sorted.forEach(s => {
+          if (!grouped[s.jour]) grouped[s.jour] = []
+          grouped[s.jour].push(s)
+        })
+        setDbByJour(grouped)
       })
   }, [])
 
@@ -151,9 +152,12 @@ export default function Cours() {
     })
   }
 
-  const coursMardi = computePlaces(dbMardi, 'Mardi')
-  const coursJeudi = computePlaces(dbJeudi, 'Jeudi')
-  const coursSamedi = computePlaces(dbSamedi, 'Samedi')
+  const JOURS_ORDER = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche']
+
+  const coursByJour = {}
+  Object.entries(dbByJour).forEach(([jour, arr]) => {
+    coursByJour[jour] = computePlaces(arr, jour)
+  })
 
   const toggleSession = (jour, session) => {
     const key = `${jour} ${session.date}`
@@ -171,7 +175,7 @@ export default function Cours() {
   // Places max = minimum disponible parmi les séances sélectionnées
   const minAvailablePlaces = selectedSessions.length > 0
     ? Math.min(...selectedSessions.map(s => {
-        const arr = s.jour === 'Mardi' ? coursMardi : s.jour === 'Jeudi' ? coursJeudi : coursSamedi
+        const arr = coursByJour[s.jour] || []
         return arr.find(c => c.date === s.date)?.places || 1
       }))
     : 1
@@ -364,89 +368,43 @@ export default function Cours() {
         </div>
       </div>
 
-      {/* PLANNING MARDI */}
-      <section id="planning-mardi" className="px-6 md:px-16 lg:px-24 py-12 max-w-7xl mx-auto scroll-mt-24">
-        <Reveal>
-          <div className="flex items-center gap-4 mb-8 flex-wrap">
-            <h2 className="font-display font-bold text-3xl md:text-4xl">Mardis soir</h2>
-            <span className="font-ui text-xs bg-[#E87040] text-[#FBF5E9] px-3 py-1 rounded-lg uppercase tracking-widest">18h30 – 21h</span>
-            <span className="font-ui text-xs text-[#2A1506]/40 bg-[#2A1506]/5 px-3 py-1 rounded-lg">Mars – Avril 2026</span>
-          </div>
-        </Reveal>
-        <Reveal delay={0.1}>
-          {coursMardi.length === 0 ? (
-            <p className="font-ui text-sm text-[#2A1506]/40 italic">Aucun créneau prévu pour le moment.</p>
-          ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-4">
-              {coursMardi.map((c, i) => (
-                <SessionCard
-                  key={c.id || i}
-                  c={c}
-                  selected={isSelected('Mardi', c.date)}
-                  onClick={() => toggleSession('Mardi', c)}
-                  maxReached={maxReached}
-                />
-              ))}
-            </div>
-          )}
-        </Reveal>
-      </section>
+      {/* PLANNING — dynamique pour tous les jours */}
+      {JOURS_ORDER.filter(j => coursByJour[j]?.length > 0).map(jour => {
+        const sessions = coursByJour[jour]
+        const heureRef = sessions[0]?.heure || ''
+        const plural = jour + 's'
+        return (
+          <section key={jour} id={`planning-${jour.toLowerCase()}`} className="px-6 md:px-16 lg:px-24 py-12 max-w-7xl mx-auto scroll-mt-24">
+            <Reveal>
+              <div className="flex items-center gap-4 mb-8 flex-wrap">
+                <h2 className="font-display font-bold text-3xl md:text-4xl">{plural}</h2>
+                {heureRef && (
+                  <span className="font-ui text-xs bg-[#E87040] text-[#FBF5E9] px-3 py-1 rounded-lg uppercase tracking-widest">{heureRef}</span>
+                )}
+              </div>
+            </Reveal>
+            <Reveal delay={0.1}>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-4">
+                {sessions.map((c, i) => (
+                  <SessionCard
+                    key={c.id || i}
+                    c={c}
+                    selected={isSelected(jour, c.date)}
+                    onClick={() => toggleSession(jour, c)}
+                    maxReached={maxReached}
+                  />
+                ))}
+              </div>
+            </Reveal>
+          </section>
+        )
+      })}
 
-      {/* PLANNING JEUDI */}
-      <section id="planning-jeudi" className="px-6 md:px-16 lg:px-24 py-12 max-w-7xl mx-auto scroll-mt-24">
-        <Reveal>
-          <div className="flex items-center gap-4 mb-8 flex-wrap">
-            <h2 className="font-display font-bold text-3xl md:text-4xl">Jeudis soir</h2>
-            <span className="font-ui text-xs bg-[#F3D07A] text-[#2A1506] px-3 py-1 rounded-lg uppercase tracking-widest">18h30 – 21h</span>
-            <span className="font-ui text-xs text-[#2A1506]/40 bg-[#2A1506]/5 px-3 py-1 rounded-lg">Mars – Avril 2026</span>
-          </div>
-        </Reveal>
-        <Reveal delay={0.1}>
-          {coursJeudi.length === 0 ? (
-            <p className="font-ui text-sm text-[#2A1506]/40 italic">Aucun créneau prévu pour le moment.</p>
-          ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-4">
-              {coursJeudi.map((c, i) => (
-                <SessionCard
-                  key={c.id || i}
-                  c={c}
-                  selected={isSelected('Jeudi', c.date)}
-                  onClick={() => toggleSession('Jeudi', c)}
-                  maxReached={maxReached}
-                />
-              ))}
-            </div>
-          )}
-        </Reveal>
-      </section>
-
-      {/* PLANNING SAMEDI */}
-      <section id="planning-samedi" className="px-6 md:px-16 lg:px-24 py-12 max-w-7xl mx-auto scroll-mt-24">
-        <Reveal>
-          <div className="flex items-center gap-4 mb-8 flex-wrap">
-            <h2 className="font-display font-bold text-3xl md:text-4xl">Samedis</h2>
-            <span className="font-ui text-xs bg-[#E87040] text-[#FBF5E9] px-3 py-1 rounded-lg uppercase tracking-widest">10h – 12h30</span>
-            <span className="font-ui text-xs text-[#2A1506]/40 bg-[#2A1506]/5 px-3 py-1 rounded-lg">Mars – Avril 2026</span>
-          </div>
-        </Reveal>
-        <Reveal delay={0.1}>
-          {coursSamedi.length === 0 ? (
-            <p className="font-ui text-sm text-[#2A1506]/40 italic">Aucun créneau prévu pour le moment.</p>
-          ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-4">
-              {coursSamedi.map((c, i) => (
-                <SessionCard
-                  key={c.id || i}
-                  c={c}
-                  selected={isSelected('Samedi', c.date)}
-                  onClick={() => toggleSession('Samedi', c)}
-                  maxReached={maxReached}
-                />
-              ))}
-            </div>
-          )}
-        </Reveal>
-      </section>
+      {Object.keys(coursByJour).length === 0 && (
+        <section className="px-6 md:px-16 lg:px-24 py-12 max-w-7xl mx-auto">
+          <p className="font-ui text-sm text-[#2A1506]/40 italic">Aucun créneau prévu pour le moment.</p>
+        </section>
+      )}
 
       {/* RESERVATION */}
       <section className="px-6 md:px-16 lg:px-24 py-20 relative overflow-hidden" style={{ backgroundColor: '#2A1506', backgroundImage: 'radial-gradient(circle, rgba(251,245,233,0.04) 1px, transparent 1px)', backgroundSize: '6px 6px' }}>

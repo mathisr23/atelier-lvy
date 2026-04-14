@@ -90,7 +90,13 @@ export default function Initiation() {
       .eq('annee', currentYear)
       .or('type.eq.initiation,type.is.null')
       .order('day', { ascending: true })
-      .then(({ data }) => { setSessions(data || []); setLoadingSessions(false) })
+      .then(({ data }) => {
+        const today = new Date()
+        today.setHours(0, 0, 0, 0)
+        const future = (data || []).filter(s => new Date(s.annee, s.mois, s.day) >= today)
+        setSessions(future)
+        setLoadingSessions(false)
+      })
   }, [currentMonth, currentYear])
 
   const prevMonth = () => {

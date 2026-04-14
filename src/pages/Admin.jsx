@@ -195,13 +195,19 @@ function ReservationCard({ r, sessions, onAction }) {
 }
 
 /* ─── SESSION CARD ─── */
-function SessionCard({ s, onDelete, onEdit }) {
+function SessionCard({ s, onDelete, onEdit, onReservationAdd, onReservationDelete }) {
   const [deleting, setDeleting] = useState(false)
   const [editing, setEditing] = useState(false)
   const [saving, setSaving] = useState(false)
   const [editForm, setEditForm] = useState({ heure: s.heure, places_total: s.places_total })
+  const [showDetails, setShowDetails] = useState(false)
+  const [detailsReservations, setDetailsReservations] = useState([])
+  const [loadingDetails, setLoadingDetails] = useState(false)
+  const [addForm, setAddForm] = useState({ prenom: '', nom: '', nb_places: 1 })
+  const [addLoading, setAddLoading] = useState(false)
   const pct = s.places_total > 0 ? Math.round((s.places_restantes / s.places_total) * 100) : 0
   const barColor = pct === 0 ? 'bg-[#F2A0A8]' : pct < 50 ? 'bg-[#F3D07A]' : 'bg-[#9BBF90]'
+  const isInitiation = s.type === 'initiation' || !s.type
 
   const handleDelete = async () => {
     if (!confirm(`Supprimer le créneau du ${s.jour} ${s.date} ?`)) return
@@ -226,6 +232,72 @@ function SessionCard({ s, onDelete, onEdit }) {
       setEditing(false)
     }
     setSaving(false)
+  }
+
+  const fetchDetails = async () => {
+    setLoadingDetails(true)
+    if (isInitiation) {
+      const { data } = await supabase.from('reservations').select('*').eq('session_id', s.id).order('created_at')
+      setDetailsReservations(data || [])
+    } else {
+      const dateKey = `${s.jour} ${s.date}`
+      const { data } = await supabase.from('reservations').select('*').eq('type', 'cours').ilike('date_session', `%${dateKey}%`).order('created_at')
+      setDetailsReservations(data || [])
+    }
+    setLoadingDetails(false)
+  }
+
+  const handleToggleDetails = () => {
+    if (!showDetails) fetchDetails()
+    setShowDetails(v => !v)
+  }
+
+  const handleDeleteReservation = async (r) => {
+    if (!confirm(`Supprimer la réservation de ${r.prenom} ${r.nom} ?`)) return
+    await supabase.from('reservations').delete().eq('id', r.id)
+    if (isInitiation && r.status === 'accepted' && r.nb_places) {
+      const { data: sess } = await supabase.from('sessions').select('places_restantes, places_total').eq('id', s.id).single()
+      if (sess) {
+        const newRestantes = Math.min(sess.places_total, sess.places_restantes + r.nb_places)
+        await supabase.from('sessions').update({ places_restantes: newRestantes }).eq('id', s.id)
+        onEdit({ ...s, places_restantes: newRestantes })
+      }
+    }
+    setDetailsReservations(prev => prev.filter(x => x.id !== r.id))
+    onReservationDelete(r.id)
+  }
+
+  const handleManualAdd = async (e) => {
+    e.preventDefault()
+    if (!addForm.prenom.trim()) return
+    setAddLoading(true)
+    const dateKey = `${s.jour} ${s.date}`
+    const newRes = {
+      prenom: addForm.prenom.trim(),
+      nom: addForm.nom.trim() || '',
+      nb_places: addForm.nb_places,
+      type: isInitiation ? 'initiation' : 'cours',
+      status: 'accepted',
+      session_id: isInitiation ? s.id : null,
+      date_session: isInitiation ? dateKey : JSON.stringify([dateKey]),
+      jour: s.jour.toLowerCase(),
+      email: '',
+    }
+    const { data, error } = await supabase.from('reservations').insert([newRes]).select().single()
+    if (!error && data) {
+      if (isInitiation) {
+        const { data: sess } = await supabase.from('sessions').select('places_restantes, places_total').eq('id', s.id).single()
+        if (sess) {
+          const newRestantes = Math.max(0, sess.places_restantes - addForm.nb_places)
+          await supabase.from('sessions').update({ places_restantes: newRestantes }).eq('id', s.id)
+          onEdit({ ...s, places_restantes: newRestantes })
+        }
+      }
+      setDetailsReservations(prev => [...prev, data])
+      onReservationAdd(data)
+      setAddForm({ prenom: '', nom: '', nb_places: 1 })
+    }
+    setAddLoading(false)
   }
 
   return (
@@ -299,6 +371,82 @@ function SessionCard({ s, onDelete, onEdit }) {
             <div className={`h-full rounded-full transition-all duration-300 ${barColor}`} style={{ width: `${pct}%` }} />
           </div>
         </div>
+      )}
+      {!editing && (
+        <>
+          <button
+            onClick={handleToggleDetails}
+            className={`font-ui text-xs font-semibold px-3 py-1.5 rounded-lg border transition-all duration-150 ${showDetails ? 'bg-[#2A1506] border-[#2A1506] text-[#FBF5E9]' : 'bg-white border-[#2A1506]/15 text-[#2A1506]/50 hover:border-[#2A1506]/30 hover:text-[#2A1506]'}`}
+          >
+            {showDetails ? '▲ Fermer les détails' : '▼ Voir les détails'}
+          </button>
+          {showDetails && (
+            <div className="border-t border-[#2A1506]/10 pt-3 flex flex-col gap-2">
+              <p className="font-ui text-xs font-bold uppercase tracking-wider text-[#2A1506]/40">Inscriptions</p>
+              {loadingDetails ? (
+                <p className="font-ui text-xs text-[#2A1506]/40 italic">Chargement…</p>
+              ) : detailsReservations.length === 0 ? (
+                <p className="font-ui text-xs text-[#2A1506]/30 italic">Aucune inscription pour ce créneau.</p>
+              ) : (
+                <div className="flex flex-col gap-1.5">
+                  {detailsReservations.map(r => (
+                    <div key={r.id} className="flex items-center gap-2 bg-[#FBF5E9] rounded-lg px-3 py-2">
+                      <div className="flex-1 min-w-0">
+                        <span className="font-ui text-sm font-semibold text-[#2A1506]">{r.prenom} {r.nom}</span>
+                        {r.email && <span className="font-ui text-xs text-[#2A1506]/40 ml-2">{r.email}</span>}
+                      </div>
+                      <span className={`font-ui text-xs font-bold px-2 py-0.5 rounded-lg whitespace-nowrap ${statusConfig[r.status]?.bg || 'bg-[#2A1506]/10'} ${statusConfig[r.status]?.text || 'text-[#2A1506]'}`}>
+                        {r.nb_places} pl.
+                      </span>
+                      <button
+                        onClick={() => handleDeleteReservation(r)}
+                        className="font-ui text-sm text-[#2A1506]/25 hover:text-[#F2A0A8] hover:bg-[#F2A0A8]/10 transition-colors w-6 h-6 flex items-center justify-center rounded-lg flex-shrink-0"
+                        title="Supprimer cette inscription"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <form onSubmit={handleManualAdd} className="border-t border-[#2A1506]/8 pt-3 flex flex-col gap-2 mt-1">
+                <p className="font-ui text-xs text-[#2A1506]/40 uppercase tracking-wider">Ajouter manuellement</p>
+                <div className="flex gap-1.5 flex-wrap">
+                  <input
+                    type="text"
+                    placeholder="Prénom *"
+                    value={addForm.prenom}
+                    onChange={e => setAddForm(f => ({ ...f, prenom: e.target.value }))}
+                    required
+                    className="flex-1 min-w-[80px] font-ui text-xs bg-[#FBF5E9] border border-[#2A1506]/15 focus:border-[#E87040] outline-none rounded-lg px-2.5 py-1.5 placeholder:text-[#2A1506]/30 transition-colors"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Nom"
+                    value={addForm.nom}
+                    onChange={e => setAddForm(f => ({ ...f, nom: e.target.value }))}
+                    className="flex-1 min-w-[80px] font-ui text-xs bg-[#FBF5E9] border border-[#2A1506]/15 focus:border-[#E87040] outline-none rounded-lg px-2.5 py-1.5 placeholder:text-[#2A1506]/30 transition-colors"
+                  />
+                  <input
+                    type="number"
+                    min={1}
+                    max={s.places_total}
+                    value={addForm.nb_places}
+                    onChange={e => setAddForm(f => ({ ...f, nb_places: parseInt(e.target.value) || 1 }))}
+                    className="w-14 font-ui text-xs bg-[#FBF5E9] border border-[#2A1506]/15 focus:border-[#E87040] outline-none rounded-lg px-2 py-1.5 text-center transition-colors"
+                  />
+                  <button
+                    type="submit"
+                    disabled={addLoading || !addForm.prenom.trim()}
+                    className="font-ui font-bold text-xs px-3 py-1.5 bg-[#9BBF90] text-[#2A1506] rounded-lg hover:bg-[#7aab6e] transition-colors disabled:opacity-50 whitespace-nowrap"
+                  >
+                    {addLoading ? '…' : '+ Valider'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          )}
+        </>
       )}
     </div>
   )
@@ -381,28 +529,28 @@ function AddSessionForm({ onAdd }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="bg-[#2A1506] rounded-2xl p-5 flex flex-col sm:flex-row gap-3 items-end mb-6">
+    <form onSubmit={handleSubmit} className="bg-[#2A1506] rounded-2xl p-5 flex flex-col sm:flex-row gap-3 sm:items-end mb-6">
       <div className="flex-1">
         <label className="font-ui text-xs uppercase tracking-widest text-[#FBF5E9]/40 block mb-1.5">Date</label>
         <input type="date" value={form.date} onChange={e => setForm(f => ({ ...f, date: e.target.value }))} required className={inpDark} />
       </div>
-      <div className="flex-1 min-w-[120px]">
+      <div className="flex-1 sm:min-w-[120px]">
         <label className="font-ui text-xs uppercase tracking-widest text-[#FBF5E9]/40 block mb-1.5">Type</label>
         <TypeSelector
           value={form.type}
           onChange={val => setForm(f => ({ ...f, type: val, places: val === 'cours' ? 6 : 8 }))}
         />
       </div>
-      <div className="flex-1 min-w-[120px]">
+      <div className="flex-1 sm:min-w-[120px]">
         <label className="font-ui text-xs uppercase tracking-widest text-[#FBF5E9]/40 block mb-1.5">Horaires</label>
         <input type="text" value={form.heure} onChange={e => setForm(f => ({ ...f, heure: e.target.value }))} placeholder="18h30 – 20h30" required className={inpDark} />
       </div>
-      <div className="w-20">
+      <div className="w-full sm:w-20">
         <label className="font-ui text-xs uppercase tracking-widest text-[#FBF5E9]/40 block mb-1.5">Places</label>
         <input type="number" min={1} max={20} value={form.places} onChange={e => setForm(f => ({ ...f, places: parseInt(e.target.value) }))} className={inpDark} />
       </div>
       <button type="submit" disabled={loading}
-        className="font-ui font-bold text-sm px-5 py-2.5 bg-[#E87040] text-[#2A1506] rounded-xl hover:bg-[#FBF5E9] transition-colors disabled:opacity-50 whitespace-nowrap">
+        className="w-full sm:w-auto font-ui font-bold text-sm px-5 py-2.5 bg-[#E87040] text-[#2A1506] rounded-xl hover:bg-[#FBF5E9] transition-colors disabled:opacity-50 whitespace-nowrap">
         {loading ? '…' : '+ Ajouter'}
       </button>
     </form>
@@ -496,6 +644,8 @@ export default function Admin() {
   const handleSessionAdd = (s) => setSessions(prev => [...prev, s].sort((a, b) => a.annee - b.annee || a.mois - b.mois || a.day - b.day))
   const handleSessionDelete = (id) => setSessions(prev => prev.filter(s => s.id !== id))
   const handleSessionEdit = (updated) => setSessions(prev => prev.map(s => s.id === updated.id ? updated : s))
+  const handleReservationAddFromSession = (r) => setReservations(prev => [r, ...prev])
+  const handleReservationDeleteFromSession = (id) => setReservations(prev => prev.filter(r => r.id !== id))
 
   if (!session) return <LoginForm />
 
@@ -507,19 +657,30 @@ export default function Admin() {
     if (s.type === 'cours') {
       let reserved = 0
       const dayPrefix = s.jour
+      const dateKey = `${s.jour} ${s.date}`
       const sTypeSessions = sessions.filter(x => x.type === 'cours' && x.jour.toLowerCase() === dayPrefix.toLowerCase())
       const currentIndex = sTypeSessions.findIndex(x => x.id === s.id)
 
       reservations.forEach(r => {
         if (r.type === 'cours' && r.status === 'accepted') {
-          if (r.date_session && r.date_session.toLowerCase().startsWith(dayPrefix.toLowerCase())) {
+          if (!r.date_session) return
+          // Nouveau format : JSON array ["Mardi 25 mars", ...]
+          try {
+            const dates = JSON.parse(r.date_session)
+            if (Array.isArray(dates)) {
+              if (dates.includes(dateKey)) reserved += r.nb_places || 1
+              return
+            }
+          } catch {
+            // Ancien format : "Mardi 25 mars" avec séances consécutives
+          }
+          if (r.date_session.toLowerCase().startsWith(dayPrefix.toLowerCase())) {
             const startDate = r.date_session.replace(new RegExp(`^${dayPrefix} `, 'i'), '')
             const startIndex = sTypeSessions.findIndex(x => x.date === startDate)
             if (startIndex !== -1) {
-              const numPlaces = r.nb_places || 1
               const nbSns = r.nb_seances || 5
               if (currentIndex >= startIndex && currentIndex < startIndex + nbSns) {
-                reserved += numPlaces
+                reserved += r.nb_places || 1
               }
             }
           }
@@ -542,7 +703,30 @@ export default function Admin() {
   return (
     <div className="min-h-screen bg-[#FBF5E9]">
       <header className="bg-[#2A1506] sticky top-0 z-10">
-        <div className="max-w-6xl mx-auto px-6 md:px-10 flex items-center justify-between">
+        {/* Mobile */}
+        <div className="md:hidden">
+          <div className="flex items-center justify-between px-4 pt-3 pb-2">
+            <p className="font-display italic font-bold text-[#E87040] text-xl">Atelier LVY</p>
+            <button onClick={() => supabase.auth.signOut()}
+              className="font-ui text-xs text-[#FBF5E9]/40 hover:text-[#FBF5E9] transition-colors">
+              Déconnexion
+            </button>
+          </div>
+          <nav className="flex border-t border-[#FBF5E9]/5">
+            {[
+              { key: 'reservations', label: counts.pending > 0 ? `Rés. · ${counts.pending}` : 'Rés.' },
+              { key: 'sessions', label: `Créneaux · ${sessions.length}` },
+              { key: 'commentaires', label: commentsPending > 0 ? `Avis · ${commentsPending}` : 'Avis' },
+            ].map(({ key, label }) => (
+              <button key={key} onClick={() => setActiveTab(key)}
+                className={`flex-1 font-ui text-xs font-semibold px-1 py-3 border-b-2 transition-all text-center ${activeTab === key ? 'text-[#E87040] border-[#E87040]' : 'text-[#FBF5E9]/40 border-transparent'}`}>
+                {label}
+              </button>
+            ))}
+          </nav>
+        </div>
+        {/* Desktop */}
+        <div className="hidden md:flex max-w-6xl mx-auto px-10 items-center justify-between">
           <p className="font-display italic font-bold text-[#E87040] text-xl py-4">Atelier LVY</p>
           <nav className="flex items-center gap-0">
             {[
@@ -629,7 +813,7 @@ export default function Admin() {
               <p className="font-ui text-[#2A1506]/30 text-sm text-center py-12 italic">Aucun créneau pour l'instant.</p>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {filteredSessions.map(s => <SessionCard key={s.id} s={s} onDelete={handleSessionDelete} onEdit={handleSessionEdit} />)}
+                {filteredSessions.map(s => <SessionCard key={s.id} s={s} onDelete={handleSessionDelete} onEdit={handleSessionEdit} onReservationAdd={handleReservationAddFromSession} onReservationDelete={handleReservationDeleteFromSession} />)}
               </div>
             )}
           </>

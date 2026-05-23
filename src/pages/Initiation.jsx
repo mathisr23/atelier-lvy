@@ -89,6 +89,7 @@ export default function Initiation() {
       .eq('mois', currentMonth)
       .eq('annee', currentYear)
       .or('type.eq.initiation,type.is.null')
+      .or('archived.is.false,archived.is.null')
       .order('day', { ascending: true })
       .then(({ data }) => {
         const today = new Date()

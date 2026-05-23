@@ -99,6 +99,7 @@ export default function Cours() {
       .from('sessions')
       .select('*')
       .eq('type', 'cours')
+      .or('archived.is.false,archived.is.null')
       .order('annee').order('mois').order('day')
       .then(({ data }) => {
         const sorted = data || []

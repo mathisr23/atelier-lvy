@@ -34,12 +34,6 @@ const btn = {
   orange: 'inline-block font-ui font-semibold text-sm px-8 py-3.5 bg-[#E87040] text-[#2A1506] border-2 border-[#E87040] rounded-xl hover:bg-[#2A1506] hover:text-[#FBF5E9] hover:border-[#2A1506] transition-all duration-200',
 }
 
-const FALLBACK_TESTIMONIALS = [
-  { id: 'f1', nom: 'Camille R.', texte: "Une expérience magique ! Léa met tellement à l'aise que même les moins manuels créent quelque chose dont ils sont fiers. Je recommande les yeux fermés.", type: 'initiation' },
-  { id: 'f2', nom: 'Sophie & Marc', texte: "On a offert une initiation à notre fille pour son anniversaire. Elle en parle encore des mois après. Léa est pédagogue, patiente et passionnée.", type: 'initiation' },
-  { id: 'f3', nom: 'Julie T.', texte: "J'ai commandé un bol sur mesure pour offrir. Léa a parfaitement compris ce que je voulais et le résultat est au-delà de mes attentes. Une vraie artiste.", type: 'creation' },
-]
-
 const projects = [
   {
     id: 1,
@@ -347,28 +341,35 @@ export default function Apropos() {
             </h2>
           </Reveal>
 
-          {/* Commentaires */}
-          {(() => {
-            const displayed = commentaires !== null && commentaires.length > 0 ? commentaires : FALLBACK_TESTIMONIALS
-            return (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
-                {displayed.map(({ id, nom, texte, type }, i) => (
-                  <Reveal key={id} delay={i * 0.1} direction="up">
-                    <div className={`rounded-3xl p-8 flex flex-col gap-6 h-full ${i === 1 ? 'bg-[#E87040]' : 'bg-[#FBF5E9]/5 border border-[#FBF5E9]/10'}`}>
-                      <span className="font-display text-5xl leading-none select-none opacity-40" style={{ color: i === 1 ? '#2A1506' : '#F3D07A' }}>"</span>
-                      <p className={`font-body text-base leading-relaxed flex-1 ${i === 1 ? 'text-[#2A1506]' : 'text-[#FBF5E9]/80'}`}>{texte}</p>
-                      <div className="flex items-center justify-between">
-                        <p className={`font-ui font-semibold text-sm ${i === 1 ? 'text-[#2A1506]' : 'text-[#FBF5E9]'}`}>{nom}</p>
-                        <span className={`font-ui text-xs px-3 py-1 rounded-lg ${i === 1 ? 'bg-[#2A1506]/15 text-[#2A1506]' : type === 'initiation' ? 'bg-[#9BBF90]/20 text-[#9BBF90]' : type === 'cours' ? 'bg-[#F2A0A8]/20 text-[#F2A0A8]' : 'bg-[#F3D07A]/20 text-[#F3D07A]'}`}>
-                          {{ initiation: 'Initiation', cours: 'Cours', autre: 'Autre', creation: 'Création' }[type] ?? type}
-                        </span>
+          {/* Commentaires — scroll horizontal, masqué si aucun avis approuvé */}
+          {commentaires && commentaires.length > 0 && (
+            <Reveal delay={0.1}>
+              <div className="mb-16 -mx-6 md:-mx-16 lg:-mx-24">
+                <div className="overflow-x-auto scrollbar-hide pb-4">
+                  <div className="flex gap-6 px-6 md:px-16 lg:px-24 snap-x snap-mandatory">
+                    {commentaires.map(({ id, nom, texte, type }, i) => (
+                      <div
+                        key={id}
+                        className={`rounded-3xl p-8 flex flex-col gap-6 flex-shrink-0 w-[85vw] sm:w-[420px] snap-start ${i % 3 === 1 ? 'bg-[#E87040]' : 'bg-[#FBF5E9]/5 border border-[#FBF5E9]/10'}`}
+                      >
+                        <span className="font-display text-5xl leading-none select-none opacity-40" style={{ color: i % 3 === 1 ? '#2A1506' : '#F3D07A' }}>"</span>
+                        <p className={`font-body text-base leading-relaxed flex-1 ${i % 3 === 1 ? 'text-[#2A1506]' : 'text-[#FBF5E9]/80'}`}>{texte}</p>
+                        <div className="flex items-center justify-between">
+                          <p className={`font-ui font-semibold text-sm ${i % 3 === 1 ? 'text-[#2A1506]' : 'text-[#FBF5E9]'}`}>{nom}</p>
+                          <span className={`font-ui text-xs px-3 py-1 rounded-lg ${i % 3 === 1 ? 'bg-[#2A1506]/15 text-[#2A1506]' : type === 'initiation' ? 'bg-[#9BBF90]/20 text-[#9BBF90]' : type === 'cours' ? 'bg-[#F2A0A8]/20 text-[#F2A0A8]' : 'bg-[#F3D07A]/20 text-[#F3D07A]'}`}>
+                            {{ initiation: 'Initiation', cours: 'Cours', autre: 'Autre', creation: 'Création' }[type] ?? type}
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                  </Reveal>
-                ))}
+                    ))}
+                  </div>
+                </div>
+                {commentaires.length > 1 && (
+                  <p className="font-ui text-xs text-[#FBF5E9]/30 px-6 md:px-16 lg:px-24 mt-2">← Faites défiler pour découvrir les autres témoignages</p>
+                )}
               </div>
-            )
-          })()}
+            </Reveal>
+          )}
 
           {/* Formulaire laisser un commentaire */}
           <Reveal delay={0.2}>

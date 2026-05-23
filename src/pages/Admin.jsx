@@ -195,10 +195,11 @@ function ReservationCard({ r, sessions, onAction }) {
 }
 
 /* ─── SESSION CARD ─── */
-function SessionCard({ s, onDelete, onEdit, onReservationAdd, onReservationDelete }) {
+function SessionCard({ s, onDelete, onEdit, onReservationAdd, onReservationDelete, onArchiveToggle }) {
   const [deleting, setDeleting] = useState(false)
   const [editing, setEditing] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [archiving, setArchiving] = useState(false)
   const [editForm, setEditForm] = useState({ heure: s.heure, places_total: s.places_total })
   const [showDetails, setShowDetails] = useState(false)
   const [detailsReservations, setDetailsReservations] = useState([])
@@ -214,6 +215,20 @@ function SessionCard({ s, onDelete, onEdit, onReservationAdd, onReservationDelet
     setDeleting(true)
     await supabase.from('sessions').delete().eq('id', s.id)
     onDelete(s.id)
+  }
+
+  const handleArchive = async () => {
+    setArchiving(true)
+    const newArchived = !s.archived
+    const { data, error } = await supabase.from('sessions')
+      .update({ archived: newArchived })
+      .eq('id', s.id)
+      .select()
+      .single()
+    if (!error && data) {
+      onArchiveToggle(data)
+    }
+    setArchiving(false)
   }
 
   const handleSave = async () => {
@@ -353,6 +368,24 @@ function SessionCard({ s, onDelete, onEdit, onReservationAdd, onReservationDelet
             <button onClick={() => setEditing(true)}
               className="font-ui text-xs text-[#2A1506]/30 hover:text-[#E87040] hover:bg-[#E87040]/10 transition-colors px-2 py-1 rounded-lg">
               Modifier
+            </button>
+            <button onClick={handleArchive} disabled={archiving}
+              className="font-ui text-xs text-[#2A1506]/30 hover:text-[#F3D07A] hover:bg-[#F3D07A]/20 transition-colors px-2 py-1 rounded-lg disabled:opacity-40 inline-flex items-center gap-1">
+              {archiving ? '…' : s.archived ? (
+                <>
+                  <svg width="11" height="11" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                    <path d="M8 5L3 10l5 5M3 10h11a4 4 0 014 4v1" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                  Restaurer
+                </>
+              ) : (
+                <>
+                  <svg width="11" height="11" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                    <path d="M3 6h14v3H3zM4.5 9v7a1 1 0 001 1h9a1 1 0 001-1V9M8 12h4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                  Archiver
+                </>
+              )}
             </button>
             <button onClick={handleDelete} disabled={deleting}
               className="font-ui text-xs text-[#2A1506]/25 hover:text-[#F2A0A8] hover:bg-[#F2A0A8]/10 transition-colors px-2 py-1 rounded-lg disabled:opacity-40">
@@ -644,6 +677,7 @@ export default function Admin() {
   const handleSessionAdd = (s) => setSessions(prev => [...prev, s].sort((a, b) => a.annee - b.annee || a.mois - b.mois || a.day - b.day))
   const handleSessionDelete = (id) => setSessions(prev => prev.filter(s => s.id !== id))
   const handleSessionEdit = (updated) => setSessions(prev => prev.map(s => s.id === updated.id ? updated : s))
+  const handleSessionArchiveToggle = (updated) => setSessions(prev => prev.map(s => s.id === updated.id ? updated : s))
   const handleReservationAddFromSession = (r) => setReservations(prev => [r, ...prev])
   const handleReservationDeleteFromSession = (id) => setReservations(prev => prev.filter(r => r.id !== id))
 
@@ -691,7 +725,19 @@ export default function Admin() {
     return s
   })
 
-  const filteredSessions = filterSessionType === 'all' ? enhancedSessions : enhancedSessions.filter(s => (s.type || 'initiation') === filterSessionType)
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const isPast = (s) => {
+    const d = new Date(s.annee, s.mois, s.day)
+    return d < today
+  }
+  const activeSessions = enhancedSessions.filter(s => !s.archived && !isPast(s))
+  const archivedSessions = enhancedSessions.filter(s => s.archived)
+  const historiqueSessions = enhancedSessions.filter(s => !s.archived && isPast(s))
+  const applyTypeFilter = (list) => filterSessionType === 'all' ? list : list.filter(s => (s.type || 'initiation') === filterSessionType)
+  const filteredSessions = applyTypeFilter(activeSessions)
+  const filteredArchives = applyTypeFilter(archivedSessions)
+  const filteredHistorique = applyTypeFilter(historiqueSessions)
 
   const counts = {
     pending: reservations.filter(r => r.status === 'pending').length,
@@ -712,10 +758,12 @@ export default function Admin() {
               Déconnexion
             </button>
           </div>
-          <nav className="flex border-t border-[#FBF5E9]/5">
+          <nav className="flex border-t border-[#FBF5E9]/5 overflow-x-auto scrollbar-hide">
             {[
               { key: 'reservations', label: counts.pending > 0 ? `Rés. · ${counts.pending}` : 'Rés.' },
-              { key: 'sessions', label: `Créneaux · ${sessions.length}` },
+              { key: 'sessions', label: `Créneaux · ${activeSessions.length}` },
+              { key: 'archives', label: `Archives · ${archivedSessions.length}` },
+              { key: 'historique', label: `Historique · ${historiqueSessions.length}` },
               { key: 'commentaires', label: commentsPending > 0 ? `Avis · ${commentsPending}` : 'Avis' },
             ].map(({ key, label }) => (
               <button key={key} onClick={() => setActiveTab(key)}
@@ -731,7 +779,9 @@ export default function Admin() {
           <nav className="flex items-center gap-0">
             {[
               { key: 'reservations', label: counts.pending > 0 ? `Réservations · ${counts.pending} en attente` : 'Réservations' },
-              { key: 'sessions', label: `Créneaux · ${sessions.length}` },
+              { key: 'sessions', label: `Créneaux · ${activeSessions.length}` },
+              { key: 'archives', label: `Archives · ${archivedSessions.length}` },
+              { key: 'historique', label: `Historique · ${historiqueSessions.length}` },
               { key: 'commentaires', label: commentsPending > 0 ? `Avis · ${commentsPending} en attente` : 'Avis' },
             ].map(({ key, label }) => (
               <button key={key} onClick={() => setActiveTab(key)}
@@ -813,7 +863,64 @@ export default function Admin() {
               <p className="font-ui text-[#2A1506]/30 text-sm text-center py-12 italic">Aucun créneau pour l'instant.</p>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {filteredSessions.map(s => <SessionCard key={s.id} s={s} onDelete={handleSessionDelete} onEdit={handleSessionEdit} onReservationAdd={handleReservationAddFromSession} onReservationDelete={handleReservationDeleteFromSession} />)}
+                {filteredSessions.map(s => <SessionCard key={s.id} s={s} onDelete={handleSessionDelete} onEdit={handleSessionEdit} onReservationAdd={handleReservationAddFromSession} onReservationDelete={handleReservationDeleteFromSession} onArchiveToggle={handleSessionArchiveToggle} />)}
+              </div>
+            )}
+          </>
+        ) : activeTab === 'archives' ? (
+          <>
+            <div className="mb-5">
+              <h2 className="font-display font-bold text-2xl text-[#2A1506]">Créneaux archivés</h2>
+              <p className="font-ui text-sm text-[#2A1506]/50 mt-1">Créneaux que vous avez archivés manuellement pour les suivre (qui vient à telle date, etc.). Ils ne sont plus visibles sur le site public.</p>
+            </div>
+            <div className="flex flex-wrap gap-2 mb-6">
+              {[
+                { key: 'all', label: 'Tous' },
+                { key: 'initiation', label: 'Initiation' },
+                { key: 'cours', label: 'Cours' },
+              ].map(({ key, label }) => (
+                <button key={key} onClick={() => setFilterSessionType(key)}
+                  className={`font-ui text-xs font-semibold px-3 py-1.5 rounded-lg border transition-all duration-150 ${filterSessionType === key ? 'bg-[#E87040] border-[#E87040] text-[#2A1506]' : 'bg-white border-[#2A1506]/10 text-[#2A1506]/50 hover:border-[#2A1506]/25'}`}>
+                  {label}
+                </button>
+              ))}
+            </div>
+            {filteredArchives.length === 0 ? (
+              <div className="text-center py-24">
+                <p className="font-display italic text-4xl text-[#2A1506]/15">Aucun créneau archivé</p>
+                <p className="font-ui text-sm text-[#2A1506]/40 mt-3">Depuis l'onglet Créneaux, utilisez le bouton « Archiver » pour ranger ici les créneaux à suivre.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {filteredArchives.map(s => <SessionCard key={s.id} s={s} onDelete={handleSessionDelete} onEdit={handleSessionEdit} onReservationAdd={handleReservationAddFromSession} onReservationDelete={handleReservationDeleteFromSession} onArchiveToggle={handleSessionArchiveToggle} />)}
+              </div>
+            )}
+          </>
+        ) : activeTab === 'historique' ? (
+          <>
+            <div className="mb-5">
+              <h2 className="font-display font-bold text-2xl text-[#2A1506]">Historique des créneaux passés</h2>
+              <p className="font-ui text-sm text-[#2A1506]/50 mt-1">Tous les créneaux dont la date est dépassée. Consultez « Voir les détails » pour retrouver qui était inscrit.</p>
+            </div>
+            <div className="flex flex-wrap gap-2 mb-6">
+              {[
+                { key: 'all', label: 'Tous' },
+                { key: 'initiation', label: 'Initiation' },
+                { key: 'cours', label: 'Cours' },
+              ].map(({ key, label }) => (
+                <button key={key} onClick={() => setFilterSessionType(key)}
+                  className={`font-ui text-xs font-semibold px-3 py-1.5 rounded-lg border transition-all duration-150 ${filterSessionType === key ? 'bg-[#E87040] border-[#E87040] text-[#2A1506]' : 'bg-white border-[#2A1506]/10 text-[#2A1506]/50 hover:border-[#2A1506]/25'}`}>
+                  {label}
+                </button>
+              ))}
+            </div>
+            {filteredHistorique.length === 0 ? (
+              <div className="text-center py-24">
+                <p className="font-display italic text-4xl text-[#2A1506]/15">Aucun créneau passé</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {filteredHistorique.map(s => <SessionCard key={s.id} s={s} onDelete={handleSessionDelete} onEdit={handleSessionEdit} onReservationAdd={handleReservationAddFromSession} onReservationDelete={handleReservationDeleteFromSession} onArchiveToggle={handleSessionArchiveToggle} />)}
               </div>
             )}
           </>

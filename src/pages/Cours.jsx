@@ -102,7 +102,9 @@ export default function Cours() {
       .or('archived.is.false,archived.is.null')
       .order('annee').order('mois').order('day')
       .then(({ data }) => {
-        const sorted = data || []
+        const today = new Date()
+        today.setHours(0, 0, 0, 0)
+        const sorted = (data || []).filter(s => new Date(s.annee, s.mois, s.day) >= today)
         const grouped = {}
         sorted.forEach(s => {
           if (!grouped[s.jour]) grouped[s.jour] = []

@@ -30,3 +30,6 @@ dist-ssr
 # Claude AI
 .claude/
 CLAUDE.md
+
+# Photos brutes de la boutique (lourdes) — seules les versions optimisées sont versionnées
+src/assets/boutique/produits/

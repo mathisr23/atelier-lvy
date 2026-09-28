@@ -4,11 +4,14 @@ import { AnimatePresence, motion } from 'framer-motion'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import SplashScreen from './components/SplashScreen'
+import CartDrawer from './components/CartDrawer'
+import { CartProvider } from './context/CartContext'
 import Apropos from './pages/Apropos'
 import Boutique from './pages/Boutique'
 import Initiation from './pages/Initiation'
 import Cours from './pages/Cours'
 import Contact from './pages/Contact'
+import CommandeSucces from './pages/CommandeSucces'
 import Admin from './pages/Admin'
 import NotFound from './pages/NotFound'
 
@@ -41,6 +44,7 @@ function AnimatedRoutes() {
         <Route path="/initiation" element={<PageWrapper><Initiation /></PageWrapper>} />
         <Route path="/cours" element={<PageWrapper><Cours /></PageWrapper>} />
         <Route path="/contact" element={<PageWrapper><Contact /></PageWrapper>} />
+        <Route path="/commande/succes" element={<PageWrapper><CommandeSucces /></PageWrapper>} />
         <Route path="*" element={<PageWrapper><NotFound /></PageWrapper>} />
       </Routes>
     </AnimatePresence>
@@ -50,7 +54,7 @@ function AnimatedRoutes() {
 function MainApp() {
   const [splashDone, setSplashDone] = useState(false)
   return (
-    <>
+    <CartProvider>
       <SplashScreen onDone={() => setSplashDone(true)} />
       {splashDone && (
         <>
@@ -60,9 +64,10 @@ function MainApp() {
             <AnimatedRoutes />
           </main>
           <Footer />
+          <CartDrawer />
         </>
       )}
-    </>
+    </CartProvider>
   )
 }
 

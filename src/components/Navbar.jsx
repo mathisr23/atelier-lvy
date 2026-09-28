@@ -1,6 +1,25 @@
 import { NavLink } from 'react-router-dom'
 import { useState } from 'react'
 import logo1 from '../assets/logo1.png'
+import { useCart } from '../context/CartContext'
+
+function CartButton() {
+  const { items, setOpen } = useCart()
+  return (
+    <button onClick={() => setOpen(true)} className="relative p-1.5 hover:opacity-70 transition-opacity" aria-label="Panier">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2A1506" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4Z" />
+        <path d="M3 6h18" />
+        <path d="M16 10a4 4 0 01-8 0" />
+      </svg>
+      {items.length > 0 && (
+        <span className="absolute -top-1 -right-1 w-4.5 h-4.5 min-w-[18px] rounded-full bg-[#E87040] text-[#FBF5E9] text-[0.6rem] font-ui font-bold flex items-center justify-center px-1">
+          {items.length}
+        </span>
+      )}
+    </button>
+  )
+}
 
 const links = [
   { to: '/', label: 'À propos' },
@@ -38,18 +57,22 @@ export default function Navbar() {
               <span className="absolute -bottom-0.5 left-0 h-px bg-[#E87040] transition-all duration-300 w-0 group-hover:w-full" />
             </NavLink>
           ))}
+          <CartButton />
         </nav>
 
-        {/* Mobile burger */}
-        <button
-          onClick={() => setOpen(!open)}
-          className="md:hidden flex flex-col gap-1.5 p-1"
-          aria-label="Menu"
-        >
-          <span className={`block w-6 h-px bg-[#2A1506] transition-all duration-300 ${open ? 'rotate-45 translate-y-2' : ''}`} />
-          <span className={`block w-6 h-px bg-[#2A1506] transition-all duration-300 ${open ? 'opacity-0' : ''}`} />
-          <span className={`block w-6 h-px bg-[#2A1506] transition-all duration-300 ${open ? '-rotate-45 -translate-y-2' : ''}`} />
-        </button>
+        {/* Mobile: panier + burger */}
+        <div className="md:hidden flex items-center gap-3">
+          <CartButton />
+          <button
+            onClick={() => setOpen(!open)}
+            className="flex flex-col gap-1.5 p-1"
+            aria-label="Menu"
+          >
+            <span className={`block w-6 h-px bg-[#2A1506] transition-all duration-300 ${open ? 'rotate-45 translate-y-2' : ''}`} />
+            <span className={`block w-6 h-px bg-[#2A1506] transition-all duration-300 ${open ? 'opacity-0' : ''}`} />
+            <span className={`block w-6 h-px bg-[#2A1506] transition-all duration-300 ${open ? '-rotate-45 -translate-y-2' : ''}`} />
+          </button>
+        </div>
       </div>
 
       {/* Mobile menu */}

@@ -5,23 +5,10 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Squiggle } from '../components/Deco'
 import Reveal from '../components/Reveal'
 import { supabase } from '../lib/supabase'
+import { EMAILJS, envoyerEmail, mailHtml, carte, ligne, citation } from '../lib/emails'
 import imgCouteaux from '../assets/couteaux_marrons.png'
 
 const EDGE_FUNCTION_URL = import.meta.env.VITE_ADMIN_EDGE_FUNCTION_URL
-
-const ROW = (label, value) =>
-  `<tr><td style="padding:10px 0;border-bottom:1px solid rgba(42,21,6,0.05)"><strong>${label}</strong></td><td style="padding:10px 0;border-bottom:1px solid rgba(42,21,6,0.05);text-align:right">${value}</td></tr>`
-
-function buildRecap({ date, places, seances, total }) {
-  const rows = [
-    date && ROW('Créneau', date),
-    places && ROW('Places', places),
-    seances && seances !== '1' && ROW('Pack séances', `${seances} séances`),
-    total && ROW('Total estimé', total),
-  ].filter(Boolean)
-  if (!rows.length) return ''
-  return `<table style="width:100%;border-collapse:collapse;font-size:14px">${rows.join('')}</table>`
-}
 
 const types = [
   { value: 'commande', label: 'Commande sur mesure' },
@@ -127,43 +114,49 @@ export default function Contact() {
         let total = null
         if (form.type === 'initiation' && form.places) total = `${50 * places} €`
         else if (form.type === 'cours' && seances > 1) total = `${(seances >= 10 ? 500 : 275) * places} €`
-        const emailParams = {
-          service_id: 'service_263neen',
-          user_id: 'ACjZWpVavc0biX8Y3',
-          template_params: {
-            type_demande: typeLabel,
-            user_prenom: form.prenom.trim(),
-            user_nom: form.nom.trim(),
-            user_email: form.email.trim(),
-            user_tel: form.telephone.trim() || 'Non renseigné',
-            date: defaultDates.length > 0 ? defaultDates.join(', ') : form.date || '',
-            places: form.places || '',
-            seances: form.seances || '',
-            recap: buildRecap({ date: form.date, places: form.places, seances: form.seances, total }),
-            total: total || '',
-            message: form.message.trim() || 'Aucun message',
-          }
-        }
 
-        // 1. Envoi de la notification pour TOI (Léa)
-        await fetch('https://api.emailjs.com/api/v1.0/email/send', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ...emailParams, template_id: 'template_39831u7' }),
+        const prenom = form.prenom.trim()
+        const nomComplet = `${prenom} ${form.nom.trim()}`
+        const email = form.email.trim()
+        const creneau = defaultDates.length > 0 ? defaultDates.join(', ') : form.date
+        const lignesDemande = [
+          ligne('Créneau', creneau),
+          ligne('Places', form.places),
+          seances > 1 && ligne('Pack', `${seances} séances`),
+          ligne('Total estimé', total, { fort: true }),
+        ]
+
+        // 1. Notification pour Léa
+        await envoyerEmail(EMAILJS.templateLea, {
+          sujet: `Nouvelle demande — ${typeLabel} — ${nomComplet}`,
+          user_email: email,
+          reply_to: email,
+          contenu: mailHtml({
+            titre: `Nouvelle demande : ${typeLabel}`,
+            blocs: [
+              carte('Client', [
+                ligne('Nom', nomComplet),
+                ligne('Email', email),
+                ligne('Téléphone', form.telephone.trim() || 'Non renseigné'),
+              ]),
+              carte('Demande', lignesDemande),
+              citation('Son message', form.message.trim()),
+            ],
+          }),
         })
 
-        // 2. Envoi du mail de récap automatique pour LE CLIENT
-        await fetch('https://api.emailjs.com/api/v1.0/email/send', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            ...emailParams,
-            template_id: 'template_apxutah',
-            template_params: {
-              ...emailParams.template_params,
-              titre: `Récap de ta demande — ${typeLabel}`,
-              intro: `Merci pour ton message ! Je te confirme avoir bien reçu ta demande pour : ${typeLabel}. Je te réponds personnellement dans les plus brefs délais (généralement sous 48h).`,
-            },
+        // 2. Récap automatique pour le client
+        await envoyerEmail(EMAILJS.templateClient, {
+          sujet: `Récap de ta demande — ${typeLabel}`,
+          user_email: email,
+          reply_to: 'contact.atelierlvy@gmail.com',
+          contenu: mailHtml({
+            titre: `Bonjour ${prenom},`,
+            paragraphes: [
+              `Merci pour ton message ! Je te confirme avoir bien reçu ta demande pour : ${typeLabel}.`,
+              'Je te réponds personnellement dans les plus brefs délais (généralement sous 48h) pour confirmer avec toi.',
+            ],
+            blocs: [carte('Récapitulatif de ta demande', lignesDemande), citation('Ton message', form.message.trim())],
           }),
         })
 

@@ -29,10 +29,26 @@ export function CatalogueProvider({ children }) {
     const produitsParSlug = Object.fromEntries(produits.map((p) => [p.slug, p]))
     const categoriesParId = Object.fromEntries(categories.map((c) => [c.id, c]))
     const collectionsParId = Object.fromEntries(collections.map((c) => [c.id, c]))
-    return { produits, categories, collections, produitsParSlug, categoriesParId, collectionsParId, loading, refresh }
+    // Pour la navigation : uniquement ce qui contient au moins une pièce visible
+    const categoriesActives = categories.filter((c) => produits.some((p) => p.categorie_id === c.id))
+    const collectionsActives = collections.filter((c) => produits.some((p) => p.collection_id === c.id))
+    return {
+      produits, categories, collections, produitsParSlug, categoriesParId, collectionsParId,
+      categoriesActives, collectionsActives, loading, refresh,
+    }
   }, [produits, categories, collections, loading, refresh])
 
   return <CatalogueContext.Provider value={value}>{children}</CatalogueContext.Provider>
+}
+
+// Lien vers la boutique filtrée — ex. lienBoutique({ collection: 'corail', type: 'cuilleres' })
+// eslint-disable-next-line react-refresh/only-export-components
+export function lienBoutique({ type, collection } = {}) {
+  const params = new URLSearchParams()
+  if (collection) params.set('collection', collection)
+  if (type) params.set('type', type)
+  const qs = params.toString()
+  return `/boutique${qs ? `?${qs}` : ''}`
 }
 
 // eslint-disable-next-line react-refresh/only-export-components -- hook partagé intentionnellement avec le provider

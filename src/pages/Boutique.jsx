@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useSearchParams, useLocation } from 'react-router-dom'
 import useSEO from '../hooks/useSEO'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Asterisk } from '../components/Deco'
@@ -42,17 +43,41 @@ export default function Boutique() {
     description: 'Explorez mes créations en céramique disponibles à la vente — pièces uniques faites à la main.',
   })
 
-  const [activeCat, setActiveCat] = useState('all')
+  // Filtres dans l'URL (/boutique?collection=corail&type=cuilleres) : partageables et utilisés par le menu
+  const [params, setParams] = useSearchParams()
+  const location = useLocation()
+  const typeActif = params.get('type')
+  const collectionActive = params.get('collection')
   const [openProduit, setOpenProduit] = useState(null)
   const [lightboxIndex, setLightboxIndex] = useState(null)
   const { addItem, qteDansPanier, setOpen: ouvrirPanier } = useCart()
-  const { produits, categories, categoriesParId, collectionsParId, loading } = useCatalogue()
+  const { produits, categoriesActives, collectionsActives, categoriesParId, collectionsParId, loading } = useCatalogue()
 
   const categorieDe = (p) => categoriesParId[p.categorie_id]
   const catLabel = (p) => categorieDe(p)?.label ?? ''
   const catColor = (p) => categorieDe(p)?.couleur ?? '#2A1506'
 
-  const filtered = activeCat === 'all' ? produits : produits.filter(p => p.categorie_id === activeCat)
+  const filtered = produits.filter(p =>
+    (!typeActif || categoriesParId[p.categorie_id]?.slug === typeActif) &&
+    (!collectionActive || collectionsParId[p.collection_id]?.slug === collectionActive)
+  )
+
+  const setFiltre = (cle, valeur) => {
+    const suivants = new URLSearchParams(params)
+    if (valeur && suivants.get(cle) !== valeur) suivants.set(cle, valeur)
+    else suivants.delete(cle)
+    setParams(suivants, { replace: true, preventScrollReset: true })
+  }
+  const toutVoir = () => setParams({}, { replace: true, preventScrollReset: true })
+
+  const allerAuxPieces = () => document.getElementById('mes-pieces')?.scrollIntoView({ behavior: 'smooth' })
+
+  // Arrivée depuis le menu (Collections / Objets) : on descend directement sur les pièces
+  useEffect(() => {
+    if (!location.state?.versPieces) return
+    const t = setTimeout(allerAuxPieces, 400) // après la transition de page
+    return () => clearTimeout(t)
+  }, [location.key, location.state])
 
   useEffect(() => {
     const handler = (e) => {
@@ -107,6 +132,50 @@ export default function Boutique() {
         </div>
       </section>
 
+      {/* COLLECTIONS */}
+      {collectionsActives.length > 0 && (
+        <section className="px-6 md:px-16 lg:px-24 pb-8">
+          <div className="max-w-7xl mx-auto">
+            <Reveal>
+              <p className="font-ui text-xs uppercase tracking-[0.3em] text-[#E87040] mb-6">Les collections</p>
+            </Reveal>
+            <div className={`grid grid-cols-1 gap-5 ${collectionsActives.length === 2 ? 'md:grid-cols-2' : collectionsActives.length >= 3 ? 'md:grid-cols-3' : ''}`}>
+              {collectionsActives.map((c, i) => {
+                const pieces = produits.filter(p => p.collection_id === c.id)
+                const photos = pieces.flatMap(p => p.images.slice(0, 1)).slice(0, 3)
+                const active = collectionActive === c.slug
+                return (
+                  <Reveal key={c.id} delay={i * 0.08} direction="up">
+                    <button
+                      onClick={() => { setFiltre('collection', c.slug); allerAuxPieces() }}
+                      className={`group relative w-full text-left rounded-3xl overflow-hidden p-5 pb-6 transition-all duration-300 hover:-translate-y-1 ${active ? 'ring-4 ring-offset-4 ring-offset-[#FBF5E9]' : ''}`}
+                      style={{ backgroundColor: `${c.couleur}33`, '--tw-ring-color': c.couleur }}
+                    >
+                      <div className="flex gap-2 h-44 md:h-52 mb-5">
+                        {photos.map((img, j) => (
+                          <div key={j} className={`rounded-2xl overflow-hidden bg-white ${j === 0 ? 'flex-[1.4]' : 'flex-1'}`}>
+                            <img src={img.thumb} alt="" loading="lazy" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                          </div>
+                        ))}
+                      </div>
+                      <div className="flex items-end justify-between gap-3">
+                        <div>
+                          <p className="font-ui text-[0.65rem] uppercase tracking-[0.25em] text-[#2A1506]/50 mb-1">Collection</p>
+                          <h3 className="font-display font-black text-3xl md:text-4xl leading-none" style={{ color: c.couleur }}>{c.label}</h3>
+                        </div>
+                        <span className="font-ui text-xs font-semibold text-[#2A1506]/60 whitespace-nowrap">
+                          {pieces.length} pièce{pieces.length > 1 ? 's' : ''} <span className="inline-block transition-transform group-hover:translate-x-1">→</span>
+                        </span>
+                      </div>
+                    </button>
+                  </Reveal>
+                )
+              })}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* MES PIÈCES */}
       <section id="mes-pieces" className="px-6 md:px-16 lg:px-24 py-16 scroll-mt-24">
         <div className="max-w-7xl mx-auto">
@@ -119,36 +188,36 @@ export default function Boutique() {
           </div>
         </Reveal>
 
-        <Reveal delay={0.05}>
-          <div className="flex items-center gap-3 bg-[#F3D07A]/25 border border-[#F3D07A]/50 rounded-xl px-5 py-3 mb-10 mt-6">
-            <Asterisk size={16} color="#D97080" className="shrink-0" />
-            <p className="font-ui text-xs md:text-sm text-[#2A1506]/70">
-              La mise en vente en ligne arrive bientôt. En attendant, une pièce vous plaît ?{' '}
-              <a href="mailto:contact.atelierlvy@gmail.com" className="font-semibold text-[#D97080] underline underline-offset-2">Écrivez-moi</a>.
-            </p>
-          </div>
-        </Reveal>
 
-        {/* Filtres catégories */}
+        {/* Filtres : collection (univers) × type d'objet — combinables */}
         <Reveal delay={0.1}>
-          <div className="flex flex-wrap gap-2 mb-12">
-            <button
-              onClick={() => setActiveCat('all')}
-              className={`font-ui text-sm font-semibold px-4 py-2 rounded-xl border-2 transition-all duration-150 ${activeCat === 'all' ? 'bg-[#2A1506] border-[#2A1506] text-[#FBF5E9]' : 'bg-white border-[#2A1506]/10 text-[#2A1506]/70 hover:border-[#2A1506]/25'}`}
-            >
-              Tout voir
-            </button>
-            {categories.map((c) => (
-              <button
-                key={c.id}
-                onClick={() => setActiveCat(c.id)}
-                className={`font-ui text-sm font-semibold px-4 py-2 rounded-xl border-2 transition-all duration-150 inline-flex items-center gap-2 ${activeCat === c.id ? 'text-[#2A1506]' : 'bg-white border-[#2A1506]/10 text-[#2A1506]/70 hover:border-[#2A1506]/25'}`}
-                style={activeCat === c.id ? { backgroundColor: c.couleur, borderColor: c.couleur } : undefined}
-              >
-                <span className="w-2 h-2 rounded-full" style={{ backgroundColor: activeCat === c.id ? 'currentColor' : c.couleur }} />
-                {c.label}
-              </button>
+          <div className="flex flex-col gap-4 mb-12">
+            {[
+              { titre: 'Collections', cle: 'collection', items: collectionsActives, actif: collectionActive },
+              { titre: 'Objets', cle: 'type', items: categoriesActives, actif: typeActif },
+            ].filter(r => r.items.length > 0).map(({ titre, cle, items, actif }) => (
+              <div key={cle} className="flex flex-wrap items-center gap-2">
+                <span className="font-ui text-[0.65rem] uppercase tracking-[0.25em] text-[#2A1506]/40 w-24 shrink-0">{titre}</span>
+                {items.map((c) => (
+                  <button
+                    key={c.id}
+                    onClick={() => setFiltre(cle, c.slug)}
+                    className={`font-ui text-sm font-semibold px-4 py-2 rounded-xl border-2 transition-all duration-150 inline-flex items-center gap-2 ${actif === c.slug ? 'text-[#2A1506]' : 'bg-white border-[#2A1506]/10 text-[#2A1506]/70 hover:border-[#2A1506]/25'}`}
+                    style={actif === c.slug ? { backgroundColor: c.couleur, borderColor: c.couleur } : undefined}
+                  >
+                    <span className="w-2 h-2 rounded-full" style={{ backgroundColor: actif === c.slug ? 'currentColor' : c.couleur }} />
+                    {c.label}
+                    {actif === c.slug && <span aria-hidden="true" className="-mr-1 opacity-60">✕</span>}
+                  </button>
+                ))}
+              </div>
             ))}
+            {(typeActif || collectionActive) && (
+              <p className="font-ui text-sm text-[#2A1506]/60">
+                {filtered.length} pièce{filtered.length > 1 ? 's' : ''}
+                <button onClick={toutVoir} className="ml-3 font-semibold text-[#E87040] underline underline-offset-2 hover:text-[#2A1506]">Tout voir</button>
+              </p>
+            )}
           </div>
         </Reveal>
 
@@ -160,6 +229,12 @@ export default function Boutique() {
               <div className="h-4 w-2/3 rounded bg-[#2A1506]/5" />
             </div>
           ))}
+          {!loading && filtered.length === 0 && (
+            <div className="col-span-full text-center py-16">
+              <p className="font-display italic text-3xl text-[#2A1506]/20 mb-4">Rien pour l'instant ici…</p>
+              <button onClick={toutVoir} className={btn.outline}>Voir toutes les pièces</button>
+            </div>
+          )}
           {filtered.map((p, i) => {
             const vendu = p.stock === 0
             return (

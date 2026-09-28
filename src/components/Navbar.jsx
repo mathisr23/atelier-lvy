@@ -1,7 +1,9 @@
-import { NavLink } from 'react-router-dom'
+import { NavLink, Link } from 'react-router-dom'
 import { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import logo1 from '../assets/logo1.png'
 import { useCart } from '../context/CartContext'
+import { useCatalogue, lienBoutique } from '../context/CatalogueContext'
 
 function CartButton() {
   const { items, setOpen } = useCart()
@@ -18,6 +20,101 @@ function CartButton() {
         </span>
       )}
     </button>
+  )
+}
+
+// Sous-menu Boutique : deux portes d'entrée, par univers (collections) ou par type d'objet
+function BoutiqueSousMenu({ onChoix, compact = false }) {
+  const { collectionsActives, categoriesActives } = useCatalogue()
+  const colonnes = [
+    { titre: 'Collections', items: collectionsActives, cle: 'collection' },
+    { titre: 'Objets', items: categoriesActives, cle: 'type' },
+  ].filter((c) => c.items.length > 0)
+
+  if (compact) {
+    return (
+      <div className="flex flex-col gap-3 pl-4 border-l-2 border-[#E87040]/30">
+        {colonnes.map(({ titre, items, cle }) => (
+          <div key={titre}>
+            <p className="font-ui text-[0.65rem] uppercase tracking-[0.2em] text-[#2A1506]/40 mb-1.5">{titre}</p>
+            <div className="flex flex-wrap gap-1.5">
+              {items.map((it) => (
+                <Link key={it.id} to={lienBoutique({ [cle]: it.slug })} state={{ versPieces: true }} onClick={onChoix}
+                  className="font-ui text-sm px-3 py-1 rounded-full bg-white border border-[#2A1506]/10 text-[#2A1506]/80 inline-flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: it.couleur }} />
+                  {it.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    )
+  }
+
+  return (
+    <div className="flex gap-10">
+      {colonnes.map(({ titre, items, cle }) => (
+        <div key={titre} className="min-w-[10rem]">
+          <p className="font-ui text-[0.65rem] uppercase tracking-[0.25em] text-[#2A1506]/40 mb-3">{titre}</p>
+          <ul className="flex flex-col gap-2">
+            {items.map((it) => (
+              <li key={it.id}>
+                <Link to={lienBoutique({ [cle]: it.slug })} state={{ versPieces: true }} onClick={onChoix}
+                  className="group/item font-display text-lg text-[#2A1506] hover:text-[#E87040] transition-colors inline-flex items-center gap-2.5">
+                  <span className="w-2 h-2 rounded-full transition-transform group-hover/item:scale-150" style={{ backgroundColor: it.couleur }} />
+                  {it.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function BoutiqueMenuDesktop() {
+  const [ouvert, setOuvert] = useState(false)
+  // Ferme le menu après un choix (le lien garde sinon le focus et le rouvre)
+  const fermer = () => { setOuvert(false); document.activeElement?.blur() }
+  return (
+    <div className="relative" onMouseEnter={() => setOuvert(true)} onMouseLeave={() => setOuvert(false)} onFocus={() => setOuvert(true)} onBlur={(e) => !e.currentTarget.contains(e.relatedTarget) && setOuvert(false)}>
+      <NavLink
+        to="/boutique"
+        onClick={fermer}
+        className={({ isActive }) =>
+          `font-ui text-sm font-medium tracking-wide transition-colors relative group inline-flex items-center gap-1 ${
+            isActive ? 'text-[#E87040]' : 'text-[#2A1506]/70 hover:text-[#2A1506]'
+          }`
+        }
+      >
+        Boutique
+        <svg width="10" height="10" viewBox="0 0 10 10" className={`transition-transform duration-200 ${ouvert ? 'rotate-180' : ''}`} aria-hidden="true">
+          <path d="M2 3.5l3 3 3-3" stroke="currentColor" strokeWidth="1.4" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+        <span className="absolute -bottom-0.5 left-0 h-px bg-[#E87040] transition-all duration-300 w-0 group-hover:w-full" />
+      </NavLink>
+      <AnimatePresence>
+        {ouvert && (
+          <motion.div
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 6 }}
+            transition={{ duration: 0.18 }}
+            className="absolute left-1/2 -translate-x-1/2 top-full pt-4"
+          >
+            <div className="bg-[#FBF5E9] border border-[#2A1506]/10 rounded-2xl shadow-xl p-6">
+              <BoutiqueSousMenu onChoix={fermer} />
+              <Link to="/boutique" state={{ versPieces: true }} onClick={fermer}
+                className="block mt-5 pt-4 border-t border-dashed border-[#2A1506]/15 font-ui text-xs font-semibold uppercase tracking-widest text-[#E87040] hover:text-[#2A1506] transition-colors">
+                Toutes les pièces →
+              </Link>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   )
 }
 
@@ -42,7 +139,7 @@ export default function Navbar() {
 
         {/* Desktop nav */}
         <nav className="hidden md:flex items-center gap-8">
-          {links.map(({ to, label }) => (
+          {links.map(({ to, label }) => to === '/boutique' ? <BoutiqueMenuDesktop key={to} /> : (
             <NavLink
               key={to}
               to={to}
@@ -76,20 +173,22 @@ export default function Navbar() {
       </div>
 
       {/* Mobile menu */}
-      <div className={`md:hidden overflow-hidden transition-all duration-300 ${open ? 'max-h-64' : 'max-h-0'}`}>
+      <div className={`md:hidden overflow-y-auto transition-all duration-300 ${open ? 'max-h-[80vh]' : 'max-h-0'}`}>
         <nav className="flex flex-col px-6 pb-6 gap-4 border-t border-[#2A1506]/10 pt-4">
           {links.map(({ to, label }) => (
-            <NavLink
-              key={to}
-              to={to}
-              end={to === '/'}
-              onClick={() => setOpen(false)}
-              className={({ isActive }) =>
-                `font-ui text-base font-medium ${isActive ? 'text-[#E87040]' : 'text-[#2A1506]/70'}`
-              }
-            >
-              {label}
-            </NavLink>
+            <div key={to} className="flex flex-col gap-3">
+              <NavLink
+                to={to}
+                end={to === '/'}
+                onClick={() => setOpen(false)}
+                className={({ isActive }) =>
+                  `font-ui text-base font-medium ${isActive ? 'text-[#E87040]' : 'text-[#2A1506]/70'}`
+                }
+              >
+                {label}
+              </NavLink>
+              {to === '/boutique' && <BoutiqueSousMenu compact onChoix={() => setOpen(false)} />}
+            </div>
           ))}
         </nav>
       </div>

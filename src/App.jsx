@@ -6,6 +6,7 @@ import Footer from './components/Footer'
 import SplashScreen from './components/SplashScreen'
 import CartDrawer from './components/CartDrawer'
 import { CartProvider } from './context/CartContext'
+import { CatalogueProvider } from './context/CatalogueContext'
 import Apropos from './pages/Apropos'
 import Boutique from './pages/Boutique'
 import Initiation from './pages/Initiation'
@@ -54,6 +55,7 @@ function AnimatedRoutes() {
 function MainApp() {
   const [splashDone, setSplashDone] = useState(false)
   return (
+    <CatalogueProvider>
     <CartProvider>
       <SplashScreen onDone={() => setSplashDone(true)} />
       {splashDone && (
@@ -68,6 +70,7 @@ function MainApp() {
         </>
       )}
     </CartProvider>
+    </CatalogueProvider>
   )
 }
 

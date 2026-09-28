@@ -4,16 +4,18 @@ import useSEO from '../hooks/useSEO'
 import { Asterisk } from '../components/Deco'
 import Reveal from '../components/Reveal'
 import { useCart } from '../context/CartContext'
+import { useCatalogue } from '../context/CatalogueContext'
 
 export default function CommandeSucces() {
   useSEO({ title: 'Commande confirmée — Léa Artiste céramiste', description: 'Merci pour votre commande.' })
-  const { clear, refreshInfos } = useCart()
+  const { clear } = useCart()
+  const { refresh } = useCatalogue()
   const [params] = useSearchParams()
 
   useEffect(() => {
     // On ne vide le panier que si l'on revient réellement d'un paiement Stripe
     if (params.get('session_id')) clear()
-    refreshInfos()
+    refresh() // stocks à jour après l'achat
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 

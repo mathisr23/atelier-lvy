@@ -1,4 +1,4 @@
-// Webhook Stripe : à la confirmation d'un paiement, marque les pièces comme vendues
+// Webhook Stripe : à la confirmation d'un paiement, enregistre la commande, décompte le stock
 // et envoie un mail à Léa + une confirmation au client. Appelé directement par Stripe (pas de JWT Supabase).
 import Stripe from 'npm:stripe@17.4.0'
 import { createClient } from 'npm:@supabase/supabase-js@2'
@@ -60,12 +60,7 @@ async function envoyerEmail(template_id, template_params) {
   if (!res.ok) console.error(`Erreur EmailJS (${template_id}):`, res.status, await res.text())
 }
 
-async function envoyerMailsCommande(sessionId) {
-  // Session complète : pièces achetées + mode de livraison choisi
-  const session = await stripe.checkout.sessions.retrieve(sessionId, {
-    expand: ['line_items', 'shipping_cost.shipping_rate'],
-  })
-
+async function envoyerMailsCommande(session) {
   const client = session.customer_details
   const nom = client?.name ?? ''
   const adresse = session.shipping_details?.address
@@ -79,7 +74,7 @@ async function envoyerMailsCommande(sessionId) {
     : ''
 
   const lignesCommande = [
-    ...(session.line_items?.data ?? []).map((li) => ligne(li.description, euros(li.amount_total))),
+    ...(session.line_items?.data ?? []).map((li) => ligne(li.quantity > 1 ? `${li.description} × ${li.quantity}` : li.description, euros(li.amount_total))),
     ligne(livraison.replace(/ — offerte$/, ''), session.shipping_cost?.amount_total ? euros(session.shipping_cost.amount_total) : 'Offerte'),
     ligne('Total payé', euros(session.amount_total), { fort: true }),
   ]
@@ -141,16 +136,51 @@ Deno.serve(async (req) => {
   }
 
   if (event.type === 'checkout.session.completed') {
-    const session = event.data.object
-    const slugs = (session.metadata?.slugs ?? '').split(',').filter(Boolean)
+    // Session complète : pièces (avec leur slug), quantités, livraison choisie
+    const session = await stripe.checkout.sessions.retrieve(event.data.object.id, {
+      expand: ['line_items.data.price.product', 'shipping_cost.shipping_rate'],
+    })
+    const articles = (session.line_items?.data ?? []).map((li) => ({
+      slug: li.price?.product?.metadata?.slug ?? null,
+      nom: li.description,
+      quantite: li.quantity ?? 1,
+      montant: (li.amount_total ?? 0) / 100,
+    }))
 
-    if (slugs.length > 0) {
-      const { error } = await supabase.from('produit_prix').update({ vendu: true }).in('slug', slugs)
-      if (error) console.error('Erreur mise à jour vendu:', error)
+    // Enregistre la commande une seule fois : si Stripe renvoie l'événement, on s'arrête là
+    const { data: nouvelle, error: errCommande } = await supabase
+      .from('commandes')
+      .upsert(
+        {
+          stripe_session_id: session.id,
+          nom: session.customer_details?.name ?? null,
+          email: session.customer_details?.email ?? null,
+          telephone: session.customer_details?.phone ?? null,
+          total: (session.amount_total ?? 0) / 100,
+          livraison: session.shipping_cost?.shipping_rate?.display_name ?? null,
+          adresse: session.shipping_details?.address ?? null,
+          articles,
+        },
+        { onConflict: 'stripe_session_id', ignoreDuplicates: true },
+      )
+      .select('stripe_session_id')
+    if (errCommande) {
+      console.error('Erreur enregistrement commande:', errCommande)
+      return new Response('Erreur base de données', { status: 500 }) // Stripe réessaiera
+    }
+    if (!nouvelle || nouvelle.length === 0) {
+      console.log('Commande déjà traitée, événement ignoré:', session.id)
+      return new Response(JSON.stringify({ received: true, doublon: true }), { headers: { 'Content-Type': 'application/json' } })
+    }
+
+    for (const { slug, quantite } of articles) {
+      if (!slug) continue
+      const { error } = await supabase.rpc('decrementer_stock', { p_slug: slug, p_qte: quantite })
+      if (error) console.error(`Erreur stock (${slug}):`, error)
     }
 
     // Un échec d'email ne doit pas faire échouer le webhook (Stripe le renverrait en boucle)
-    await envoyerMailsCommande(session.id).catch((err) => console.error('Erreur envoi email:', err))
+    await envoyerMailsCommande(session).catch((err) => console.error('Erreur envoi email:', err))
   }
 
   return new Response(JSON.stringify({ received: true }), { headers: { 'Content-Type': 'application/json' } })

@@ -1,21 +1,27 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useCart } from '../context/CartContext'
+import { useCatalogue } from '../context/CatalogueContext'
 import { supabase } from '../lib/supabase'
 import { FRAIS_LIVRAISON, SEUIL_LIVRAISON_OFFERTE } from '../data/livraison'
 
 const formatEuros = (n) => `${Number(n).toLocaleString('fr-FR', { minimumFractionDigits: Number.isInteger(n) ? 0 : 2, maximumFractionDigits: 2 })} €`
 
 export default function CartDrawer() {
-  const { items, removeItem, open, setOpen, infosMap } = useCart()
+  const { items, removeItem, setQte, open, setOpen } = useCart()
+  const { produitsParSlug } = useCatalogue()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
 
-  const total = items.reduce((sum, i) => sum + (infosMap[i.slug]?.prix ?? 0), 0)
+  const total = items.reduce((sum, i) => sum + (Number(produitsParSlug[i.slug]?.prix) || 0) * i.qte, 0)
   const livraisonOfferte = total >= SEUIL_LIVRAISON_OFFERTE
   const fraisLivraison = livraisonOfferte ? 0 : FRAIS_LIVRAISON
   const resteAvantOfferte = SEUIL_LIVRAISON_OFFERTE - total
-  const indisponibles = items.filter((i) => infosMap[i.slug]?.vendu || infosMap[i.slug]?.prix == null)
+  const estIndisponible = (i) => {
+    const p = produitsParSlug[i.slug]
+    return !p || p.prix == null || p.stock < i.qte
+  }
+  const indisponibles = items.filter(estIndisponible)
 
   const handleCheckout = async () => {
     setError(null)
@@ -25,7 +31,7 @@ export default function CartDrawer() {
     }
     setLoading(true)
     const { data, error: fnError } = await supabase.functions.invoke('create-checkout-session', {
-      body: { items: items.map((i) => ({ slug: i.slug, nom: i.nom })) },
+      body: { items: items.map((i) => ({ slug: i.slug, qte: i.qte })) },
     })
     if (fnError || !data?.url) {
       setError("Impossible de lancer le paiement pour l'instant. Réessaie dans un instant.")
@@ -54,7 +60,7 @@ export default function CartDrawer() {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between px-6 py-5 border-b border-[#2A1506]/10">
-              <h2 className="font-display font-bold text-2xl">Panier {items.length > 0 && `(${items.length})`}</h2>
+              <h2 className="font-display font-bold text-2xl">Panier {items.length > 0 && `(${items.reduce((n, i) => n + i.qte, 0)})`}</h2>
               <button
                 onClick={() => setOpen(false)}
                 className="w-9 h-9 rounded-full bg-[#2A1506]/10 hover:bg-[#2A1506]/20 flex items-center justify-center transition-colors"
@@ -74,16 +80,33 @@ export default function CartDrawer() {
               ) : (
                 <div className="flex flex-col gap-4">
                   {items.map((item) => {
-                    const infos = infosMap[item.slug]
-                    const vendu = infos?.vendu
+                    const p = produitsParSlug[item.slug]
+                    const epuise = !p || p.stock === 0
+                    const indispo = estIndisponible(item)
                     return (
-                      <div key={item.slug} className={`flex gap-3 items-center rounded-xl p-2 ${vendu ? 'bg-[#F2A0A8]/10' : ''}`}>
-                        <img src={item.image} alt={item.nom} className={`w-16 h-16 rounded-lg object-cover shrink-0 ${vendu ? 'grayscale opacity-60' : ''}`} />
+                      <div key={item.slug} className={`flex gap-3 items-center rounded-xl p-2 ${indispo ? 'bg-[#F2A0A8]/10' : ''}`}>
+                        <img src={p?.images?.[0]?.thumb ?? item.image} alt={p?.nom ?? item.nom} className={`w-16 h-16 rounded-lg object-cover shrink-0 ${epuise ? 'grayscale opacity-60' : ''}`} />
                         <div className="flex-1 min-w-0">
-                          <p className="font-display font-bold text-sm leading-snug truncate">{item.nom}</p>
+                          <p className="font-display font-bold text-sm leading-snug truncate">{p?.nom ?? item.nom}</p>
                           <p className="font-ui text-xs text-[#2A1506]/50 mt-0.5">
-                            {vendu ? <span className="text-[#D97080] font-semibold">Vendue entre-temps</span> : infos?.prix != null ? `${infos.prix} €` : 'Prix à venir'}
+                            {epuise ? (
+                              <span className="text-[#D97080] font-semibold">Vendue entre-temps</span>
+                            ) : indispo && p.prix != null ? (
+                              <span className="text-[#D97080] font-semibold">Plus que {p.stock} en stock</span>
+                            ) : p.prix != null ? (
+                              formatEuros(Number(p.prix) * item.qte)
+                            ) : (
+                              'Prix à venir'
+                            )}
                           </p>
+                          {/* Quantité — uniquement pour les pièces faites en plusieurs exemplaires */}
+                          {!epuise && p.stock > 1 && (
+                            <div className="inline-flex items-center gap-1 mt-1.5 bg-white rounded-lg border border-[#2A1506]/10">
+                              <button onClick={() => setQte(item.slug, item.qte - 1)} className="w-7 h-7 font-ui text-sm text-[#2A1506]/60 hover:text-[#E87040]" aria-label="Retirer un exemplaire">−</button>
+                              <span className="font-ui text-xs font-semibold w-5 text-center">{item.qte}</span>
+                              <button onClick={() => setQte(item.slug, item.qte + 1)} disabled={item.qte >= p.stock} className="w-7 h-7 font-ui text-sm text-[#2A1506]/60 hover:text-[#E87040] disabled:opacity-30" aria-label="Ajouter un exemplaire">+</button>
+                            </div>
+                          )}
                         </div>
                         <button
                           onClick={() => removeItem(item.slug)}

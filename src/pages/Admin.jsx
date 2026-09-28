@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
-import { produits as CATALOGUE_PRODUITS, categories as CATEGORIES_PRODUITS } from '../data/produits'
+import ProduitsAdmin, { CommandesAdmin } from './admin/ProduitsAdmin'
 
 const EDGE_FUNCTION_URL = import.meta.env.VITE_ADMIN_EDGE_FUNCTION_URL
 
@@ -636,105 +636,16 @@ function CommentaireCard({ c, onAction }) {
   )
 }
 
-/* ─── PRODUIT PRIX CARD ─── */
-function ProduitPrixCard({ p, infos, onSaved }) {
-  const [prix, setPrix] = useState(infos?.prix ?? '')
-  const [description, setDescription] = useState(infos?.description ?? '')
-  const [saving, setSaving] = useState(false)
-  const [saved, setSaved] = useState(false)
-  const [togglingVendu, setTogglingVendu] = useState(false)
-  const vendu = infos?.vendu ?? false
-  const dirty = prix !== (infos?.prix ?? '') || description !== (infos?.description ?? '')
-
-  const handleSave = async () => {
-    setSaving(true)
-    const payload = {
-      slug: p.slug,
-      prix: prix === '' ? null : parseFloat(prix),
-      description: description.trim() === '' ? null : description.trim(),
-      updated_at: new Date().toISOString(),
-    }
-    const { error } = await supabase.from('produit_prix').upsert(payload)
-    if (!error) {
-      onSaved(p.slug, payload)
-      setSaved(true)
-      setTimeout(() => setSaved(false), 1500)
-    }
-    setSaving(false)
-  }
-
-  const handleToggleVendu = async () => {
-    setTogglingVendu(true)
-    const payload = { slug: p.slug, vendu: !vendu, updated_at: new Date().toISOString() }
-    const { error } = await supabase.from('produit_prix').upsert(payload)
-    if (!error) onSaved(p.slug, payload)
-    setTogglingVendu(false)
-  }
-
-  return (
-    <div className={`bg-white rounded-2xl border-2 p-4 flex gap-4 transition-colors ${vendu ? 'border-[#F2A0A8]/50' : 'border-[#2A1506]/10'}`}>
-      <img src={p.images[0].thumb} alt={p.nom} className={`w-20 h-20 rounded-xl object-cover shrink-0 ${vendu ? 'grayscale opacity-60' : ''}`} />
-      <div className="flex-1 min-w-0 flex flex-col gap-2">
-        <div className="flex items-start justify-between gap-2">
-          <div>
-            <p className="font-display font-bold text-base leading-tight">{p.nom}</p>
-            <p className="font-ui text-xs uppercase tracking-wider mt-0.5" style={{ color: CATEGORIES_PRODUITS.find(c => c.slug === p.categorie)?.color }}>
-              {CATEGORIES_PRODUITS.find(c => c.slug === p.categorie)?.label ?? p.categorie}
-            </p>
-          </div>
-          <button
-            onClick={handleToggleVendu}
-            disabled={togglingVendu}
-            className={`font-ui text-[0.65rem] font-bold px-2.5 py-1 rounded-lg whitespace-nowrap transition-colors disabled:opacity-50 ${vendu ? 'bg-[#F2A0A8] text-[#2A1506] hover:bg-[#d97080] hover:text-white' : 'bg-[#9BBF90]/20 text-[#6A9960] hover:bg-[#9BBF90]/40'}`}
-          >
-            {togglingVendu ? '…' : vendu ? '● Vendu' : '○ Disponible'}
-          </button>
-        </div>
-        <div className="flex gap-2 items-center">
-          <div className="relative">
-            <input
-              type="number"
-              min="0"
-              step="0.5"
-              value={prix}
-              onChange={e => setPrix(e.target.value)}
-              placeholder="—"
-              className="w-24 font-ui text-sm bg-[#FBF5E9] border-2 border-[#2A1506]/15 focus:border-[#E87040] outline-none rounded-lg pl-3 pr-6 py-1.5 transition-colors"
-            />
-            <span className="absolute right-2.5 top-1/2 -translate-y-1/2 font-ui text-xs text-[#2A1506]/40 pointer-events-none">€</span>
-          </div>
-          <button
-            onClick={handleSave}
-            disabled={saving || !dirty}
-            className="font-ui font-bold text-xs px-3 py-1.5 rounded-lg bg-[#9BBF90] text-[#2A1506] hover:bg-[#7aab6e] transition-colors disabled:opacity-40 whitespace-nowrap"
-          >
-            {saving ? '…' : saved ? '✓ Enregistré' : 'Enregistrer'}
-          </button>
-        </div>
-        <textarea
-          value={description}
-          onChange={e => setDescription(e.target.value)}
-          rows={2}
-          placeholder="Description de la pièce…"
-          className="w-full font-ui text-xs bg-[#FBF5E9] border-2 border-[#2A1506]/15 focus:border-[#E87040] outline-none rounded-lg px-3 py-2 placeholder:text-[#2A1506]/30 transition-colors resize-none"
-        />
-      </div>
-    </div>
-  )
-}
-
 /* ─── MAIN ─── */
 export default function Admin() {
   const [session, setSession] = useState(null)
   const [reservations, setReservations] = useState([])
   const [sessions, setSessions] = useState([])
   const [commentaires, setCommentaires] = useState([])
-  const [prixMap, setPrixMap] = useState({})
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState('pending')
   const [filterType, setFilterType] = useState('all')
   const [filterSessionType, setFilterSessionType] = useState('all')
-  const [filterProduitCat, setFilterProduitCat] = useState('all')
   const [activeTab, setActiveTab] = useState('reservations')
 
   useEffect(() => {
@@ -750,12 +661,10 @@ export default function Admin() {
       supabase.from('reservations').select('*').order('created_at', { ascending: false }),
       supabase.from('sessions').select('*').order('annee').order('mois').order('day'),
       supabase.from('commentaires').select('*').order('created_at', { ascending: false }),
-      supabase.from('produit_prix').select('*'),
-    ]).then(([resData, sessData, commData, prixData]) => {
+    ]).then(([resData, sessData, commData]) => {
       setReservations(resData.data || [])
       setSessions(sessData.data || [])
       setCommentaires(commData.data || [])
-      setPrixMap(Object.fromEntries((prixData.data || []).map(r => [r.slug, r])))
       setLoading(false)
     })
   }, [session])
@@ -765,9 +674,6 @@ export default function Admin() {
   }
   const handleCommentaireAction = (id, newStatut) => {
     setCommentaires(prev => prev.map(c => c.id === id ? { ...c, statut: newStatut } : c))
-  }
-  const handlePrixSaved = (slug, payload) => {
-    setPrixMap(prev => ({ ...prev, [slug]: { ...prev[slug], ...payload } }))
   }
   const handleSessionAdd = (s) => setSessions(prev => [...prev, s].sort((a, b) => a.annee - b.annee || a.mois - b.mois || a.day - b.day))
   const handleSessionDelete = (id) => setSessions(prev => prev.filter(s => s.id !== id))
@@ -840,8 +746,6 @@ export default function Admin() {
     refused: reservations.filter(r => r.status === 'refused').length,
   }
   const commentsPending = commentaires.filter(c => c.statut === 'pending').length
-  const produitsSansPrix = CATALOGUE_PRODUITS.filter(p => prixMap[p.slug]?.prix == null).length
-  const filteredProduits = filterProduitCat === 'all' ? CATALOGUE_PRODUITS : CATALOGUE_PRODUITS.filter(p => p.categorie === filterProduitCat)
 
   return (
     <div className="min-h-screen bg-[#FBF5E9]">
@@ -862,7 +766,8 @@ export default function Admin() {
               { key: 'archives', label: `Archives · ${archivedSessions.length}` },
               { key: 'historique', label: `Historique · ${historiqueSessions.length}` },
               { key: 'commentaires', label: commentsPending > 0 ? `Avis · ${commentsPending}` : 'Avis' },
-              { key: 'produits', label: produitsSansPrix > 0 ? `Produits · ${produitsSansPrix}` : 'Produits' },
+              { key: 'produits', label: 'Boutique' },
+              { key: 'commandes', label: 'Commandes' },
             ].map(({ key, label }) => (
               <button key={key} onClick={() => setActiveTab(key)}
                 className={`flex-1 font-ui text-xs font-semibold px-1 py-3 border-b-2 transition-all text-center ${activeTab === key ? 'text-[#E87040] border-[#E87040]' : 'text-[#FBF5E9]/40 border-transparent'}`}>
@@ -881,7 +786,8 @@ export default function Admin() {
               { key: 'archives', label: `Archives · ${archivedSessions.length}` },
               { key: 'historique', label: `Historique · ${historiqueSessions.length}` },
               { key: 'commentaires', label: commentsPending > 0 ? `Avis · ${commentsPending} en attente` : 'Avis' },
-              { key: 'produits', label: produitsSansPrix > 0 ? `Produits · ${produitsSansPrix} sans prix` : 'Produits' },
+              { key: 'produits', label: 'Boutique' },
+              { key: 'commandes', label: 'Commandes' },
             ].map(({ key, label }) => (
               <button key={key} onClick={() => setActiveTab(key)}
                 className={`font-ui text-sm font-semibold px-5 py-5 border-b-2 transition-all ${activeTab === key ? 'text-[#E87040] border-[#E87040]' : 'text-[#FBF5E9]/40 border-transparent hover:text-[#FBF5E9]/70'}`}>
@@ -1040,26 +946,9 @@ export default function Admin() {
             )}
           </>
         ) : activeTab === 'produits' ? (
-          <>
-            <div className="mb-5">
-              <h2 className="font-display font-bold text-2xl text-[#2A1506]">Prix des pièces</h2>
-              <p className="font-ui text-sm text-[#2A1506]/50 mt-1">Ce que tu entres ici s'affiche automatiquement dans la boutique.</p>
-            </div>
-            <div className="flex flex-wrap gap-2 mb-6">
-              {[{ slug: 'all', label: 'Tous' }, ...CATEGORIES_PRODUITS].map(({ slug, label, color }) => (
-                <button key={slug} onClick={() => setFilterProduitCat(slug)}
-                  className={`font-ui text-xs font-semibold px-3 py-1.5 rounded-lg border transition-all duration-150 ${filterProduitCat === slug ? 'text-[#2A1506]' : 'bg-white border-[#2A1506]/10 text-[#2A1506]/50 hover:border-[#2A1506]/25'}`}
-                  style={filterProduitCat === slug ? { backgroundColor: color || '#2A1506', borderColor: color || '#2A1506' } : undefined}>
-                  {label}
-                </button>
-              ))}
-            </div>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              {filteredProduits.map(p => (
-                <ProduitPrixCard key={p.slug} p={p} infos={prixMap[p.slug]} onSaved={handlePrixSaved} />
-              ))}
-            </div>
-          </>
+          <ProduitsAdmin />
+        ) : activeTab === 'commandes' ? (
+          <CommandesAdmin />
         ) : null}
       </main>
     </div>

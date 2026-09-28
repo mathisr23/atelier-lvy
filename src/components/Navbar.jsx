@@ -14,7 +14,7 @@ function CartButton() {
       </svg>
       {items.length > 0 && (
         <span className="absolute -top-1 -right-1 w-4.5 h-4.5 min-w-[18px] rounded-full bg-[#E87040] text-[#FBF5E9] text-[0.6rem] font-ui font-bold flex items-center justify-center px-1">
-          {items.length}
+          {items.reduce((n, i) => n + i.qte, 0)}
         </span>
       )}
     </button>

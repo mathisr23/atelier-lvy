@@ -41,30 +41,42 @@ Deno.serve(async (req) => {
       return json({ error: 'Panier vide.' }, 400)
     }
 
-    const slugs = [...new Set(items.map((i) => i.slug))]
+    // Quantités regroupées par pièce (le client n'envoie que slug + quantité, jamais de prix)
+    const quantites = new Map()
+    for (const { slug, qte } of items) {
+      const n = Math.max(1, Math.floor(Number(qte) || 1))
+      quantites.set(slug, (quantites.get(slug) ?? 0) + n)
+    }
+
     const { data: rows, error } = await supabase
-      .from('produit_prix')
-      .select('slug, prix, vendu')
-      .in('slug', slugs)
+      .from('produits')
+      .select('slug, nom, prix, stock, visible, images')
+      .in('slug', [...quantites.keys()])
     if (error) throw error
 
     const bySlug = new Map(rows.map((r) => [r.slug, r]))
+    const siteUrl = urlDuSite(req)
     const indisponibles = []
     const line_items = []
 
-    for (const { slug, nom } of items) {
+    for (const [slug, qte] of quantites) {
       const row = bySlug.get(slug)
-      if (!row || row.vendu || row.prix == null) {
-        indisponibles.push(nom || slug)
+      if (!row || !row.visible || row.prix == null || row.stock < qte) {
+        indisponibles.push(row?.nom ?? slug)
         continue
       }
+      const photo = row.images?.[0]?.thumb
       line_items.push({
         price_data: {
           currency: 'eur',
-          product_data: { name: nom || slug },
+          product_data: {
+            name: row.nom,
+            metadata: { slug },
+            ...(photo ? { images: [photo.startsWith('http') ? photo : `${siteUrl}${photo}`] } : {}),
+          },
           unit_amount: Math.round(Number(row.prix) * 100),
         },
-        quantity: 1,
+        quantity: qte,
       })
     }
 
@@ -72,10 +84,9 @@ Deno.serve(async (req) => {
       return json({ error: 'indisponible', indisponibles }, 409)
     }
 
-    const sousTotal = line_items.reduce((s, li) => s + li.price_data.unit_amount, 0)
+    const sousTotal = line_items.reduce((s, li) => s + li.price_data.unit_amount * li.quantity, 0)
     const livraisonOfferte = sousTotal >= SEUIL_LIVRAISON_OFFERTE
 
-    const siteUrl = urlDuSite(req)
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
       locale: 'fr',
@@ -100,7 +111,6 @@ Deno.serve(async (req) => {
           },
         },
       ],
-      metadata: { slugs: slugs.join(',') },
     })
 
     return json({ url: session.url })

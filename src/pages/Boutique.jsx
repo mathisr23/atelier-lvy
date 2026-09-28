@@ -3,7 +3,7 @@ import useSEO from '../hooks/useSEO'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Asterisk } from '../components/Deco'
 import Reveal from '../components/Reveal'
-import { produits, categories } from '../data/produits'
+import { useCatalogue } from '../context/CatalogueContext'
 import { useCart } from '../context/CartContext'
 import imgFourMarron from '../assets/four_marron.png'
 import imgVase1 from '../assets/vase1.png'
@@ -17,13 +17,6 @@ const btn = {
   orange: 'inline-block font-ui font-semibold text-sm px-8 py-3.5 bg-[#E87040] text-[#2A1506] border-2 border-[#E87040] rounded-xl hover:bg-[#2A1506] hover:text-[#FBF5E9] hover:border-[#2A1506] transition-all duration-200 whitespace-nowrap',
 }
 
-function catLabel(slug) {
-  return categories.find(c => c.slug === slug)?.label ?? slug
-}
-function catColor(slug) {
-  return categories.find(c => c.slug === slug)?.color ?? '#2A1506'
-}
-
 const defaultDescriptions = {
   'porte-bijoux': "Un joli rangement pour poser bagues et bijoux du quotidien — pièce unique en grès, façonnée et émaillée à la main.",
   'bols-vases': "Une pièce en grès façonnée à la main, entre objet du quotidien et petite sculpture.",
@@ -34,6 +27,8 @@ const defaultDescriptions = {
 function defaultDescription(categorieSlug) {
   return defaultDescriptions[categorieSlug] ?? 'Pièce unique façonnée à la main dans mon atelier, en grès.'
 }
+
+const formatPrix = (n) => `${Number(n).toLocaleString('fr-FR', { minimumFractionDigits: Number.isInteger(Number(n)) ? 0 : 2 })} €`
 
 const steps = [
   { num: '01', title: 'Contacte moi', text: "Raconte-moi ton idée et tes envies, tu peux aussi me faire un croquis et m’envoyer des inspirations. Ensuite je te recontacte pour qu’on puisse échanger ensemble et bien cerner ce que tu souhaites.", color: '#E87040' },
@@ -50,9 +45,14 @@ export default function Boutique() {
   const [activeCat, setActiveCat] = useState('all')
   const [openProduit, setOpenProduit] = useState(null)
   const [lightboxIndex, setLightboxIndex] = useState(null)
-  const { infosMap, addItem, removeItem, isInCart } = useCart()
+  const { addItem, qteDansPanier, setOpen: ouvrirPanier } = useCart()
+  const { produits, categories, categoriesParId, collectionsParId, loading } = useCatalogue()
 
-  const filtered = activeCat === 'all' ? produits : produits.filter(p => p.categorie === activeCat)
+  const categorieDe = (p) => categoriesParId[p.categorie_id]
+  const catLabel = (p) => categorieDe(p)?.label ?? ''
+  const catColor = (p) => categorieDe(p)?.couleur ?? '#2A1506'
+
+  const filtered = activeCat === 'all' ? produits : produits.filter(p => p.categorie_id === activeCat)
 
   useEffect(() => {
     const handler = (e) => {
@@ -140,12 +140,12 @@ export default function Boutique() {
             </button>
             {categories.map((c) => (
               <button
-                key={c.slug}
-                onClick={() => setActiveCat(c.slug)}
-                className={`font-ui text-sm font-semibold px-4 py-2 rounded-xl border-2 transition-all duration-150 inline-flex items-center gap-2 ${activeCat === c.slug ? 'text-[#2A1506]' : 'bg-white border-[#2A1506]/10 text-[#2A1506]/70 hover:border-[#2A1506]/25'}`}
-                style={activeCat === c.slug ? { backgroundColor: c.color, borderColor: c.color } : undefined}
+                key={c.id}
+                onClick={() => setActiveCat(c.id)}
+                className={`font-ui text-sm font-semibold px-4 py-2 rounded-xl border-2 transition-all duration-150 inline-flex items-center gap-2 ${activeCat === c.id ? 'text-[#2A1506]' : 'bg-white border-[#2A1506]/10 text-[#2A1506]/70 hover:border-[#2A1506]/25'}`}
+                style={activeCat === c.id ? { backgroundColor: c.couleur, borderColor: c.couleur } : undefined}
               >
-                <span className="w-2 h-2 rounded-full" style={{ backgroundColor: activeCat === c.slug ? 'currentColor' : c.color }} />
+                <span className="w-2 h-2 rounded-full" style={{ backgroundColor: activeCat === c.id ? 'currentColor' : c.couleur }} />
                 {c.label}
               </button>
             ))}
@@ -154,14 +154,20 @@ export default function Boutique() {
 
         {/* Grille produits */}
         <div className="grid grid-cols-2 md:grid-cols-3 gap-x-10 md:gap-x-14 gap-y-16 md:gap-y-20">
+          {loading && Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="animate-pulse">
+              <div className="aspect-[4/5] rounded-2xl bg-[#2A1506]/5 mb-4" />
+              <div className="h-4 w-2/3 rounded bg-[#2A1506]/5" />
+            </div>
+          ))}
           {filtered.map((p, i) => {
-            const vendu = infosMap[p.slug]?.vendu ?? false
+            const vendu = p.stock === 0
             return (
             <Reveal key={p.slug} delay={Math.min(i * 0.04, 0.3)} direction="up">
               <button onClick={() => setOpenProduit(p)} className="group text-left w-full">
                 <div className="relative aspect-[4/5] rounded-2xl overflow-hidden bg-white mb-4 shadow-sm group-hover:shadow-lg transition-shadow duration-300">
                   <img
-                    src={p.images[0].thumb}
+                    src={p.images[0]?.thumb}
                     alt={p.nom}
                     className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 ${vendu ? 'grayscale opacity-70' : ''}`}
                     loading="lazy"
@@ -175,14 +181,14 @@ export default function Boutique() {
                 <div className="flex items-start justify-between gap-2">
                   <div>
                     <p className="font-display font-bold text-base md:text-lg leading-snug">{p.nom}</p>
-                    <p className="font-ui text-xs uppercase tracking-wider mt-1" style={{ color: catColor(p.categorie) }}>
-                      {catLabel(p.categorie)}
+                    <p className="font-ui text-xs uppercase tracking-wider mt-1" style={{ color: catColor(p) }}>
+                      {catLabel(p)}
                     </p>
                   </div>
                   {vendu ? (
                     <span className="font-ui text-xs font-bold shrink-0 text-[#2A1506]/40">Vendu</span>
-                  ) : infosMap[p.slug]?.prix != null && (
-                    <span className="font-ui text-sm font-bold shrink-0">{infosMap[p.slug].prix} €</span>
+                  ) : p.prix != null && (
+                    <span className="font-ui text-sm font-bold shrink-0">{formatPrix(p.prix)}</span>
                   )}
                 </div>
               </button>
@@ -291,9 +297,14 @@ export default function Boutique() {
               {/* Infos */}
               <div className="p-6 md:p-8 flex flex-col">
                 <div className="flex items-start justify-between gap-3 mb-1">
-                  <span className="font-ui text-xs font-semibold uppercase tracking-widest px-3 py-1 rounded-lg" style={{ backgroundColor: `${catColor(openProduit.categorie)}25`, color: catColor(openProduit.categorie) }}>
-                    {catLabel(openProduit.categorie)}
+                  <span className="font-ui text-xs font-semibold uppercase tracking-widest px-3 py-1 rounded-lg" style={{ backgroundColor: `${catColor(openProduit)}25`, color: catColor(openProduit) }}>
+                    {catLabel(openProduit)}
                   </span>
+                  {collectionsParId[openProduit.collection_id] && (
+                    <span className="font-ui text-xs font-semibold uppercase tracking-widest px-3 py-1 rounded-lg mr-auto" style={{ backgroundColor: `${collectionsParId[openProduit.collection_id].couleur}25`, color: collectionsParId[openProduit.collection_id].couleur }}>
+                      Collection {collectionsParId[openProduit.collection_id].label}
+                    </span>
+                  )}
                   <button
                     onClick={() => setOpenProduit(null)}
                     className="w-9 h-9 rounded-full bg-[#2A1506]/10 hover:bg-[#2A1506]/20 flex items-center justify-center transition-colors shrink-0"
@@ -304,39 +315,40 @@ export default function Boutique() {
                   </button>
                 </div>
                 <h3 className="font-display font-bold text-3xl mt-3 mb-2">{openProduit.nom}</h3>
-                {infosMap[openProduit.slug]?.vendu ? (
+                {openProduit.stock === 0 ? (
                   <p className="font-ui font-bold text-sm uppercase tracking-widest mb-5 inline-flex items-center gap-2 text-[#2A1506]/50">
                     <span className="w-2 h-2 rounded-full bg-[#F2A0A8]" /> Pièce vendue
                   </p>
                 ) : (
-                  <p className="font-display font-bold text-2xl mb-5" style={{ color: catColor(openProduit.categorie) }}>
-                    {infosMap[openProduit.slug]?.prix != null ? `${infosMap[openProduit.slug].prix} €` : 'Prix à venir'}
+                  <p className="font-display font-bold text-2xl mb-5" style={{ color: catColor(openProduit) }}>
+                    {openProduit.prix != null ? formatPrix(openProduit.prix) : 'Prix à venir'}
+                    {openProduit.stock > 1 && <span className="font-ui font-semibold text-xs text-[#2A1506]/40 ml-3 align-middle">{openProduit.stock} disponibles</span>}
                   </p>
                 )}
                 <p className="font-body leading-relaxed mb-8 text-[#2A1506]/70">
-                  {infosMap[openProduit.slug]?.description || defaultDescription(openProduit.categorie)}
+                  {openProduit.description || defaultDescription(categorieDe(openProduit)?.slug)}
                 </p>
                 <div className="mt-auto">
-                  {infosMap[openProduit.slug]?.vendu ? null : infosMap[openProduit.slug]?.prix == null ? (
+                  {openProduit.stock === 0 ? null : openProduit.prix == null ? (
                     <a
                       href={`mailto:contact.atelierlvy@gmail.com?subject=${encodeURIComponent(`À propos de « ${openProduit.nom} »`)}`}
                       className={`${btn.outline} w-full text-center`}
                     >
                       Écrivez-moi pour cette pièce →
                     </a>
-                  ) : isInCart(openProduit.slug) ? (
+                  ) : qteDansPanier(openProduit.slug) >= openProduit.stock ? (
                     <button
-                      onClick={() => removeItem(openProduit.slug)}
-                      className="w-full font-ui font-semibold text-sm px-8 py-3.5 bg-[#9BBF90]/20 text-[#2A1506] border-2 border-[#9BBF90] rounded-xl hover:bg-[#F2A0A8]/20 hover:border-[#F2A0A8] transition-all duration-200"
+                      onClick={() => { setOpenProduit(null); ouvrirPanier(true) }}
+                      className="w-full font-ui font-semibold text-sm px-8 py-3.5 bg-[#9BBF90]/20 text-[#2A1506] border-2 border-[#9BBF90] rounded-xl hover:bg-[#9BBF90]/40 transition-all duration-200"
                     >
-                      ✓ Dans le panier — retirer
+                      ✓ Dans le panier — voir le panier
                     </button>
                   ) : (
                     <button
-                      onClick={() => addItem({ slug: openProduit.slug, nom: openProduit.nom, image: openProduit.images[0].thumb })}
+                      onClick={() => addItem({ slug: openProduit.slug, nom: openProduit.nom, image: openProduit.images[0]?.thumb })}
                       className={`${btn.orange} w-full text-center`}
                     >
-                      Ajouter au panier →
+                      {qteDansPanier(openProduit.slug) > 0 ? `Ajouter un autre exemplaire (${qteDansPanier(openProduit.slug)} dans le panier)` : 'Ajouter au panier →'}
                     </button>
                   )}
                 </div>

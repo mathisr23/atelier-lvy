@@ -141,7 +141,7 @@ export default function Navbar() {
 
         {/* Desktop nav */}
         <nav className="hidden md:flex items-center gap-8">
-          {links.map(({ to, label }) => to === '/boutique' ? <BoutiqueMenuDesktop key={to} /> : (
+          {links.map(({ to, label }) => to === '/boutique' && VENTE_OUVERTE ? <BoutiqueMenuDesktop key={to} /> : (
             <NavLink
               key={to}
               to={to}
@@ -189,7 +189,7 @@ export default function Navbar() {
               >
                 {label}
               </NavLink>
-              {to === '/boutique' && <BoutiqueSousMenu compact onChoix={() => setOpen(false)} />}
+              {to === '/boutique' && VENTE_OUVERTE && <BoutiqueSousMenu compact onChoix={() => setOpen(false)} />}
             </div>
           ))}
         </nav>

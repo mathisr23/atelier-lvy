@@ -1,6 +1,6 @@
 // Éléments graphiques de la boutique : bandeaux, vagues, festons, formes fleurs, tampons, rayures.
 // Inspirés des références de Léa (hello chooki, zestwax) — tout en SVG/CSS, sans image.
-import { useId } from 'react'
+import { useId, useRef, useState, useEffect } from 'react'
 
 // Identifiant utilisable dans url(#…) — useId peut contenir « : » ou « « »
 const useIdSvg = () => useId().replace(/[^a-zA-Z0-9_-]/g, '')
@@ -22,6 +22,64 @@ export function Bandeau({ items, fond = '#2A1506', couleur = '#FBF5E9', vitesse 
           </div>
         ))}
       </div>
+    </div>
+  )
+}
+
+/* ─── Ruban ondulé : bords parallèles, texte qui glisse le long de la vague ─── */
+// Dessiné au pixel près selon la largeur réelle (pas de déformation du texte), recalculé au redimensionnement.
+const RUBAN = { epaisseur: 46, amplitude: 7, periode: 320, cycle: 1300, vitesse: 45 } // cycle = longueur d'une répétition du texte (px)
+
+export function RubanOndule({ items, fond = '#2A1506', couleur = '#F3D07A', fondHaut = '#FBF5E9', fondBas = '#FBF5E9', separateur = '✿' }) {
+  const id = useIdSvg()
+  const ref = useRef(null)
+  const [largeur, setLargeur] = useState(0)
+  const [animer] = useState(() => !window.matchMedia?.('(prefers-reduced-motion: reduce)').matches)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const obs = new ResizeObserver(([e]) => setLargeur(Math.round(e.contentRect.width)))
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [])
+
+  const { epaisseur, amplitude, periode, cycle, vitesse } = RUBAN
+  const hauteur = epaisseur + amplitude * 2 + 8
+  const milieu = hauteur / 2
+  const y = (x) => milieu + amplitude * Math.sin((2 * Math.PI * x) / periode)
+
+  // Courbes échantillonnées tous les 8 px, débordant de chaque côté pour que le texte entre/sorte hors champ
+  const xs = []
+  for (let x = -cycle; x <= largeur + 40; x += 8) xs.push(x)
+  const haut = xs.map((x) => `${x},${(y(x) - epaisseur / 2).toFixed(1)}`)
+  const bas = xs.map((x) => `${x},${(y(x) + epaisseur / 2).toFixed(1)}`).reverse()
+  const centre = `M ${xs.map((x) => `${x},${y(x).toFixed(1)}`).join(' L ')}`
+
+  // Assez de répétitions pour couvrir l'écran même pendant le défilement
+  const repetitions = Math.ceil((largeur + 2 * cycle) / cycle) + 1
+  const unite = items.map((t) => `${t}  ${separateur}  `).join('')
+
+  return (
+    <div ref={ref} className="w-full" style={{ background: `linear-gradient(${fondHaut} 50%, ${fondBas} 50%)` }} aria-label={items.join(', ')} role="img">
+      {largeur > 0 && (
+        <svg width={largeur} height={hauteur} viewBox={`0 0 ${largeur} ${hauteur}`} className="block" aria-hidden="true">
+          <rect width={largeur} height={milieu} fill={fondHaut} />
+          <rect y={milieu} width={largeur} height={milieu} fill={fondBas} />
+          <polygon points={[...haut, ...bas].join(' ')} fill={fond} />
+          <defs><path id={`ruban-${id}`} d={centre} /></defs>
+          <text
+            fill={couleur}
+            dominantBaseline="central"
+            style={{ fontFamily: 'Syne, sans-serif', fontSize: 13, fontWeight: 700, letterSpacing: 3, textTransform: 'uppercase' }}
+          >
+            <textPath href={`#ruban-${id}`} textLength={cycle * repetitions} lengthAdjust="spacing" startOffset={0}>
+              {unite.repeat(repetitions)}
+              {animer && <animate attributeName="startOffset" from="0" to={-cycle} dur={`${cycle / vitesse}s`} repeatCount="indefinite" />}
+            </textPath>
+          </text>
+        </svg>
+      )}
     </div>
   )
 }

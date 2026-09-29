@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useSearchParams, useLocation } from 'react-router-dom'
 import useSEO from '../hooks/useSEO'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Bandeau, Vague, Festons, BandeRayee, BandeDamier, PhotoForme, Tampon, Soleil, Fleur, rayures } from '../components/Graphique'
+import { Bandeau, RubanOndule, Festons, BandeRayee, BandeDamier, PhotoForme, Tampon, Soleil, Fleur, rayures } from '../components/Graphique'
 import { SEUIL_LIVRAISON_OFFERTE } from '../data/livraison'
 import Reveal from '../components/Reveal'
 import { useCatalogue } from '../context/CatalogueContext'
@@ -158,12 +158,10 @@ export default function Boutique() {
       </section>
 
       {/* Ruban ondulé */}
-      <div className="bg-[#FCE4E1]"><Vague couleur="#2A1506" /></div>
-      <Bandeau items={RUBAN} fond="#2A1506" couleur="#F3D07A" separateur="✿" vitesse={45} />
-      <Vague couleur="#2A1506" inverse />
+      <RubanOndule items={RUBAN} fond="#2A1506" couleur="#F3D07A" fondHaut="#FCE4E1" fondBas="#FBF5E9" />
 
       {/* COLLECTIONS */}
-      {collectionsActives.length > 0 && (
+      {VENTE_OUVERTE && collectionsActives.length > 0 && (
         <section className="relative px-6 md:px-16 lg:px-24 pt-16 pb-20">
           <Fleur taille={34} couleur="#C9B8E8" coeur="#FBF5E9" className="absolute top-12 right-8 md:right-24" />
           <div className="max-w-7xl mx-auto">
@@ -215,8 +213,8 @@ export default function Boutique() {
                 Des créations faites à la main en grès, pièces uniques ou en petites séries.
               </p>
 
-              {/* Filtres : collection (univers) × type d'objet — combinables */}
-              <div className="flex flex-col gap-3">
+              {/* Filtres : collection (univers) × type d'objet — combinables (masqués tant que la vente est fermée) */}
+              <div className={`flex flex-col gap-3 ${VENTE_OUVERTE ? '' : 'hidden'}`}>
                 {[
                   { titre: 'Collections', cle: 'collection', items: collectionsActives, actif: collectionActive },
                   { titre: 'Objets', cle: 'type', items: categoriesActives, actif: typeActif },
@@ -247,8 +245,28 @@ export default function Boutique() {
             </div>
           </Reveal>
 
+          {/* Vente fermée : aperçu flouté des pièces + encart « bientôt » */}
+          {!VENTE_OUVERTE && (
+            <div className="relative z-10 flex justify-center">
+              <div className="absolute top-8 md:top-16 mx-4 max-w-lg w-[calc(100%-2rem)] bg-[#FBF5E9] border-2 border-[#2A1506] rounded-[2rem] px-6 py-9 md:px-10 md:py-12 text-center shadow-[6px_6px_0_#2A1506]">
+                <Tampon taille={96} fond="#F3D07A" texte="bientôt ✺ boutique en ligne ✺ " className="absolute -top-12 left-1/2 -translate-x-1/2" />
+                <p className="font-ui text-xs uppercase tracking-[0.3em] text-[#E87040] mt-6 mb-3">Encore un peu de patience</p>
+                <h3 className="font-display font-black text-3xl md:text-4xl leading-tight mb-4">
+                  La boutique en ligne <span className="italic text-[#D97080]">ouvre bientôt</span>
+                </h3>
+                <p className="font-body text-lg text-[#2A1506]/70 mb-7">
+                  Les pièces sont en train de sortir du four ! En attendant, une création te plaît ? Écris-moi, on s'arrange ensemble.
+                </p>
+                <a href="mailto:contact.atelierlvy@gmail.com?subject=Une pièce de la boutique" className={btn.orange}>Écris-moi →</a>
+              </div>
+            </div>
+          )}
+
           {/* Grille produits */}
-          <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
+          <div
+            className={`grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 ${VENTE_OUVERTE ? '' : 'blur-[6px] opacity-70 pointer-events-none select-none max-h-[46rem] md:max-h-[52rem] overflow-hidden'}`}
+            aria-hidden={!VENTE_OUVERTE}
+          >
             {loading && Array.from({ length: 6 }).map((_, i) => (
               <div key={i} className="animate-pulse bg-[#FBF5E9] rounded-[2rem] p-3">
                 <div className="aspect-[4/5] rounded-t-full rounded-b-2xl bg-[#2A1506]/5 mb-4" />

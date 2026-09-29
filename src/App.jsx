@@ -7,6 +7,7 @@ import SplashScreen from './components/SplashScreen'
 import CartDrawer from './components/CartDrawer'
 import { CartProvider } from './context/CartContext'
 import { CatalogueProvider } from './context/CatalogueContext'
+import { VENTE_OUVERTE } from './lib/vente'
 import Apropos from './pages/Apropos'
 import Boutique from './pages/Boutique'
 import Initiation from './pages/Initiation'
@@ -66,7 +67,7 @@ function MainApp() {
             <AnimatedRoutes />
           </main>
           <Footer />
-          <CartDrawer />
+          {VENTE_OUVERTE && <CartDrawer />}
         </>
       )}
     </CartProvider>

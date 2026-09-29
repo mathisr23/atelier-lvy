@@ -7,6 +7,7 @@ import { SEUIL_LIVRAISON_OFFERTE } from '../data/livraison'
 import Reveal from '../components/Reveal'
 import { useCatalogue } from '../context/CatalogueContext'
 import { useCart } from '../context/CartContext'
+import { VENTE_OUVERTE } from '../lib/vente'
 
 const btn = {
   dark: 'inline-block font-ui font-semibold text-sm px-8 py-3.5 bg-[#2A1506] text-[#FBF5E9] border-2 border-[#2A1506] rounded-xl hover:bg-[#E87040] hover:text-[#2A1506] hover:border-[#E87040] transition-all duration-200 whitespace-nowrap',
@@ -443,7 +444,7 @@ export default function Boutique() {
                   {openProduit.description || defaultDescription(categorieDe(openProduit)?.slug)}
                 </p>
                 <div className="mt-auto">
-                  {openProduit.stock === 0 ? null : openProduit.prix == null ? (
+                  {openProduit.stock === 0 ? null : openProduit.prix == null || !VENTE_OUVERTE ? (
                     <a
                       href={`mailto:contact.atelierlvy@gmail.com?subject=${encodeURIComponent(`À propos de « ${openProduit.nom} »`)}`}
                       className={`${btn.outline} w-full text-center`}

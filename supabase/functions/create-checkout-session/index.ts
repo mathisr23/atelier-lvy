@@ -56,6 +56,15 @@ Deno.serve(async (req) => {
 
     const bySlug = new Map(rows.map((r) => [r.slug, r]))
     const siteUrl = urlDuSite(req)
+
+    // Stripe en mode test : paiements refusés depuis le site de production (seuls local et aperçus Vercel passent).
+    // Le verrou se lève tout seul quand la clé live (sk_live_…) est en place.
+    const modeTest = (Deno.env.get('STRIPE_SECRET_KEY') ?? '').startsWith('sk_test_')
+    const origine = req.headers.get('origin') ?? ''
+    const siteDeTest = /^http:\/\/localhost:\d+$/.test(origine) || /^https:\/\/atelier-lvy-[a-z0-9-]+\.vercel\.app$/.test(origine)
+    if (modeTest && !siteDeTest) {
+      return json({ error: 'La vente en ligne ouvre bientôt.' }, 403)
+    }
     const indisponibles = []
     const line_items = []
 

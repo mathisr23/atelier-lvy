@@ -4,9 +4,11 @@ import { motion, AnimatePresence } from 'framer-motion'
 import logo1 from '../assets/logo1.png'
 import { useCart } from '../context/CartContext'
 import { useCatalogue, lienBoutique } from '../context/CatalogueContext'
+import { VENTE_OUVERTE } from '../lib/vente'
 
 function CartButton() {
   const { items, setOpen } = useCart()
+  if (!VENTE_OUVERTE) return null // pas de panier tant que la vente en ligne est fermée
   return (
     <button onClick={() => setOpen(true)} className="relative p-1.5 hover:opacity-70 transition-opacity" aria-label="Panier">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2A1506" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">

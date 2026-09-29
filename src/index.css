@@ -16,6 +16,11 @@
   --font-display: 'Fraunces', serif;
   --font-body: 'Cormorant Garamond', serif;
   --font-ui: 'Syne', sans-serif;
+
+  --animate-defilement: defilement 35s linear infinite;
+  @keyframes defilement {
+    to { transform: translateX(-50%); }
+  }
 }
 
 @layer base {
@@ -61,4 +66,9 @@
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
+}
+/* Bandeau défilant : pause au survol, et immobile si l'utilisateur limite les animations */
+.animate-defilement:hover { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) {
+  .animate-defilement, .animate-\[spin_18s_linear_infinite\] { animation: none; }
 }

@@ -5,6 +5,7 @@ import { Asterisk } from '../components/Deco'
 import Reveal from '../components/Reveal'
 import { useCatalogue } from '../context/CatalogueContext'
 import { useCart } from '../context/CartContext'
+import { VENTE_OUVERTE } from '../lib/vente'
 import imgFourMarron from '../assets/four_marron.png'
 import imgVase1 from '../assets/vase1.png'
 import imgVerre from '../assets/verre.png'
@@ -329,7 +330,7 @@ export default function Boutique() {
                   {openProduit.description || defaultDescription(categorieDe(openProduit)?.slug)}
                 </p>
                 <div className="mt-auto">
-                  {openProduit.stock === 0 ? null : openProduit.prix == null ? (
+                  {openProduit.stock === 0 ? null : openProduit.prix == null || !VENTE_OUVERTE ? (
                     <a
                       href={`mailto:contact.atelierlvy@gmail.com?subject=${encodeURIComponent(`À propos de « ${openProduit.nom} »`)}`}
                       className={`${btn.outline} w-full text-center`}

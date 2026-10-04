@@ -391,6 +391,27 @@ export default function ProduitsAdmin() {
     setEdition(null)
   }
 
+  // Masquer / afficher toute la boutique d'un coup (ex. pendant une mise à jour du catalogue).
+  // Une pièce sans photo reste en brouillon : elle ne peut pas s'afficher dans la boutique.
+  const [basculeEnCours, setBasculeEnCours] = useState(false)
+  const nbVisibles = produits.filter((p) => p.visible).length
+  const affichables = produits.filter((p) => p.images?.length > 0)
+  const toutMasquer = nbVisibles > 0
+  const basculerTout = async () => {
+    const cibles = toutMasquer ? produits.filter((p) => p.visible) : affichables.filter((p) => !p.visible)
+    if (!cibles.length) return
+    const message = toutMasquer
+      ? `Masquer les ${cibles.length} pièce(s) visibles ? La boutique n'affichera plus aucune pièce.`
+      : `Afficher ${cibles.length} pièce(s) dans la boutique ?${affichables.length < produits.length ? ` (${produits.length - affichables.length} sans photo resteront en brouillon)` : ''}`
+    if (!confirm(message)) return
+    setBasculeEnCours(true)
+    const ids = cibles.map((p) => p.id)
+    const { error } = await supabase.from('produits').update({ visible: !toutMasquer }).in('id', ids)
+    if (error) alert("La modification n'a pas pu être enregistrée : " + error.message)
+    else setProduits((prev) => prev.map((p) => (ids.includes(p.id) ? { ...p, visible: !toutMasquer } : p)))
+    setBasculeEnCours(false)
+  }
+
   if (loading) return <p className="font-ui text-[#2A1506]/40 text-sm">Chargement…</p>
 
   return (
@@ -425,6 +446,12 @@ export default function ProduitsAdmin() {
                 {label}
               </button>
             ))}
+            {produits.length > 0 && (
+              <button onClick={basculerTout} disabled={basculeEnCours || (!toutMasquer && affichables.length === 0)}
+                className="ml-auto font-ui text-xs font-semibold px-3 py-1.5 rounded-lg border-2 border-[#2A1506]/15 bg-white text-[#2A1506] hover:border-[#2A1506]/40 transition-colors disabled:opacity-50">
+                {basculeEnCours ? '…' : toutMasquer ? `Tout masquer · ${nbVisibles} visible${nbVisibles > 1 ? 's' : ''}` : 'Tout afficher dans la boutique'}
+              </button>
+            )}
           </div>
 
           {affiches.length === 0 ? (

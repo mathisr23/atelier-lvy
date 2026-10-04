@@ -35,7 +35,7 @@ const BANDEAU_HAUT = [
   `Livraison offerte dès ${SEUIL_LIVRAISON_OFFERTE} €`,
   "Retrait gratuit à l'atelier",
 ]
-const RUBAN = ['Grès', 'Émaillé à la main', 'Tourné & modelé', 'Pièces uniques', 'Fait avec amour']
+const RUBAN = ['Grès', 'Émaillé à la main', 'Modelé à la main', 'Pièces uniques', 'Fait avec amour']
 const FORMES_COLLECTIONS = ['fleur', 'nuage']
 
 const steps = [
@@ -158,7 +158,7 @@ export default function Boutique() {
       </section>
 
       {/* Ruban ondulé */}
-      <RubanOndule items={RUBAN} fond="#2A1506" couleur="#F3D07A" fondHaut="#FCE4E1" fondBas="#FBF5E9" />
+      <RubanOndule items={RUBAN} fond="#2A1506" couleur="#F3D07A" fondHaut="#FCE4E1" fondBas="#FBF5E9" defile={false} />
 
       {/* COLLECTIONS */}
       {VENTE_OUVERTE && collectionsActives.length > 0 && (

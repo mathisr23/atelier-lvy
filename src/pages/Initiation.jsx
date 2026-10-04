@@ -68,7 +68,7 @@ const getDaysInMonth = (month, year) => new Date(year, month + 1, 0).getDate()
 export default function Initiation() {
   useSEO({
     title: 'Initiation à la céramique — Léa',
-    description: "Ateliers d'initiation à la céramique : découvrez le tournage et le modelage le temps d'une session.",
+    description: "Ateliers d'initiation à la céramique : découvrez le modelage de la terre le temps d'une session.",
   })
 
   const now = new Date()

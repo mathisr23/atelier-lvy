@@ -30,11 +30,12 @@ export function Bandeau({ items, fond = '#2A1506', couleur = '#FBF5E9', vitesse 
 // Dessiné au pixel près selon la largeur réelle (pas de déformation du texte), recalculé au redimensionnement.
 const RUBAN = { epaisseur: 46, amplitude: 7, periode: 320, cycle: 1300, vitesse: 45 } // cycle = longueur d'une répétition du texte (px)
 
-export function RubanOndule({ items, fond = '#2A1506', couleur = '#F3D07A', fondHaut = '#FBF5E9', fondBas = '#FBF5E9', separateur = '✿' }) {
+export function RubanOndule({ items, fond = '#2A1506', couleur = '#F3D07A', fondHaut = '#FBF5E9', fondBas = '#FBF5E9', separateur = '✿', defile = true }) {
   const id = useIdSvg()
   const ref = useRef(null)
   const [largeur, setLargeur] = useState(0)
-  const [animer] = useState(() => !window.matchMedia?.('(prefers-reduced-motion: reduce)').matches)
+  const [mouvementOk] = useState(() => !window.matchMedia?.('(prefers-reduced-motion: reduce)').matches)
+  const animer = defile && mouvementOk // defile={false} : texte immobile dans la vague
 
   useEffect(() => {
     const el = ref.current

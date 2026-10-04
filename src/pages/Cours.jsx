@@ -507,10 +507,10 @@ export default function Cours() {
               <Baby size={48} strokeWidth={1.5} />
             </div>
             <div className="flex-1">
-              <span className="inline-block font-ui text-xs uppercase tracking-widest bg-[#F2A0A8] text-[#2A1506] px-3 py-1 rounded-lg mb-3">Bientôt</span>
+              <span className="inline-block font-ui text-xs uppercase tracking-widest bg-[#F2A0A8] text-[#2A1506] px-3 py-1 rounded-lg mb-3">Sur demande</span>
               <h3 className="font-display font-bold text-2xl md:text-3xl text-[#2A1506] mb-3">Cours enfants</h3>
               <p className="font-ui text-[#2A1506]/60 text-sm leading-relaxed max-w-md">
-                Des séances adaptées aux petits curieux, pour découvrir la céramique en s'amusant. Planning en cours de construction, reste connecté·e !
+                Des séances adaptées aux petits curieux, pour découvrir la céramique en s'amusant. Les séances s'organisent sur demande : écris-moi pour en discuter.
               </p>
             </div>
             <Link to="/contact?type=cours" className={btn.outline}>Me contacter si intéressé →</Link>

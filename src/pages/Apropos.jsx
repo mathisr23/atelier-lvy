@@ -54,7 +54,7 @@ const projects = [
   {
     id: 3,
     name: 'Océan',
-    subtitle: 'Pièces réalisées en tournage',
+    subtitle: 'Pièces modelées à la main',
     color: '#9BBF90',
     preview: imgIMG4948,
     images: [imgIMG4948, imgIMG4959, imgIMG5065],
@@ -62,7 +62,7 @@ const projects = [
   {
     id: 4,
     name: 'Sand',
-    subtitle: 'Pièces réalisées en modelage et tournage',
+    subtitle: 'Pièces réalisées en modelage',
     color: '#F3D07A',
     preview: imgIMG4982,
     images: [imgIMG4982, imgIMG4984, imgIMG5006],
@@ -216,7 +216,7 @@ export default function Apropos() {
               <div className="space-y-3 text-[#FBF5E9]/70 leading-relaxed font-body text-base">
                 <p className="text-[#FBF5E9]/90 font-bold">Je m’appelle Léa, artiste céramiste basée à Boinville-le-Gaillard.</p>
                 <p>J’ai découvert ma passion pour le modelage à l’École Boulle, en me formant à la gravure en modelé et à la création de bas-reliefs. Progressivement, je me suis tournée vers la céramique afin de donner plus de volume à mes créations, tasses, sculptures et objets variés.</p>
-                <p>Formée grâce à plusieurs divers stages, j’ai ensuite développé mon activité d’auto-entrepreneur afin de produire des commandes pour des ateliers collaborant avec de grandes maisons. Ces expériences m’ont permis de maîtriser les techniques de modelage, de coulage, tournage ou encore de décor.</p>
+                <p>Formée grâce à plusieurs divers stages, j’ai ensuite développé mon activité d’auto-entrepreneur afin de produire des commandes pour des ateliers collaborant avec de grandes maisons. Ces expériences m’ont permis de maîtriser les techniques de modelage, de coulage ou encore de décor.</p>
                 <p>Aujourd’hui, je crée mes propres pièces en m’inspirant de la nature, de ses formes organiques et la richesse de ses couleurs. J’intègre également des réflexions sociétales et environnementales à mon travail. J’imagine mon atelier comme un laboratoire d’idées, où se mêlent des savoir-faire et une pluralité de matériaux.</p>
                 <p>Je transmets ma passion à travers des ateliers découverte et des cours hebdomadaires, pensés comme des espaces de rencontre et de partage où l’on peut libérer notre créativité. J’y crée des moments hors du quotidien, où chacun peut expérimenter, s’exprimer librement et laisser place à son imagination, tout en tissant du lien avec d’autres.</p>
               </div>

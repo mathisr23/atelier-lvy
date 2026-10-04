@@ -532,61 +532,84 @@ function TypeSelector({ value, onChange }) {
 }
 
 /* ─── ADD SESSION FORM ─── */
+// Plusieurs dates peuvent partager le même horaire : chaque date choisie s'ajoute à la liste, puis tout est créé d'un coup.
 function AddSessionForm({ onAdd }) {
-  const [form, setForm] = useState({ date: '', heure: '', places: 6, type: 'initiation' })
+  const [form, setForm] = useState({ dates: [], heure: '', places: 6, type: 'initiation' })
   const [loading, setLoading] = useState(false)
+
+  const ajouterDate = (val) => {
+    if (!val) return
+    setForm(f => f.dates.includes(val) ? f : { ...f, dates: [...f.dates, val].sort() })
+  }
+  const retirerDate = (val) => setForm(f => ({ ...f, dates: f.dates.filter(d => d !== val) }))
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (!form.date || !form.heure) return
+    if (!form.dates.length || !form.heure.trim()) return
     setLoading(true)
-    const d = new Date(form.date + 'T12:00:00')
-    const jour = JOURS_FR[d.getDay()]
-    const day = d.getDate()
-    const mois = d.getMonth()
-    const annee = d.getFullYear()
-    const dateStr = `${day} ${MONTHS_FR[mois]}`
+    const lignes = form.dates.map(iso => {
+      const d = new Date(iso + 'T12:00:00')
+      const day = d.getDate()
+      const mois = d.getMonth()
+      return {
+        jour: JOURS_FR[d.getDay()], day, date: `${day} ${MONTHS_FR[mois]}`, mois, annee: d.getFullYear(),
+        heure: form.heure.trim(),
+        places_total: form.places,
+        places_restantes: form.places,
+        type: form.type,
+      }
+    })
 
-    const { data, error } = await supabase.from('sessions').insert([{
-      jour, day, date: dateStr, mois, annee,
-      heure: form.heure,
-      places_total: form.places,
-      places_restantes: form.places,
-      type: form.type,
-    }]).select().single()
+    const { data, error } = await supabase.from('sessions').insert(lignes).select()
 
     if (!error && data) {
       onAdd(data)
-      setForm({ date: '', heure: '', places: form.type === 'cours' ? 6 : 8, type: form.type })
+      setForm({ dates: [], heure: '', places: form.type === 'cours' ? 6 : 8, type: form.type })
     }
     setLoading(false)
   }
 
+  const libelle = (iso) => new Date(iso + 'T12:00:00').toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' })
+
   return (
-    <form onSubmit={handleSubmit} className="bg-[#2A1506] rounded-2xl p-5 flex flex-col sm:flex-row gap-3 sm:items-end mb-6">
-      <div className="flex-1">
-        <label className="font-ui text-xs uppercase tracking-widest text-[#FBF5E9]/40 block mb-1.5">Date</label>
-        <input type="date" value={form.date} onChange={e => setForm(f => ({ ...f, date: e.target.value }))} required className={inpDark} />
+    <form onSubmit={handleSubmit} className="bg-[#2A1506] rounded-2xl p-5 mb-6">
+      <div className="flex flex-col sm:flex-row gap-3 sm:items-end">
+        <div className="flex-1">
+          <label className="font-ui text-xs uppercase tracking-widest text-[#FBF5E9]/40 block mb-1.5">Date(s)</label>
+          {/* La valeur reste vide : chaque sélection ajoute une date à la liste */}
+          <input type="date" value="" onChange={e => ajouterDate(e.target.value)} className={inpDark} />
+        </div>
+        <div className="flex-1 sm:min-w-[120px]">
+          <label className="font-ui text-xs uppercase tracking-widest text-[#FBF5E9]/40 block mb-1.5">Type</label>
+          <TypeSelector
+            value={form.type}
+            onChange={val => setForm(f => ({ ...f, type: val, places: val === 'cours' ? 6 : 8 }))}
+          />
+        </div>
+        <div className="flex-1 sm:min-w-[120px]">
+          <label className="font-ui text-xs uppercase tracking-widest text-[#FBF5E9]/40 block mb-1.5">Horaires</label>
+          <input type="text" value={form.heure} onChange={e => setForm(f => ({ ...f, heure: e.target.value }))} placeholder="18h30 – 20h30" required className={inpDark} />
+        </div>
+        <div className="w-full sm:w-20">
+          <label className="font-ui text-xs uppercase tracking-widest text-[#FBF5E9]/40 block mb-1.5">Places</label>
+          <input type="number" min={1} max={20} value={form.places} onChange={e => setForm(f => ({ ...f, places: parseInt(e.target.value) }))} className={inpDark} />
+        </div>
+        <button type="submit" disabled={loading || !form.dates.length}
+          className="w-full sm:w-auto font-ui font-bold text-sm px-5 py-2.5 bg-[#E87040] text-[#2A1506] rounded-xl hover:bg-[#FBF5E9] transition-colors disabled:opacity-50 whitespace-nowrap">
+          {loading ? '…' : form.dates.length > 1 ? `+ Ajouter ${form.dates.length} créneaux` : '+ Ajouter'}
+        </button>
       </div>
-      <div className="flex-1 sm:min-w-[120px]">
-        <label className="font-ui text-xs uppercase tracking-widest text-[#FBF5E9]/40 block mb-1.5">Type</label>
-        <TypeSelector
-          value={form.type}
-          onChange={val => setForm(f => ({ ...f, type: val, places: val === 'cours' ? 6 : 8 }))}
-        />
+      <div className="flex flex-wrap items-center gap-2 mt-3">
+        {form.dates.length === 0 ? (
+          <p className="font-ui text-xs text-[#FBF5E9]/40">Choisis une ou plusieurs dates : elles auront toutes le même horaire.</p>
+        ) : form.dates.map(iso => (
+          <span key={iso} className="inline-flex items-center gap-1.5 font-ui text-xs bg-[#FBF5E9]/10 text-[#FBF5E9] pl-3 pr-1.5 py-1 rounded-lg">
+            {libelle(iso)}
+            <button type="button" onClick={() => retirerDate(iso)} aria-label={`Retirer le ${libelle(iso)}`}
+              className="w-5 h-5 rounded-md hover:bg-[#FBF5E9]/20 leading-none">×</button>
+          </span>
+        ))}
       </div>
-      <div className="flex-1 sm:min-w-[120px]">
-        <label className="font-ui text-xs uppercase tracking-widest text-[#FBF5E9]/40 block mb-1.5">Horaires</label>
-        <input type="text" value={form.heure} onChange={e => setForm(f => ({ ...f, heure: e.target.value }))} placeholder="18h30 – 20h30" required className={inpDark} />
-      </div>
-      <div className="w-full sm:w-20">
-        <label className="font-ui text-xs uppercase tracking-widest text-[#FBF5E9]/40 block mb-1.5">Places</label>
-        <input type="number" min={1} max={20} value={form.places} onChange={e => setForm(f => ({ ...f, places: parseInt(e.target.value) }))} className={inpDark} />
-      </div>
-      <button type="submit" disabled={loading}
-        className="w-full sm:w-auto font-ui font-bold text-sm px-5 py-2.5 bg-[#E87040] text-[#2A1506] rounded-xl hover:bg-[#FBF5E9] transition-colors disabled:opacity-50 whitespace-nowrap">
-        {loading ? '…' : '+ Ajouter'}
-      </button>
     </form>
   )
 }
@@ -675,7 +698,7 @@ export default function Admin() {
   const handleCommentaireAction = (id, newStatut) => {
     setCommentaires(prev => prev.map(c => c.id === id ? { ...c, statut: newStatut } : c))
   }
-  const handleSessionAdd = (s) => setSessions(prev => [...prev, s].sort((a, b) => a.annee - b.annee || a.mois - b.mois || a.day - b.day))
+  const handleSessionAdd = (nouvelles) => setSessions(prev => [...prev, ...nouvelles].sort((a, b) => a.annee - b.annee || a.mois - b.mois || a.day - b.day))
   const handleSessionDelete = (id) => setSessions(prev => prev.filter(s => s.id !== id))
   const handleSessionEdit = (updated) => setSessions(prev => prev.map(s => s.id === updated.id ? updated : s))
   const handleSessionArchiveToggle = (updated) => setSessions(prev => prev.map(s => s.id === updated.id ? updated : s))

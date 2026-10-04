@@ -3,41 +3,11 @@ import { Link } from 'react-router-dom'
 import useSEO from '../hooks/useSEO'
 import { Baby } from 'lucide-react'
 import Reveal from '../components/Reveal'
+import Faq from '../components/Faq'
+import { Etiquette, Etoile, Nuage, Coeur, Spirale, Vase, FriseStickers } from '../components/Stickers'
 import { supabase } from '../lib/supabase'
 import imgPince from '../assets/pince_marron.png'
 import imgTablier from '../assets/tablier.png'
-
-function FaqSection({ items }) {
-  const [open, setOpen] = useState(null)
-  return (
-    <section className="px-6 md:px-16 lg:px-24 py-20 max-w-7xl mx-auto">
-      <Reveal>
-        <p className="font-ui text-xs uppercase tracking-[0.3em] text-[#9BBF90] mb-3">FAQ</p>
-        <h2 className="font-display font-bold text-4xl md:text-5xl mb-10">Questions fréquentes</h2>
-      </Reveal>
-      <div className="flex flex-col gap-3 max-w-3xl">
-        {items.map((item, i) => (
-          <Reveal key={i} delay={i * 0.05}>
-            <button
-              onClick={() => setOpen(open === i ? null : i)}
-              className="w-full text-left bg-[#FBF5E9] border-2 border-[#2A1506]/10 rounded-2xl px-6 py-5 hover:border-[#9BBF90]/60 transition-all duration-200"
-            >
-              <div className="flex items-center justify-between gap-4">
-                <span className="font-ui font-semibold text-[#2A1506] text-lg">{item.q}</span>
-                <span className={`text-[#9BBF90] text-2xl font-light flex-shrink-0 transition-transform duration-300 ${open === i ? 'rotate-45' : ''}`}>+</span>
-              </div>
-              <div className={`grid transition-all duration-300 ease-in-out ${open === i ? 'grid-rows-[1fr] mt-3' : 'grid-rows-[0fr]'}`}>
-                <div className="overflow-hidden">
-                  <p className="font-body text-[#2A1506]/65 text-base leading-relaxed pr-8">{item.a}</p>
-                </div>
-              </div>
-            </button>
-          </Reveal>
-        ))}
-      </div>
-    </section>
-  )
-}
 
 const btn = {
   dark: 'inline-block font-ui font-semibold text-sm px-8 py-3.5 bg-[#2A1506] text-[#FBF5E9] border-2 border-[#E87040] rounded-xl hover:bg-[#E87040] hover:text-[#2A1506] hover:border-[#E87040] transition-all duration-200 whitespace-nowrap',
@@ -194,29 +164,39 @@ export default function Cours() {
     <div className="bg-[#FBF5E9] pt-20">
 
       {/* HERO */}
-      <section className="px-6 md:px-16 lg:px-24 py-20 max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <div>
-            <Reveal><p className="font-ui text-xs uppercase tracking-[0.3em] text-[#9BBF90] mb-4">Cours réguliers</p></Reveal>
+      <section className="relative overflow-hidden bg-[#EEE7F7]" style={{ backgroundImage: 'radial-gradient(circle, rgba(140,110,190,0.16) 2px, transparent 2px)', backgroundSize: '26px 26px' }}>
+        <Nuage taille={120} className="absolute top-10 right-[42%] hidden lg:block" />
+        <Etoile taille={48} couleur="#F2A0A8" branches={8} creux={0.55} className="absolute top-14 left-[5%] hidden md:block" />
+        <Spirale taille={38} className="absolute bottom-16 left-[46%] hidden lg:block" />
+        <div className="max-w-7xl mx-auto px-6 md:px-16 lg:px-24 py-14 md:py-20 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div className="relative z-10">
+            <Reveal><Etiquette fond="#9BBF90" className="mb-6">cours réguliers</Etiquette></Reveal>
             <Reveal delay={0.1}>
-              <h1 className="font-display font-black leading-[0.9] mb-8" style={{ fontSize: 'clamp(3.5rem, 10vw, 9rem)' }}>
-                Apprendre,<br /><span className="italic text-[#9BBF90]">semaine</span><br />après semaine<span className="text-[#E87040]">.</span>
+              <h1 className="font-display font-black leading-[0.9] mb-8" style={{ fontSize: 'clamp(3.5rem, 10vw, 8.5rem)' }}>
+                Apprendre,<br /><span className="italic text-[#8C6EBE]">semaine</span><br />après semaine<span className="text-[#E87040]">.</span>
               </h1>
             </Reveal>
             <Reveal delay={0.2}>
-              <p className="font-ui text-[#2A1506]/60 text-lg max-w-xl leading-relaxed">
+              <p className="font-body text-[#2A1506]/75 text-xl max-w-xl leading-relaxed mb-7">
                 Les cours réguliers, ce n'est pas une initiation. C'est un engagement dans la durée pour vraiment progresser, explorer des techniques variées et trouver ton propre style dans l'argile.
               </p>
+              <div className="flex flex-wrap gap-3">
+                <span className="font-display font-black text-2xl px-5 py-2 rounded-full bg-[#F3D07A] border-2 border-[#2A1506] shadow-[3px_3px_0_#2A1506] -rotate-2">dès 50 € / séance</span>
+                <span className="font-main font-bold text-2xl px-4 py-2 rounded-full bg-[#FBF5E9] border-2 border-[#2A1506] rotate-2">4 personnes max</span>
+              </div>
             </Reveal>
           </div>
           <Reveal direction="left" delay={0.15}>
             <div className="relative h-[36rem] hidden lg:block">
               <img src={imgTablier} alt="Tablier de céramiste" className="absolute inset-0 m-auto w-[36rem] h-[36rem] top-72 rotate-12 object-contain mix-blend-multiply contrast-[1.1] pointer-events-none" style={{ imageRendering: '-webkit-optimize-contrast' }} />
               <img src={imgPince} alt="Pince de céramiste" className="absolute top-0 -right-20 w-72 h-72 -rotate-60 object-contain mix-blend-multiply contrast-[1.1] pointer-events-none" style={{ imageRendering: '-webkit-optimize-contrast' }} />
+              <Vase taille={70} couleur="#F2A0A8" className="absolute bottom-10 left-6 -rotate-6" />
             </div>
           </Reveal>
         </div>
       </section>
+
+      <FriseStickers fond="#FBF5E9" />
 
       {/* CONCEPT PACKS */}
       <section className="px-6 md:px-16 lg:px-24 py-24 relative overflow-hidden" style={{ backgroundColor: '#9BBF90', backgroundImage: 'radial-gradient(circle, rgba(42,21,6,0.1) 1.5px, transparent 1.5px)', backgroundSize: '22px 22px' }}>
@@ -235,7 +215,7 @@ export default function Cours() {
                   <p>C'est pourquoi les cours sont proposés en packs de 5 ou 10 séances. Tu peux créer différentes pièces avec plus de liberté dans leurs formats <span className="text-[#2A1506]/50 text-sm">(dans la limite de 10 kg par personne)</span>.</p>
                   <p>Achète ton pack et réserve tes créneaux en fonction des dates disponibles ci-dessous ! L'idéal est de venir 1 fois par semaine (pour pas que ta pièce ne tombe dans l'oubli 😄)</p>
                 </div>
-                <div className="bg-[#2A1506]/10 rounded-2xl p-5 font-ui text-sm text-[#2A1506]/70 mb-8">
+                <div className="bg-[#FBF5E9] border-2 border-[#2A1506] shadow-[4px_4px_0_#2A1506] rounded-2xl p-5 font-ui text-sm text-[#2A1506]/75 mb-8 -rotate-1">
                   <p className="font-semibold text-[#2A1506] mb-2">Inclus :</p>
                   <ul className="space-y-1">
                     <li>• 10 kg maximum de terre par personne</li>
@@ -248,7 +228,7 @@ export default function Cours() {
               <Reveal delay={0.15}>
                 <div className="flex flex-wrap gap-3">
                   {['Petit groupe (4 pers. max)', 'Tous niveaux bienvenus', 'Matériel fourni', 'Cuissons incluses'].map(item => (
-                    <span key={item} className="font-ui text-sm bg-[#2A1506]/10 text-[#2A1506] px-4 py-2 rounded-xl">
+                    <span key={item} className="font-ui text-sm font-semibold bg-[#FBF5E9] border-2 border-[#2A1506] text-[#2A1506] px-4 py-2 rounded-full">
                       {item}
                     </span>
                   ))}
@@ -259,7 +239,7 @@ export default function Cours() {
             {/* Les packs */}
             <div className="flex flex-col gap-4">
               <Reveal delay={0.02}>
-                <div className="bg-[#FBF5E9] border-2 border-[#2A1506]/10 rounded-3xl p-6 md:p-8">
+                <div className="bg-[#FBF5E9] border-2 border-[#2A1506] shadow-[5px_5px_0_#2A1506] rounded-3xl p-6 md:p-8">
                   <div className="flex items-start justify-between mb-4">
                     <div>
                       <p className="font-ui text-xs uppercase tracking-widest text-[#2A1506]/40 mb-1">Pour tester</p>
@@ -275,7 +255,8 @@ export default function Cours() {
                 </div>
               </Reveal>
               <Reveal delay={0.05}>
-                <div className="bg-[#E87040] text-[#2A1506] rounded-3xl p-6 md:p-8">
+                <div className="relative bg-[#E87040] text-[#2A1506] border-2 border-[#2A1506] shadow-[5px_5px_0_#2A1506] rounded-3xl p-6 md:p-8">
+                  <span className="absolute -top-5 right-6"><Etiquette fond="#F3D07A" rotation={6}>le + populaire !</Etiquette></span>
                   <div className="flex items-start justify-between mb-4">
                     <div>
                       <p className="font-ui text-xs uppercase tracking-widest text-[#2A1506]/50 mb-1">Le plus populaire</p>
@@ -293,7 +274,8 @@ export default function Cours() {
                 </div>
               </Reveal>
               <Reveal delay={0.1}>
-                <div className="bg-[#2A1506] text-[#FBF5E9] rounded-3xl p-6 md:p-8">
+                <div className="relative bg-[#2A1506] text-[#FBF5E9] border-2 border-[#2A1506] shadow-[5px_5px_0_#FBF5E9] rounded-3xl p-6 md:p-8">
+                  <Etoile taille={52} couleur="#F3D07A" className="absolute -top-6 -right-4 rotate-12" />
                   <div className="flex items-start justify-between mb-4">
                     <div>
                       <p className="font-ui text-xs uppercase tracking-widest text-[#FBF5E9]/40 mb-1">Meilleure valeur</p>
@@ -489,7 +471,7 @@ export default function Cours() {
       </section>
 
       {/* FAQ */}
-      <FaqSection
+      <Faq
         items={[
           { q: "Peut-on commencer sans expérience ?", a: "Oui, les cours sont ouverts à tous les niveaux. Si tu n'as jamais touché l'argile, une initiation avant de prendre un pack est une bonne façon de démarrer." },
           { q: "Que se passe-t-il si je rate une séance ?", a: "Il faut me prévenir en amont pour que je puisse reprogrammer le cours. Dans le cas contraire, si je n'ai pas été prévenue, la séance n'est pas reprogrammable." },
@@ -502,12 +484,13 @@ export default function Cours() {
       {/* COURS ENFANTS */}
       <section className="px-6 md:px-16 lg:px-24 py-20 max-w-7xl mx-auto">
         <Reveal>
-          <div className="bg-[#F2A0A8]/20 border border-[#F2A0A8]/40 rounded-3xl p-10 md:p-16 flex flex-col md:flex-row items-center gap-8">
+          <div className="relative bg-[#FCE4E1] border-2 border-[#2A1506] shadow-[6px_6px_0_#2A1506] rounded-[2rem] p-10 md:p-16 flex flex-col md:flex-row items-center gap-8">
+            <Coeur taille={54} className="absolute -top-6 right-12 rotate-12" />
             <div className="text-[#D97080] bg-[#FBF5E9] p-4 rounded-full shadow-sm">
               <Baby size={48} strokeWidth={1.5} />
             </div>
             <div className="flex-1">
-              <span className="inline-block font-ui text-xs uppercase tracking-widest bg-[#F2A0A8] text-[#2A1506] px-3 py-1 rounded-lg mb-3">Sur demande</span>
+              <Etiquette fond="#F3D07A" className="mb-3">sur demande</Etiquette>
               <h3 className="font-display font-bold text-2xl md:text-3xl text-[#2A1506] mb-3">Cours enfants</h3>
               <p className="font-ui text-[#2A1506]/60 text-sm leading-relaxed max-w-md">
                 Des séances adaptées aux petits curieux, pour découvrir la céramique en s'amusant. Les séances s'organisent sur demande : écris-moi pour en discuter.

@@ -3,44 +3,14 @@ import { Link } from 'react-router-dom'
 import useSEO from '../hooks/useSEO'
 import { Cake, Wine, Gem, Building2, Palette, Sparkles, Mail } from 'lucide-react'
 import Reveal from '../components/Reveal'
+import Faq from '../components/Faq'
+import { Etiquette, Etoile, Nuage, Coeur, Fleurette, Tasse, FriseStickers } from '../components/Stickers'
 import imgOutils from '../assets/outils_marron.png'
 import imgTablier2 from '../assets/tablier_2_marron.png'
 import imgRessort from '../assets/ressort_marron.png'
 import imgOutils3 from '../assets/outils_marron_3.png'
 import imgPinceau from '../assets/pinceau_marron.png'
 import { supabase } from '../lib/supabase'
-
-function FaqSection({ items }) {
-  const [open, setOpen] = useState(null)
-  return (
-    <section className="px-6 md:px-16 lg:px-24 py-20 max-w-7xl mx-auto">
-      <Reveal>
-        <p className="font-ui text-xs uppercase tracking-[0.3em] text-[#E87040] mb-3">FAQ</p>
-        <h2 className="font-display font-bold text-4xl md:text-5xl mb-10">Questions fréquentes</h2>
-      </Reveal>
-      <div className="flex flex-col gap-3 max-w-3xl">
-        {items.map((item, i) => (
-          <Reveal key={i} delay={i * 0.05}>
-            <button
-              onClick={() => setOpen(open === i ? null : i)}
-              className="w-full text-left bg-[#FBF5E9] border-2 border-[#2A1506]/10 rounded-2xl px-6 py-5 hover:border-[#E87040]/40 transition-all duration-200"
-            >
-              <div className="flex items-center justify-between gap-4">
-                <span className="font-ui font-semibold text-[#2A1506] text-lg">{item.q}</span>
-                <span className={`text-[#E87040] text-2xl font-light flex-shrink-0 transition-transform duration-300 ${open === i ? 'rotate-45' : ''}`}>+</span>
-              </div>
-              <div className={`grid transition-all duration-300 ease-in-out ${open === i ? 'grid-rows-[1fr] mt-3' : 'grid-rows-[0fr]'}`}>
-                <div className="overflow-hidden">
-                  <p className="font-body text-[#2A1506]/65 text-base leading-relaxed pr-8">{item.a}</p>
-                </div>
-              </div>
-            </button>
-          </Reveal>
-        ))}
-      </div>
-    </section>
-  )
-}
 
 const btn = {
   dark: 'inline-block font-ui font-semibold text-sm px-8 py-3.5 bg-[#2A1506] text-[#FBF5E9] border-2 border-[#E87040] rounded-xl hover:bg-[#E87040] hover:text-[#2A1506] hover:border-[#E87040] transition-all duration-200 whitespace-nowrap',
@@ -119,28 +89,39 @@ export default function Initiation() {
     <div className="bg-[#FBF5E9] pt-20">
 
       {/* HERO */}
-      <section className="px-6 py-20 max-w-7xl mx-auto">
-        <div className="flex items-center justify-between pb-12">
-          <div className="shrink-0 w-full lg:max-w-[55%]">
-            <Reveal><p className="font-ui text-xs uppercase tracking-[0.3em] text-[#E87040] mb-4">Initiation</p></Reveal>
+      <section className="relative overflow-hidden bg-[#E3EEDC]" style={{ backgroundImage: 'radial-gradient(circle, rgba(106,153,96,0.18) 2px, transparent 2px)', backgroundSize: '26px 26px' }}>
+        <Nuage taille={120} className="absolute top-8 right-[40%] hidden lg:block" />
+        <Etoile taille={50} couleur="#F3D07A" className="absolute top-12 left-[4%] hidden md:block -rotate-12" />
+        <Coeur taille={42} className="absolute bottom-14 left-[48%] hidden lg:block" />
+        <div className="max-w-7xl mx-auto px-6 md:px-16 lg:px-24 py-14 md:py-20 flex items-center justify-between gap-8">
+          <div className="relative z-10 w-full lg:max-w-[58%]">
+            <Reveal><Etiquette fond="#F2A0A8" className="mb-6">initiation · 2h</Etiquette></Reveal>
             <Reveal delay={0.1}>
-              <h1 className="font-display font-black leading-[0.9] mb-8" style={{ fontSize: 'clamp(3.5rem, 10vw, 9rem)' }}>
-                Les mains<br />dans la terre<span className="text-[#9BBF90]">.</span>
+              <h1 className="font-display font-black leading-[0.9] mb-8" style={{ fontSize: 'clamp(3.5rem, 10vw, 8.5rem)' }}>
+                Les mains<br />dans la <span className="italic text-[#6A9960]">terre</span><span className="text-[#E87040]">.</span>
               </h1>
             </Reveal>
             <Reveal delay={0.2}>
-              <p className="font-ui text-[#2A1506]/60 text-lg max-w-md leading-relaxed">
+              <p className="font-body text-[#2A1506]/75 text-xl max-w-md leading-relaxed mb-7">
                 Pas besoin d'expérience ou de talent particulier, juste besoin de curiosité et d'une envie de créer quelque chose avec ses mains ! Je m'occupe du reste.
               </p>
+              <div className="flex flex-wrap gap-3">
+                <span className="font-display font-black text-2xl px-5 py-2 rounded-full bg-[#F3D07A] border-2 border-[#2A1506] shadow-[3px_3px_0_#2A1506] -rotate-2">50 € / pers.</span>
+                <span className="font-main font-bold text-2xl px-4 py-2 rounded-full bg-[#FBF5E9] border-2 border-[#2A1506] rotate-2">6 personnes max</span>
+              </div>
             </Reveal>
           </div>
           <Reveal direction="left" delay={0.15}>
-            <div className="hidden lg:flex items-center justify-end -mr-8">
-              <img src={imgTablier2} alt="Tablier de céramiste" className="w-[28rem] h-auto object-contain mix-blend-multiply contrast-[1.1] pointer-events-none" style={{ imageRendering: '-webkit-optimize-contrast' }} />
+            <div className="relative hidden lg:flex items-center justify-end -mr-8">
+              <Fleurette taille={340} couleur="#FBF5E9" coeur="#FBF5E9" className="absolute inset-0 m-auto opacity-80" />
+              <img src={imgTablier2} alt="Tablier de céramiste" className="relative w-[26rem] h-auto object-contain mix-blend-multiply contrast-[1.1] pointer-events-none" style={{ imageRendering: '-webkit-optimize-contrast' }} />
+              <Tasse taille={64} couleur="#F2A0A8" className="absolute bottom-6 left-4 -rotate-12" />
             </div>
           </Reveal>
         </div>
       </section>
+
+      <FriseStickers fond="#FBF5E9" className="mb-12" />
 
       {/* FORMAT PILLS */}
       <section className="px-6 md:px-16 lg:px-24 pb-8 max-w-7xl mx-auto">
@@ -210,16 +191,19 @@ export default function Initiation() {
               { num: '4', label: "Je m'occupe de la cuisson et vous préviens dès que vos pièces sont disponibles !" },
             ].map(({ num, label }, i) => (
               <Reveal key={num} delay={i * 0.08}>
-                <div className="bg-[#FBF5E9]/60 backdrop-blur-sm rounded-2xl p-5 text-center">
-                  <p className="font-display font-black text-4xl text-[#D97080] mb-2">{num}</p>
-                  <p className="font-ui text-xs text-[#2A1506]/70 leading-snug">{label}</p>
+                <div className={`h-full bg-[#FBF5E9] border-2 border-[#2A1506] rounded-2xl p-5 pt-4 text-center shadow-[4px_4px_0_#2A1506] ${i % 2 ? 'rotate-1' : '-rotate-1'}`}>
+                  <div className="relative w-14 h-14 mx-auto mb-2">
+                    <Fleurette taille={56} couleur={['#F3D07A', '#9BBF90', '#C9B8E8', '#E87040'][i]} coeur="#FBF5E9" rayonCoeur={20} className="absolute inset-0" />
+                    <span className="absolute inset-0 flex items-center justify-center font-display font-black text-xl">{num}</span>
+                  </div>
+                  <p className="font-ui text-xs font-semibold text-[#2A1506]/75 leading-snug">{label}</p>
                 </div>
               </Reveal>
             ))}
           </div>
 
           <Reveal delay={0.1}>
-            <div className="bg-[#FBF5E9] rounded-3xl p-6 md:p-8">
+            <div className="bg-[#FBF5E9] border-2 border-[#2A1506] shadow-[6px_6px_0_#2A1506] rounded-3xl p-6 md:p-8">
 
               {/* Header calendrier */}
               <div className="flex flex-col md:flex-row md:items-center justify-between mb-5 gap-4">
@@ -419,9 +403,10 @@ export default function Initiation() {
               <p className="font-body text-[#2A1506]/70 text-lg leading-relaxed mb-8 max-w-md">
                 Je viens animer un atelier de modelage chez vous — 2 heures de modelage, de rires, de créativité et de partage. Idéal pour une occasion un peu spéciale ! Faites moi part de vos inspirations pour que j'adapte le matériel à vos besoins. <em>Frais de déplacement applicables selon la distance.</em>
               </p>
+              <Etiquette fond="#FBF5E9" rotation={3} className="mb-6">de 2 à 10 participants</Etiquette>
               <div className="flex flex-wrap gap-2 mb-10">
                 {evenements.map(({ icon: Icon, label }) => (
-                  <span key={label} className="font-ui text-sm bg-[#2A1506]/10 text-[#2A1506] px-4 py-2 rounded-lg flex items-center gap-2">
+                  <span key={label} className="font-ui text-sm font-semibold bg-[#FBF5E9] border-2 border-[#2A1506] text-[#2A1506] px-4 py-2 rounded-full flex items-center gap-2">
                     <Icon size={16} strokeWidth={2} className="text-[#E87040]" /> {label}
                   </span>
                 ))}
@@ -448,14 +433,16 @@ export default function Initiation() {
       {/* INITIATION PONCTUELLE */}
       <section className="px-6 md:px-16 lg:px-24 py-16 max-w-7xl mx-auto">
         <Reveal>
-          <div className="bg-[#F3D07A]/30 border border-[#F3D07A]/50 rounded-3xl p-10 md:p-12 flex flex-col md:flex-row items-start gap-8">
+          <div className="relative bg-[#FCE4E1] border-2 border-[#2A1506] shadow-[6px_6px_0_#2A1506] rounded-[2rem] p-10 md:p-12 flex flex-col md:flex-row items-start gap-8">
+            <Coeur taille={58} className="absolute -top-7 right-10 rotate-12" />
+            <Coeur taille={36} couleur="#E87040" className="absolute -top-3 right-24 -rotate-12" />
             <div className="flex-1">
-              <span className="inline-block font-ui text-xs uppercase tracking-widest bg-[#F3D07A] text-[#2A1506] px-3 py-1 rounded-lg mb-4">Offre spéciale</span>
+              <Etiquette fond="#F3D07A" className="mb-4">offre spéciale</Etiquette>
               <h3 className="font-display font-bold text-2xl md:text-3xl text-[#2A1506] mb-3">Initiation parent / enfant</h3>
               <p className="font-ui text-[#2A1506]/60 text-sm leading-relaxed max-w-md mb-4">
                 Un moment unique à partager en famille ! Venez créer ensemble pendant 2 heures de modelage, pour les enfants à partir de 3 ans.
               </p>
-              <div className="bg-[#FBF5E9] rounded-2xl p-5 inline-block">
+              <div className="bg-[#FBF5E9] border-2 border-[#2A1506] rounded-2xl p-5 inline-block -rotate-1">
                 <p className="font-display font-bold text-3xl text-[#2A1506] mb-1">70 €</p>
                 <p className="font-ui text-sm text-[#2A1506]/60">pour 1 adulte + 1 enfant (dès 3 ans)</p>
                 <p className="font-ui text-sm text-[#E87040] font-semibold mt-2">+ 20 € par enfant supplémentaire</p>
@@ -469,7 +456,7 @@ export default function Initiation() {
       </section>
 
       {/* FAQ */}
-      <FaqSection
+      <Faq
         items={[
           { q: "Faut-il avoir de l'expérience ?", a: "Aucune ! Les initiations sont faites pour les débutants, même ceux qui n'ont pas l'habitude des activités manuelles. Tu seras guidé(e) tout au long du cours pour que tu puisses réaliser tes envies." },
           { q: "Qu'est-ce qu'on repart avec ?", a: "Malheureusement pas tout de suite : les pièces ont besoin de temps pour sécher avant de pouvoir passer en première cuisson. Ensuite, je m'occupe de les émailler pour qu'elles puissent être étanches après la deuxième cuisson. Il faut au moins compter 1 mois après la date de l'initiation avant de pouvoir venir les récupérer." },
@@ -482,7 +469,7 @@ export default function Initiation() {
       {/* NOTE CONFIRMATION */}
       <section className="px-6 md:px-16 lg:px-24 py-16 max-w-7xl mx-auto">
         <Reveal>
-          <div className="bg-[#9BBF90]/20 border border-[#9BBF90]/40 rounded-3xl p-8 flex flex-col md:flex-row items-center gap-6 text-center md:text-left">
+          <div className="bg-[#E3EEDC] border-2 border-[#2A1506] rounded-3xl p-8 flex flex-col md:flex-row items-center gap-6 text-center md:text-left">
             <div className="text-[#6A9960] bg-[#FBF5E9] p-4 rounded-full shadow-sm">
               <Mail size={40} strokeWidth={1.5} />
             </div>

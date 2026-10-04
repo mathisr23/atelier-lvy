@@ -1,12 +1,13 @@
-// Panier en osier vu du dessus (d'après le croquis de Léa) : bord, parois tressées, fond quadrillé, deux anses.
+// Panier illustré vu du dessus (croquis + inspiration de Léa) : panier en fil de fer rose, pièces posées dedans.
 // Les pièces sont posées par-dessus, en HTML, sur la zone du fond (en % du dessin).
+import { useState } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 
 const L = 800
 const H = 520
 // Cadre du dessin : marge autour des anses (qui sortent du panier) et de l'ombre, pour qu'elles ne soient pas coupées
 const CADRE = { x: -24, y: 0, l: L + 48, h: H + 12 }
-const BORD = { x1: 70, y1: 60, x2: 730, y2: 460 } // intérieur du rebord
+const BORD = { x1: 72, y1: 62, x2: 728, y2: 458 } // intérieur du rebord
 const FOND = { x1: 160, y1: 130, x2: 640, y2: 390 } // fond du panier
 const TRAIT = '#2A1506'
 
@@ -25,10 +26,14 @@ const cadre = (k) => ({
   x2: lerp(BORD.x2, FOND.x2, k), y2: lerp(BORD.y2, FOND.y2, k),
 })
 
-function Tressage() {
+const ROSE = '#F2A0A8'
+const ROSE_OMBRE = '#D97080'
+
+// Tous les fils du panier, dessinés deux fois : une ombre décalée puis le fil, pour le relief
+function Fils({ couleur }) {
   const montants = []
-  const N = 18
-  // Montants de l'osier : du rebord vers le fond, sur les quatre parois
+  const N = 14
+  // Montants : du rebord vers le fond, sur les quatre parois
   for (let i = 0; i <= N; i++) {
     const t = i / N
     montants.push(
@@ -36,78 +41,56 @@ function Tressage() {
       [lerp(BORD.x1, BORD.x2, t), BORD.y2, lerp(FOND.x1, FOND.x2, t), FOND.y2],
     )
   }
-  for (let i = 1; i < 12; i++) {
-    const t = i / 12
+  for (let i = 1; i < 9; i++) {
+    const t = i / 9
     montants.push(
       [BORD.x1, lerp(BORD.y1, BORD.y2, t), FOND.x1, lerp(FOND.y1, FOND.y2, t)],
       [BORD.x2, lerp(BORD.y1, BORD.y2, t), FOND.x2, lerp(FOND.y1, FOND.y2, t)],
     )
   }
-  // Rangs de tressage : cadres concentriques entre le rebord et le fond
-  const rangs = [0.22, 0.45, 0.7].map(cadre)
+  // Fond quadrillé
+  const grille = []
+  for (let x = FOND.x1 + 40; x < FOND.x2 - 10; x += 40) grille.push([x, FOND.y1, x, FOND.y2])
+  for (let y = FOND.y1 + 37; y < FOND.y2 - 10; y += 37) grille.push([FOND.x1, y, FOND.x2, y])
+  const rang = cadre(0.5)
+  const anse = 'M 58 180 C -4 176, -4 344, 58 340'
+
   return (
-    <g stroke={TRAIT} strokeLinecap="round" fill="none">
-      {montants.map(([x1, y1, x2, y2], i) => <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} strokeOpacity="0.35" strokeWidth="2" />)}
-      {rangs.map((r, i) => <rect key={i} x={r.x1} y={r.y1} width={r.x2 - r.x1} height={r.y2 - r.y1} rx={18 - i * 4} strokeOpacity="0.3" strokeWidth="2.5" />)}
+    <g stroke={couleur} fill="none" strokeLinecap="round" strokeLinejoin="round">
+      <path d={anse} strokeWidth="9" />
+      <path d={anse} strokeWidth="9" transform={`translate(${L} 0) scale(-1 1)`} />
+      {montants.map(([x1, y1, x2, y2], i) => <line key={`m${i}`} x1={x1} y1={y1} x2={x2} y2={y2} strokeWidth="5" />)}
+      {grille.map(([x1, y1, x2, y2], i) => <line key={`g${i}`} x1={x1} y1={y1} x2={x2} y2={y2} strokeWidth="5" />)}
+      <rect x={rang.x1} y={rang.y1} width={rang.x2 - rang.x1} height={rang.y2 - rang.y1} rx="16" strokeWidth="5" />
+      <rect x={FOND.x1} y={FOND.y1} width={FOND.x2 - FOND.x1} height={FOND.y2 - FOND.y1} rx="10" strokeWidth="7" />
+      <rect x={BORD.x1} y={BORD.y1} width={BORD.x2 - BORD.x1} height={BORD.y2 - BORD.y1} rx="26" strokeWidth="7" />
+      <rect x="50" y="40" width="700" height="440" rx="36" strokeWidth="11" />
     </g>
   )
 }
 
-function Fond() {
-  const lignes = []
-  for (let x = FOND.x1 + 32; x < FOND.x2; x += 32) lignes.push([x, FOND.y1, x, FOND.y2])
-  for (let y = FOND.y1 + 29; y < FOND.y2; y += 29) lignes.push([FOND.x1, y, FOND.x2, y])
-  return (
-    <g>
-      <rect x={FOND.x1} y={FOND.y1} width={FOND.x2 - FOND.x1} height={FOND.y2 - FOND.y1} rx="10" fill="#E9C08B" />
-      <g stroke={TRAIT} strokeOpacity="0.28" strokeWidth="2" strokeLinecap="round">
-        {lignes.map(([x1, y1, x2, y2], i) => <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} />)}
-      </g>
-      {/* ombre portée des parois sur le fond */}
-      <rect x={FOND.x1} y={FOND.y1} width={FOND.x2 - FOND.x1} height={FOND.y2 - FOND.y1} rx="10" fill="url(#panier-ombre-fond)" />
-      <rect x={FOND.x1} y={FOND.y1} width={FOND.x2 - FOND.x1} height={FOND.y2 - FOND.y1} rx="10" fill="none" stroke={TRAIT} strokeOpacity="0.55" strokeWidth="2.5" />
-    </g>
-  )
-}
-
-function Anse({ cote }) {
-  // Anse en osier : boucle qui sort du flanc, dessinée à gauche puis retournée pour la droite
-  const d = 'M 58 175 C -6 172, -6 348, 58 345'
-  return (
-    <g transform={cote === 'droite' ? `translate(${L} 0) scale(-1 1)` : undefined}>
-      <path d={d} fill="none" stroke={TRAIT} strokeWidth="30" strokeLinecap="round" />
-      <path d={d} fill="none" stroke="#C98B4E" strokeWidth="22" strokeLinecap="round" />
-      <path d={d} fill="none" stroke={TRAIT} strokeOpacity="0.4" strokeWidth="22" strokeDasharray="3 9" />
-    </g>
-  )
-}
-
+// Panier en fil de fer rose vu du dessus (inspiration de Léa) : rebord, parois en perspective, fond quadrillé, deux anses
 export function DessinPanier() {
-  const paroi = (pts, fill) => <polygon points={pts.map((p) => p.join(',')).join(' ')} fill={fill} />
-  const { x1, y1, x2, y2 } = BORD
   return (
     <svg viewBox={`${CADRE.x} ${CADRE.y} ${CADRE.l} ${CADRE.h}`} className="block w-full h-auto" aria-hidden="true">
-      <defs>
-        <radialGradient id="panier-ombre-fond" cx="50%" cy="50%" r="65%">
-          <stop offset="60%" stopColor={TRAIT} stopOpacity="0" />
-          <stop offset="100%" stopColor={TRAIT} stopOpacity="0.28" />
-        </radialGradient>
-      </defs>
-      {/* ombre au sol */}
-      <rect x="70" y="72" width="690" height="440" rx="40" fill={TRAIT} opacity="0.12" />
-      <Anse cote="gauche" />
-      <Anse cote="droite" />
-      {/* rebord */}
-      <rect x="48" y="38" width="704" height="444" rx="34" fill="#C98B4E" stroke={TRAIT} strokeWidth="3" />
-      <rect x="58" y="48" width="684" height="424" rx="28" fill="none" stroke={TRAIT} strokeOpacity="0.35" strokeWidth="2" strokeDasharray="10 7" />
-      {/* parois : légères variations de ton pour le relief */}
-      {paroi([[x1, y1], [x2, y1], [FOND.x2, FOND.y1], [FOND.x1, FOND.y1]], '#CF935A')}
-      {paroi([[x1, y1], [FOND.x1, FOND.y1], [FOND.x1, FOND.y2], [x1, y2]], '#D79D62')}
-      {paroi([[x2, y1], [x2, y2], [FOND.x2, FOND.y2], [FOND.x2, FOND.y1]], '#E2AE72')}
-      {paroi([[x1, y2], [FOND.x1, FOND.y2], [FOND.x2, FOND.y2], [x2, y2]], '#E6B77C')}
-      <Tressage />
-      <Fond />
-      <rect x={x1} y={y1} width={x2 - x1} height={y2 - y1} rx="22" fill="none" stroke={TRAIT} strokeWidth="3" />
+      <rect x={FOND.x1} y={FOND.y1} width={FOND.x2 - FOND.x1} height={FOND.y2 - FOND.y1} rx="10" fill="#FFFFFF" opacity="0.55" />
+      <g transform="translate(5 7)" opacity="0.45"><Fils couleur={ROSE_OMBRE} /></g>
+      <Fils couleur={ROSE} />
+    </svg>
+  )
+}
+
+// Stickers : étoile à branches (comme les étoiles de l'inspiration)
+function Etoile({ branches = 5, couleur, className = '', creux = 0.45 }) {
+  const pts = []
+  for (let i = 0; i < branches * 2; i++) {
+    const r = i % 2 ? 50 * creux : 50
+    const a = (Math.PI * i) / branches - Math.PI / 2
+    pts.push(`${50 + r * Math.cos(a)},${50 + r * Math.sin(a)}`)
+  }
+  return (
+    <svg viewBox="-4 -4 108 108" className={className} aria-hidden="true">
+      <polygon points={pts.join(' ')} fill={couleur} stroke={TRAIT} strokeOpacity="0.15" strokeWidth="2" strokeLinejoin="round" />
     </svg>
   )
 }
@@ -142,10 +125,15 @@ function disposition(n) {
 // pieces : [{ cle, nom, prix, photo, detouree }] — une entrée par exemplaire
 export default function PanierIllustre({ pieces }) {
   const reduire = useReducedMotion()
+  const [survol, setSurvol] = useState(null)
   const places = disposition(pieces.length)
+  const etiquettesVisibles = pieces.length <= 4
+  const ratio = CADRE.l / CADRE.h // pour convertir une taille en % de largeur en % de hauteur
 
   return (
     <div className="relative w-full">
+      <Etoile branches={5} couleur="#C9DE6E" className="absolute -top-[2%] right-[3%] w-[11%] rotate-12" />
+      <Etoile branches={9} creux={0.6} couleur={ROSE} className="absolute -bottom-[3%] left-[2%] w-[13%] -rotate-6" />
       <DessinPanier />
       <AnimatePresence>
         {pieces.map((piece, i) => {
@@ -154,7 +142,9 @@ export default function PanierIllustre({ pieces }) {
             <motion.div
               key={piece.cle}
               exit={{ opacity: 0, transition: { duration: 0.25 } }}
-              className="group absolute -translate-x-1/2 -translate-y-1/2 hover:z-20"
+              onMouseEnter={() => setSurvol(i)}
+              onMouseLeave={() => setSurvol(null)}
+              className="absolute -translate-x-1/2 -translate-y-1/2 hover:z-20"
               style={{ left: `${x}%`, top: `${y}%`, width: `${taille}%` }}
             >
               <motion.div
@@ -172,14 +162,28 @@ export default function PanierIllustre({ pieces }) {
                     className="w-full h-full object-cover rounded-full border-[5px] border-[#FBF5E9] shadow-[0_10px_18px_rgba(42,21,6,0.35)]" />
                 )}
               </motion.div>
-              {/* étiquette au survol */}
-              <span className="pointer-events-none absolute left-1/2 top-full -translate-x-1/2 mt-1 whitespace-nowrap font-ui text-[0.7rem] font-semibold bg-[#2A1506] text-[#FBF5E9] px-2.5 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
-                {piece.nom}{piece.prix ? ` · ${piece.prix}` : ''}
-              </span>
             </motion.div>
           )
         })}
       </AnimatePresence>
+
+      {/* Étiquettes écrites à la main, au-dessus de toutes les pièces (toujours visibles s'il y a peu de pièces, sinon au survol) */}
+      {pieces.map((piece, i) => {
+        const [x, y, , taille] = places[i]
+        const visible = etiquettesVisibles || survol === i
+        return (
+          <motion.span
+            key={piece.cle}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: visible ? 1 : 0 }}
+            transition={{ delay: etiquettesVisibles && !reduire ? 0.7 + i * 0.12 : 0, duration: 0.2 }}
+            className="pointer-events-none absolute z-30 -translate-x-1/2 -translate-y-1/3 -rotate-3 whitespace-nowrap font-main font-bold text-[clamp(1rem,1.7vw,1.4rem)] leading-none text-[#D97080] bg-[#FBF5E9] px-2.5 pt-1 pb-1.5 rounded-md shadow-[2px_3px_0_rgba(217,112,128,0.35)]"
+            style={{ left: `${x}%`, top: `${y + (taille * ratio) / 2}%` }}
+          >
+            {piece.nom}{piece.prix ? <span className="text-[#2A1506]/55"> · {piece.prix}</span> : null}
+          </motion.span>
+        )
+      })}
     </div>
   )
 }

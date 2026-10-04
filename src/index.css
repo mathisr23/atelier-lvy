@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,700;0,9..144,900;1,9..144,300;1,9..144,400;1,9..144,700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Syne:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,700;0,9..144,900;1,9..144,300;1,9..144,400;1,9..144,700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Syne:wght@400;500;600;700;800&family=Caveat:wght@500;700&display=swap');
 
 @import "tailwindcss";
 
@@ -16,6 +16,7 @@
   --font-display: 'Fraunces', serif;
   --font-body: 'Cormorant Garamond', serif;
   --font-ui: 'Syne', sans-serif;
+  --font-main: 'Caveat', cursive; /* écriture à la main : étiquettes du panier, petits mots du pêle-mêle */
 
   --animate-defilement: defilement 35s linear infinite;
   @keyframes defilement {

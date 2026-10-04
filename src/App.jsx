@@ -15,6 +15,7 @@ import Cours from './pages/Cours'
 import Contact from './pages/Contact'
 import CommandeSucces from './pages/CommandeSucces'
 import Panier from './pages/Panier'
+import Piece from './pages/Piece'
 import Admin from './pages/Admin'
 import NotFound from './pages/NotFound'
 
@@ -44,6 +45,7 @@ function AnimatedRoutes() {
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<PageWrapper><Apropos /></PageWrapper>} />
         <Route path="/boutique" element={<PageWrapper><Boutique /></PageWrapper>} />
+        <Route path="/boutique/:slug" element={<PageWrapper><Piece /></PageWrapper>} />
         <Route path="/initiation" element={<PageWrapper><Initiation /></PageWrapper>} />
         <Route path="/cours" element={<PageWrapper><Cours /></PageWrapper>} />
         <Route path="/contact" element={<PageWrapper><Contact /></PageWrapper>} />

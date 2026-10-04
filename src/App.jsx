@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import SplashScreen from './components/SplashScreen'
-import CartDrawer from './components/CartDrawer'
+import AjoutPanier from './components/AjoutPanier'
 import { CartProvider } from './context/CartContext'
 import { CatalogueProvider } from './context/CatalogueContext'
 import { VENTE_OUVERTE } from './lib/vente'
@@ -14,6 +14,7 @@ import Initiation from './pages/Initiation'
 import Cours from './pages/Cours'
 import Contact from './pages/Contact'
 import CommandeSucces from './pages/CommandeSucces'
+import Panier from './pages/Panier'
 import Admin from './pages/Admin'
 import NotFound from './pages/NotFound'
 
@@ -46,6 +47,7 @@ function AnimatedRoutes() {
         <Route path="/initiation" element={<PageWrapper><Initiation /></PageWrapper>} />
         <Route path="/cours" element={<PageWrapper><Cours /></PageWrapper>} />
         <Route path="/contact" element={<PageWrapper><Contact /></PageWrapper>} />
+        {VENTE_OUVERTE && <Route path="/panier" element={<PageWrapper><Panier /></PageWrapper>} />}
         <Route path="/commande/succes" element={<PageWrapper><CommandeSucces /></PageWrapper>} />
         <Route path="*" element={<PageWrapper><NotFound /></PageWrapper>} />
       </Routes>
@@ -67,7 +69,7 @@ function MainApp() {
             <AnimatedRoutes />
           </main>
           <Footer />
-          {VENTE_OUVERTE && <CartDrawer />}
+          {VENTE_OUVERTE && <AjoutPanier />}
         </>
       )}
     </CartProvider>

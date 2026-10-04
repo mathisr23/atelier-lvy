@@ -7,10 +7,10 @@ import { useCatalogue, lienBoutique } from '../context/CatalogueContext'
 import { VENTE_OUVERTE } from '../lib/vente'
 
 function CartButton() {
-  const { items, setOpen } = useCart()
+  const { items } = useCart()
   if (!VENTE_OUVERTE) return null // pas de panier tant que la vente en ligne est fermée
   return (
-    <button onClick={() => setOpen(true)} className="relative p-1.5 hover:opacity-70 transition-opacity" aria-label="Panier">
+    <Link to="/panier" className="relative p-1.5 hover:opacity-70 transition-opacity" aria-label="Panier">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2A1506" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4Z" />
         <path d="M3 6h18" />
@@ -21,7 +21,7 @@ function CartButton() {
           {items.reduce((n, i) => n + i.qte, 0)}
         </span>
       )}
-    </button>
+    </Link>
   )
 }
 

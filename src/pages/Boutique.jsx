@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useSearchParams, useLocation } from 'react-router-dom'
+import { useSearchParams, useLocation, useNavigate } from 'react-router-dom'
 import useSEO from '../hooks/useSEO'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Bandeau, RubanOndule, Festons, BandeRayee, BandeDamier, PhotoForme, Tampon, Soleil, Fleur, rayures } from '../components/Graphique'
@@ -57,7 +57,8 @@ export default function Boutique() {
   const collectionActive = params.get('collection')
   const [openProduit, setOpenProduit] = useState(null)
   const [lightboxIndex, setLightboxIndex] = useState(null)
-  const { addItem, qteDansPanier, setOpen: ouvrirPanier } = useCart()
+  const { addItem, qteDansPanier } = useCart()
+  const naviguer = useNavigate()
   const { produits, categoriesActives, collectionsActives, categoriesParId, collectionsParId, loading } = useCatalogue()
 
   const categorieDe = (p) => categoriesParId[p.categorie_id]
@@ -471,7 +472,7 @@ export default function Boutique() {
                     </a>
                   ) : qteDansPanier(openProduit.slug) >= openProduit.stock ? (
                     <button
-                      onClick={() => { setOpenProduit(null); ouvrirPanier(true) }}
+                      onClick={() => { setOpenProduit(null); naviguer('/panier') }}
                       className="w-full font-ui font-semibold text-sm px-8 py-3.5 bg-[#9BBF90]/20 text-[#2A1506] border-2 border-[#9BBF90] rounded-xl hover:bg-[#9BBF90]/40 transition-all duration-200"
                     >
                       ✓ Dans le panier — voir le panier

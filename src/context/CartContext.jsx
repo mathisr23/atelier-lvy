@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useState } from 'react'
 import { useCatalogue } from './CatalogueContext'
 
 const CartContext = createContext(null)
@@ -17,7 +17,8 @@ export function CartProvider({ children }) {
       return []
     }
   })
-  const [open, setOpen] = useState(false)
+  const [dernierAjout, setDernierAjout] = useState(null) // pour la petite confirmation « dans le panier »
+  const oublierAjout = useCallback(() => setDernierAjout(null), [])
 
   useEffect(() => {
     try {
@@ -35,7 +36,7 @@ export function CartProvider({ children }) {
       if (!existant) return [...prev, { ...produit, qte: 1 }]
       return prev.map((i) => (i.slug === produit.slug ? { ...i, qte: Math.min(i.qte + 1, stockDe(i.slug)) } : i))
     })
-    setOpen(true)
+    setDernierAjout({ nom: produit.nom, image: produit.image, le: Date.now() })
   }
   const setQte = (slug, qte) => {
     if (qte <= 0) return removeItem(slug)
@@ -47,7 +48,7 @@ export function CartProvider({ children }) {
   const isInCart = (slug) => qteDansPanier(slug) > 0
 
   return (
-    <CartContext.Provider value={{ items, addItem, setQte, removeItem, clear, isInCart, qteDansPanier, open, setOpen }}>
+    <CartContext.Provider value={{ items, addItem, setQte, removeItem, clear, isInCart, qteDansPanier, dernierAjout, oublierAjout }}>
       {children}
     </CartContext.Provider>
   )

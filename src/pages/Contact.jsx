@@ -2,8 +2,8 @@ import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import useSEO from '../hooks/useSEO'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Squiggle } from '../components/Deco'
 import Reveal from '../components/Reveal'
+import { Etiquette, Etoile, Nuage, Coeur, Tasse, FriseStickers } from '../components/Stickers'
 import { supabase } from '../lib/supabase'
 import { EMAILJS, envoyerEmail, mailHtml, carte, ligne, citation } from '../lib/emails'
 import imgCouteaux from '../assets/couteaux_marrons.png'
@@ -172,23 +172,29 @@ export default function Contact() {
     <div className="bg-[#FBF5E9] pt-20">
 
       {/* ─── HERO ─── */}
-      <section className="px-6 md:px-16 lg:px-24 py-20 max-w-7xl mx-auto relative overflow-hidden">
-        <div className="absolute top-20 right-10 w-64 h-64 rounded-full bg-[#E87040]/10 blur-3xl pointer-events-none" />
+      <section className="relative overflow-hidden bg-[#FBE3D3]" style={{ backgroundImage: 'radial-gradient(circle, rgba(232,112,64,0.16) 2px, transparent 2px)', backgroundSize: '26px 26px' }}>
         <img src={imgCouteaux} alt="" aria-hidden="true" className="absolute top-4 right-40 w-[24rem] object-contain mix-blend-multiply contrast-[1.1] pointer-events-none hidden lg:block" style={{ imageRendering: '-webkit-optimize-contrast' }} />
-
-        <Reveal><p className="font-ui text-xs uppercase tracking-[0.3em] text-[#E87040] mb-4">Contact</p></Reveal>
-        <Reveal delay={0.1}>
-          <h1 className="font-display font-black leading-[0.9] mb-6" style={{ fontSize: 'clamp(3.5rem, 10vw, 9rem)' }}>
-            On se<br />parle<span className="text-[#E87040]">.</span>
-          </h1>
-        </Reveal>
-        <Reveal delay={0.2}>
-          <Squiggle width={90} color="#E87040" className="mb-6 opacity-60" />
-          <p className="font-ui text-[#2A1506]/60 text-lg max-w-md leading-relaxed">
-            Une question, une commande, une envie de créer, je réponds à tout, en général sous 48h.
-          </p>
-        </Reveal>
+        <Nuage taille={120} className="absolute bottom-8 right-[8%] hidden md:block" />
+        <Etoile taille={46} couleur="#C9DE6E" className="absolute top-10 left-[46%] hidden lg:block rotate-12" />
+        <Coeur taille={40} className="absolute bottom-12 left-[40%] hidden lg:block" />
+        <Tasse taille={56} couleur="#9BBF90" className="absolute top-1/2 right-[6%] hidden lg:block rotate-12" />
+        <div className="relative max-w-7xl mx-auto px-6 md:px-16 lg:px-24 py-14 md:py-20">
+          <Reveal><Etiquette fond="#F3D07A" className="mb-6">réponse sous 48h</Etiquette></Reveal>
+          <Reveal delay={0.1}>
+            <h1 className="font-display font-black leading-[0.9] mb-6" style={{ fontSize: 'clamp(3.5rem, 10vw, 8.5rem)' }}>
+              On se<br /><span className="italic text-[#E87040]">parle</span>
+              <span className="text-[#9BBF90]">.</span>
+            </h1>
+          </Reveal>
+          <Reveal delay={0.2}>
+            <p className="font-body text-[#2A1506]/75 text-xl max-w-md leading-relaxed">
+              Une question, une commande, une envie de créer, je réponds à tout, en général sous 48h.
+            </p>
+          </Reveal>
+        </div>
       </section>
+
+      <FriseStickers fond="#FBF5E9" className="mb-14" />
 
       {/* ─── FORMULAIRE ─── */}
       <section className="px-6 md:px-16 lg:px-24 pb-32 max-w-7xl mx-auto">
@@ -196,7 +202,7 @@ export default function Contact() {
 
           {/* Formulaire */}
           <Reveal delay={0.1} className="lg:col-span-3">
-            <div className="bg-[#2A1506] rounded-3xl p-8 md:p-10">
+            <div className="bg-[#2A1506] border-2 border-[#2A1506] shadow-[6px_6px_0_#E87040] rounded-3xl p-8 md:p-10">
               <AnimatePresence mode="wait">
                 {status === 'success' ? (
                   <motion.div

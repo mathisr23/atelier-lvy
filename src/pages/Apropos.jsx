@@ -6,6 +6,8 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Asterisk, Squiggle, patterns } from '../components/Deco'
 import Reveal from '../components/Reveal'
 import PeleMele from '../components/PeleMele'
+import { PhotoForme, Tampon, Festons } from '../components/Graphique'
+import { Etoile, Coeur, Nuage, Tasse, Spirale, Fleurette, FriseStickers, Etiquette, TexteArc } from '../components/Stickers'
 import imgLea1 from '../assets/lea1.JPG'
 import imgLea2 from '../assets/lea2.JPG'
 import imgLea3 from '../assets/lea3.JPG'
@@ -26,7 +28,6 @@ import imgIMG5065 from '../assets/IMG_5065.JPG'
 import imgIMG4982 from '../assets/IMG_4982.JPG'
 import imgIMG4984 from '../assets/IMG_4984.JPG'
 import imgIMG5006 from '../assets/IMG_5006.JPG'
-import imgEtagere from '../assets/etagère_marron.png'
 
 // Classes boutons partagées
 const btn = {
@@ -130,75 +131,60 @@ export default function Apropos() {
     <div className="bg-[#FBF5E9] pt-20">
 
       {/* ─── HERO ─── */}
-      <section className="min-h-screen flex flex-col justify-center px-6 md:px-16 lg:px-24 relative overflow-hidden">
-        <div className="absolute top-20 right-10 w-72 h-72 rounded-full bg-[#F2A0A8]/20 blur-3xl pointer-events-none" />
-        <div className="absolute bottom-20 left-10 w-56 h-56 rounded-full bg-[#9BBF90]/20 blur-3xl pointer-events-none" />
+      <section className="relative overflow-hidden bg-[#FCE4E1]" style={{ backgroundImage: 'radial-gradient(circle, rgba(217,112,128,0.16) 2px, transparent 2px)', backgroundSize: '26px 26px' }}>
+        {/* stickers qui flottent */}
+        <motion.div animate={{ y: [0, -10, 0], rotate: [0, 8, 0] }} transition={{ duration: 6, repeat: Infinity }} className="absolute top-10 left-[6%] hidden md:block"><Etoile taille={54} couleur="#C9DE6E" /></motion.div>
+        <motion.div animate={{ y: [0, 8, 0] }} transition={{ duration: 5, repeat: Infinity }} className="absolute bottom-24 left-[44%] hidden lg:block"><Coeur taille={46} /></motion.div>
+        <Nuage taille={130} className="absolute top-6 right-[38%] hidden lg:block opacity-90" />
+        <Nuage taille={90} className="absolute bottom-10 right-4 md:right-10" />
+        <Spirale taille={40} className="absolute top-1/3 left-[46%] hidden lg:block" />
 
-        <motion.div animate={{ rotate: 360 }} transition={{ duration: 20, repeat: Infinity, ease: 'linear' }} className="absolute top-32 left-1/4 opacity-30">
-          <Asterisk size={26} color="#E87040" />
-        </motion.div>
-        <motion.div animate={{ rotate: -360 }} transition={{ duration: 16, repeat: Infinity, ease: 'linear' }} className="absolute bottom-40 right-1/3 opacity-40">
-          <Asterisk size={18} color="#9BBF90" />
-        </motion.div>
-        <motion.div animate={{ rotate: 360 }} transition={{ duration: 24, repeat: Infinity, ease: 'linear' }} className="absolute top-1/2 right-16 opacity-25">
-          <Asterisk size={34} color="#F3D07A" />
-        </motion.div>
-
-        <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center py-20">
+        <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-[1.1fr_1fr] gap-10 lg:gap-6 items-center px-6 md:px-16 lg:px-24 pt-10 pb-20 lg:py-16">
           <div className="relative z-10">
-            <motion.p
-              className="font-ui text-sm uppercase tracking-[0.3em] text-[#E87040] -mb-8 relative z-10"
-              initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-            >
-              Artiste céramiste
-            </motion.p>
+            <motion.div initial={{ opacity: 0, y: 10, rotate: -12 }} animate={{ opacity: 1, y: 0, rotate: 0 }} transition={{ delay: 0.1 }} className="relative z-10 -mb-6">
+              <Etiquette fond="#F3D07A">artiste céramiste</Etiquette>
+            </motion.div>
             <motion.div
-              className="-mb-10 relative z-0"
+              className="-mb-8 relative z-0"
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
             >
-              <img src={logo1} alt="Léa — Artiste céramiste" className="w-auto" style={{ height: 'clamp(14rem, 36vw, 30rem)' }} />
-            </motion.div>
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }} className="relative z-10">
-              <Squiggle width={90} color="#E87040" className="mb-6 opacity-60" />
+              <img src={logo1} alt="Léa — Artiste céramiste" className="w-auto" style={{ height: 'clamp(12rem, 32vw, 26rem)' }} />
             </motion.div>
             <motion.p
-              className="font-display italic text-[#2A1506]/60 text-xl md:text-2xl leading-relaxed max-w-md mb-10"
+              className="relative z-10 font-display italic text-[#2A1506]/75 text-xl md:text-2xl leading-relaxed max-w-md mb-8"
               initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
             >
               Avec l’atelier LVY, prenez un moment dans votre quotidien pour partager une passion, apprendre un savoir-faire et vivre une expérience conviviale !
             </motion.p>
-            <motion.div className="flex flex-wrap gap-4" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55 }}>
-              <Link to="/boutique" className={btn.orange}>Voir mes créations</Link>
-              <Link to="/initiation" className={btn.dark}>Faire une initiation</Link>
+            <motion.div className="flex flex-wrap gap-4 mb-8" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55 }}>
+              <Link to="/boutique" className={`${btn.orange} !border-[#2A1506] shadow-[4px_4px_0_#2A1506]`}>Voir mes créations</Link>
+              <Link to="/initiation" className={`${btn.dark} shadow-[4px_4px_0_#E87040]`}>Faire une initiation</Link>
             </motion.div>
+            <motion.ul className="flex flex-wrap gap-2" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }}>
+              {[['Initiations', '#9BBF90'], ['Cours hebdo', '#C9B8E8'], ['Pièces uniques', '#F3D07A'], ['Sur mesure', '#FBF5E9']].map(([t, c], i) => (
+                <li key={t} className="font-ui text-xs font-bold uppercase tracking-widest px-3 py-1.5 rounded-full border-2 border-[#2A1506]" style={{ backgroundColor: c, transform: `rotate(${i % 2 ? 2 : -2}deg)` }}>{t}</li>
+              ))}
+            </motion.ul>
           </div>
 
-          {/* Collage photos */}
-          <div className="relative h-[600px] hidden lg:block group">
-            <motion.div initial={{ opacity: 0, rotate: 0 }} animate={{ opacity: 1, rotate: 3 }} transition={{ delay: 0.3, duration: 0.6 }} className="absolute top-0 right-8 w-56 h-64 overflow-hidden shadow-xl" style={{ backgroundColor: '#E87040', borderRadius: '40% 60% 70% 30% / 40% 50% 60% 50%' }} />
-            <motion.div initial={{ opacity: 0, rotate: 0 }} animate={{ opacity: 1, rotate: -6 }} transition={{ delay: 0.4, duration: 0.6 }} className="absolute top-16 left-0 w-44 h-44 overflow-hidden shadow-xl" style={{ backgroundColor: '#9BBF90', borderRadius: '50% 50% 40% 60% / 60% 40% 50% 50%' }} />
-            <motion.div initial={{ opacity: 0, rotate: 0 }} animate={{ opacity: 1, rotate: -2 }} transition={{ delay: 0.5, duration: 0.6 }} className="absolute bottom-0 right-0 w-48 h-56 overflow-hidden shadow-xl" style={{ backgroundColor: '#F2A0A8', borderRadius: '60% 40% 50% 50% / 50% 60% 40% 50%' }} />
-            <motion.div initial={{ opacity: 0, rotate: 0 }} animate={{ opacity: 1, rotate: 6 }} transition={{ delay: 0.6, duration: 0.6 }} className="absolute bottom-8 left-12 w-36 h-36 overflow-hidden shadow-xl" style={{ backgroundColor: '#F3D07A', borderRadius: '30% 70% 70% 30% / 30% 30% 70% 70%' }} />
-            {/* illustration3 centrée entre les formes */}
-            <motion.img
-              src={imgEtagere}
-              alt="Étagère céramiste"
-              initial={{ opacity: 0, scale: 0.85 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.45, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-              className="absolute inset-0 m-auto w-[50rem] h-[50rem] object-contain drop-shadow-2xl mix-blend-multiply contrast-[1.1] pointer-events-none"
-              style={{ imageRendering: '-webkit-optimize-contrast' }}
-            />
+          {/* Collage : ses pièces dans des formes douces + stickers */}
+          <div className="relative mx-auto w-full max-w-[26rem] lg:max-w-[34rem] aspect-square">
+            <motion.div initial={{ opacity: 0, scale: 0.9, rotate: -6 }} animate={{ opacity: 1, scale: 1, rotate: 0 }} transition={{ delay: 0.3, duration: 0.7, ease: [0.16, 1, 0.3, 1] }} className="absolute right-0 top-0 w-[78%] aspect-square">
+              <PhotoForme forme="nuage" src={imgIMG4854} alt="Vase Corail, modelé à la main" fond="#E87040" ombre="#E87040" className="w-full h-full" />
+            </motion.div>
+            <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.5, duration: 0.6 }} className="absolute left-0 bottom-0 w-[46%] aspect-square">
+              <PhotoForme forme="fleur" src={imgIMG4948} alt="Bol Océan" fond="#9BBF90" ombre="#9BBF90" className="w-full h-full" />
+            </motion.div>
+            <Tampon taille={104} fond="#F3D07A" className="absolute left-[2%] top-[4%]" />
+            <Tasse taille={58} couleur="#C9B8E8" className="absolute right-[6%] bottom-[6%] rotate-12" />
+            <Etoile taille={44} couleur="#F2A0A8" branches={8} creux={0.55} className="absolute left-[44%] bottom-[30%]" />
           </div>
-        </div>
-
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-[#2A1506]/40">
-          <span className="font-ui text-xs uppercase tracking-widest">Découvrir</span>
-          <motion.div animate={{ y: [0, 8, 0] }} transition={{ duration: 1.5, repeat: Infinity }} className="w-px h-10 bg-[#2A1506]/20" />
         </div>
       </section>
+
+      <FriseStickers fond="#FBF5E9" />
 
       {/* ─── QUI SUIS-JE ─── */}
       <section className="px-6 md:px-16 lg:px-24 py-24 bg-[#2A1506] text-[#FBF5E9] relative overflow-hidden" style={patterns.grain()}>
@@ -227,102 +213,87 @@ export default function Apropos() {
           <Reveal direction="left" delay={0.15}>
             <div className="relative h-[520px]">
               {/* Photo 1 — haut gauche */}
-              <div className="absolute top-0 left-0 w-64 h-80 rounded-2xl overflow-hidden shadow-xl rotate-[-3deg]">
+              <div className="absolute top-0 left-0 w-64 h-80 bg-[#FBF5E9] p-2.5 pb-10 shadow-xl rotate-[-3deg]">
                 <img src={imgLea1} alt="Léa céramiste" className="w-full h-full object-cover object-top" />
               </div>
               {/* Photo 2 — bas droite */}
-              <div className="absolute bottom-0 right-0 w-64 h-80 rounded-2xl overflow-hidden shadow-2xl rotate-[3deg] z-10">
+              <div className="absolute bottom-0 right-0 w-64 h-80 bg-[#FBF5E9] p-2.5 pb-10 shadow-2xl rotate-[3deg] z-10">
                 <img src={imgLea2} alt="Léa à l'atelier" className="w-full h-full object-cover object-center" />
               </div>
-              <div className="absolute -bottom-6 left-4 bg-[#F3D07A] text-[#2A1506] rounded-2xl p-4 max-w-[160px] shadow-xl z-20">
-                <p className="font-display font-bold text-2xl">5 ans</p>
-                <p className="font-ui text-xs">d'expérience</p>
+              <div className="absolute -bottom-8 left-2 w-36 h-36 z-20 flex flex-col items-center justify-center text-[#2A1506] -rotate-6">
+                <Fleurette taille={144} couleur="#F3D07A" coeur="#F3D07A" className="absolute inset-0" />
+                <p className="relative font-display font-black text-3xl leading-none">5 ans</p>
+                <p className="relative font-main font-bold text-lg leading-none">d'expérience</p>
               </div>
+              <span className="absolute top-2 right-6 z-20"><Etiquette fond="#F2A0A8" rotation={6}>c'est moi !</Etiquette></span>
+              <span className="absolute -top-2 left-20 z-20 w-20 h-6 bg-[#FBF5E9]/70 -rotate-12" aria-hidden="true" />
             </div>
           </Reveal>
         </div>
       </section>
 
       {/* ─── MES CRÉATIONS ─── */}
-      <section className="px-6 md:px-16 lg:px-24 py-24">
-        <div className="max-w-7xl mx-auto">
+      <Festons couleur="#DCE8F4" />
+      <section className="relative px-6 md:px-16 lg:px-24 pt-14 pb-20 bg-[#DCE8F4] overflow-hidden">
+        <Nuage taille={110} className="absolute top-8 left-[4%] hidden md:block" />
+        <Nuage taille={80} className="absolute top-24 right-[6%]" />
+        <Etoile taille={40} couleur="#F3D07A" className="absolute bottom-16 left-[3%] hidden md:block" />
+        <Coeur taille={36} couleur="#F2A0A8" className="absolute bottom-24 right-[4%] hidden md:block" />
+        <div className="max-w-7xl mx-auto relative">
           <Reveal>
-            <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-16">
-              <div>
-                <p className="font-ui text-xs uppercase tracking-[0.3em] text-[#E87040] mb-3">Portfolio</p>
-                <h2 className="font-display font-bold text-5xl md:text-7xl leading-tight">Mes<br /><span className="italic">créations</span></h2>
-              </div>
-              <div className="flex flex-col sm:flex-row gap-4 self-start md:self-auto">
-                <a
-                  href={bookPdf}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-block border-b-2 border-orange pb-1 font-ui text-sm font-semibold text-orange hover:text-brown hover:border-brown transition-colors"
-                >
-                  Voir mes créations →
-                </a>
-                <Link to="/boutique" className="inline-block border-b-2 border-brown pb-1 font-ui text-sm font-semibold hover:text-orange hover:border-orange transition-colors">
-                  Voir la boutique →
-                </Link>
+            <div className="text-center mb-12">
+              <TexteArc texte="modeler · émailler · cuire" largeur={460} courbure={40} taille={30} couleur="#E87040" className="mx-auto w-[min(100%,26rem)] -mb-2" />
+              <h2 className="font-display font-black text-5xl md:text-7xl leading-none">Mes <span className="italic">créations</span></h2>
+              <div className="flex flex-wrap justify-center gap-3 mt-6">
+                <a href={bookPdf} target="_blank" rel="noopener noreferrer" className={`${btn.dark} !py-2.5 !px-5`}>Feuilleter mon book →</a>
+                <Link to="/boutique" className={`${btn.outline} !py-2.5 !px-5 bg-[#FBF5E9]`}>Voir la boutique →</Link>
               </div>
             </div>
           </Reveal>
 
-          <Reveal delay={0.1} direction="scale">
-            <div className="grid grid-cols-2 gap-10">
-              {projects.map((project) => (
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
+            {projects.map((project, i) => (
+              <Reveal key={project.id} delay={i * 0.08} direction="up">
                 <button
-                  key={project.id}
                   onClick={() => setOpenProject(project)}
-                  className="group relative rounded-2xl cursor-pointer h-72"
+                  className="group relative w-full text-left bg-[#FBF5E9] border-2 border-[#2A1506] rounded-[2rem] p-2.5 md:p-3 transition-all duration-300 hover:-translate-y-1.5 hover:-rotate-1 hover:shadow-[6px_6px_0_#2A1506]"
                 >
-                  {/* Image avec overflow-hidden isolé pour que la fleur puisse déborder */}
-                  <div className="absolute inset-0 overflow-hidden rounded-2xl">
-                    <img
-                      src={project.preview}
-                      alt={project.name}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
+                  <div className="relative aspect-[4/5] rounded-t-full rounded-b-2xl overflow-hidden border-2 border-[#2A1506]" style={{ backgroundColor: project.color }}>
+                    <img src={project.preview} alt={project.name} loading="lazy" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
                   </div>
-
-                  {/* Fleur badge — déborde en coin bas-droit */}
-                  <div className="absolute -bottom-8 -right-8 w-40 h-40 transition-transform duration-500 ease-out group-hover:rotate-12 origin-center">
-                    <svg viewBox="0 0 100 100" className="absolute inset-0 w-full h-full" aria-hidden="true">
-                      {/* 6 pétales uniformes à 60° d'intervalle + cœur central */}
-                      <circle cx="50" cy="19" r="19" fill={project.color} />
-                      <circle cx="75" cy="34" r="19" fill={project.color} />
-                      <circle cx="75" cy="66" r="19" fill={project.color} />
-                      <circle cx="50" cy="81" r="19" fill={project.color} />
-                      <circle cx="25" cy="66" r="19" fill={project.color} />
-                      <circle cx="25" cy="34" r="19" fill={project.color} />
-                      <circle cx="50" cy="50" r="22" fill={project.color} />
-                    </svg>
-                    <span className="absolute inset-0 flex items-center justify-center font-display font-bold text-lg text-brown">
-                      voir
-                    </span>
+                  {/* fleur « voir » qui déborde */}
+                  <div className="absolute -top-4 -right-4 w-16 h-16 md:w-20 md:h-20 transition-transform duration-500 group-hover:rotate-45">
+                    <Fleurette taille="100%" couleur={project.color} coeur="#FBF5E9" rayonCoeur={24} className="absolute inset-0 w-full h-full" />
+                    <span className="absolute inset-0 flex items-center justify-center font-main font-bold text-base md:text-lg">voir</span>
+                  </div>
+                  <div className="px-1.5 pt-3 pb-1">
+                    <p className="font-display font-bold text-lg md:text-2xl leading-none">{project.name}</p>
+                    <p className="font-ui text-[0.65rem] md:text-xs text-[#2A1506]/55 mt-1.5 leading-snug">{project.subtitle}</p>
                   </div>
                 </button>
-              ))}
-            </div>
-          </Reveal>
+              </Reveal>
+            ))}
+          </div>
         </div>
       </section>
+      <Festons couleur="#DCE8F4" inverse />
 
       {/* ─── CE QUE JE VEUX FAIRE ─── */}
       <section className="px-6 md:px-16 lg:px-24 py-24 relative overflow-hidden" style={{ backgroundColor: 'rgba(242,160,168,0.15)', ...patterns.dots('rgba(217,112,128,0.1)') }}>
         <div className="max-w-7xl mx-auto relative z-10">
           <Reveal><p className="font-ui text-xs uppercase tracking-[0.3em] text-[#D97080] mb-4">La suite</p></Reveal>
-          <Reveal delay={0.1}><h2 className="font-display font-bold text-4xl md:text-5xl mb-16 max-w-xl leading-tight">Ce que je veux créer</h2></Reveal>
+          <Reveal delay={0.1}><h2 className="font-display font-black text-4xl md:text-6xl mb-16 max-w-xl leading-tight">Ce que je veux <span className="italic text-[#E87040]">créer</span></h2></Reveal>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
               { color: '#E87040', title: 'Un lieu de partage et de rencontre', text: 'De nos jours, il est difficile de faire de nouvelles rencontres. C’est pourquoi, à travers ces initiations, je souhaite créer un espace d’échange, permettant de rencontrer d’autres personnes partageant les mêmes passions.', tag: 'Ateliers' },
-              { color: '#9BBF90', title: 'Cours enfants', text: 'Des séances adaptées aux petits, pour leur faire découvrir le plaisir de l\'argile entre leurs mains. Laisser parler leur imagination pour stimuler leur confiance en eux et leur créativité !', tag: 'Futur' },
+              { color: '#9BBF90', title: 'Cours enfants', text: 'Des séances adaptées aux petits, pour leur faire découvrir le plaisir de l\'argile entre leurs mains. Laisser parler leur imagination pour stimuler leur confiance en eux et leur créativité !', tag: 'Sur demande' },
               { color: '#F3D07A', title: 'Prochainement : l\'art thérapie', text: 'Mettre l’art au service de la personne est un de mes objectifs futurs ! Me former à cette pratique me permettrait de créer une bulle pour ceux qui ont besoin d’aide pour mieux se comprendre et s’exprimer.', tag: 'Futur' },
             ].map(({ color, title, text, tag }, i) => (
               <Reveal key={title} delay={i * 0.1} direction="up">
-                <div className="bg-[#FBF5E9] rounded-3xl p-8 border border-[#2A1506]/10 hover:shadow-lg hover:-translate-y-1 transition-all duration-200">
-                  <span className="inline-block font-ui text-xs font-semibold px-3 py-1 rounded-lg mb-6 text-[#FBF5E9]" style={{ backgroundColor: color }}>{tag}</span>
+                <div className="relative h-full rounded-[2rem] p-8 border-2 border-[#2A1506] shadow-[5px_5px_0_#2A1506] hover:-translate-y-1 hover:-rotate-1 transition-all duration-200" style={{ background: `linear-gradient(${color}40, ${color}40), #FBF5E9` }}>
+                  <span className="absolute -top-6 -right-3">{[<Tasse key="t" taille={56} couleur={color} />, <Coeur key="c" taille={52} couleur={color} />, <Etoile key="e" taille={54} couleur={color} />][i]}</span>
+                  <span className="inline-block font-main font-bold text-xl leading-none px-3 py-1 rounded-full border-2 border-[#2A1506] mb-6 -rotate-3" style={{ backgroundColor: color }}>{tag}</span>
                   <h3 className="font-display font-bold text-2xl mb-3">{title}</h3>
                   <p className="text-[#2A1506]/60 font-body text-base leading-relaxed">{text}</p>
                 </div>
@@ -337,8 +308,9 @@ export default function Apropos() {
         <div className="max-w-7xl mx-auto">
           <Reveal>
             <p className="font-ui text-xs uppercase tracking-[0.3em] text-[#F3D07A] mb-4">Ils témoignent</p>
-            <h2 className="font-display font-bold text-5xl md:text-6xl text-[#FBF5E9] leading-tight mb-16">
+            <h2 className="relative inline-block font-display font-bold text-5xl md:text-6xl text-[#FBF5E9] leading-tight mb-16">
               Ce qu'ils<br /><span className="italic text-[#F2A0A8]">en disent</span>
+              <span className="absolute left-full ml-4 top-2 whitespace-nowrap"><Etiquette fond="#C9DE6E" rotation={8}>merci !</Etiquette></span>
             </h2>
           </Reveal>
 
@@ -440,8 +412,9 @@ export default function Apropos() {
             <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-12">
               <div>
                 <p className="font-ui text-xs uppercase tracking-[0.3em] text-[#E87040] mb-3">Instagram</p>
-                <h2 className="font-display font-bold text-5xl md:text-6xl leading-tight">
-                  Sur<br /><span className="italic">l'atelier</span>
+                <h2 className="relative inline-block font-display font-black text-5xl md:text-6xl leading-tight">
+                  Sur<br /><span className="italic text-[#9BBF90]">l'atelier</span>
+                  <Etoile taille={42} couleur="#F3D07A" className="absolute -top-4 -right-12 rotate-12" />
                 </h2>
               </div>
               <a
@@ -465,19 +438,23 @@ export default function Apropos() {
       </section>
 
       {/* ─── CTA CONTACT ─── */}
-      <section className="px-6 md:px-16 lg:px-24 py-24 relative overflow-hidden">
-        <Asterisk size={22} color="#E87040" className="absolute top-12 left-12 opacity-25 rotate-12" />
-        <Asterisk size={16} color="#9BBF90" className="absolute bottom-12 right-20 opacity-35 -rotate-15" />
+      <section className="px-5 md:px-16 lg:px-24 pt-8 pb-24">
         <Reveal direction="scale">
-          <div className="max-w-4xl mx-auto text-center">
-            <h2 className="font-display font-black leading-tight mb-6" style={{ fontSize: 'clamp(3rem, 8vw, 6rem)' }}>
-              On travaille<br /><span className="italic text-[#E87040]">ensemble ?</span>
+          <div className="relative max-w-5xl mx-auto text-center bg-[#E87040] border-2 border-[#2A1506] rounded-[3rem] shadow-[8px_8px_0_#2A1506] px-6 py-16 md:py-20"
+            style={{ backgroundImage: 'radial-gradient(circle, rgba(42,21,6,0.1) 1.5px, transparent 1.5px)', backgroundSize: '20px 20px' }}>
+            <Nuage taille={120} className="absolute -top-10 -left-6" />
+            <Etoile taille={60} couleur="#C9DE6E" className="absolute -top-7 right-10 rotate-12" />
+            <Coeur taille={50} className="absolute -bottom-6 right-[18%]" />
+            <Fleurette taille={46} couleur="#FBF5E9" coeur="#F3D07A" className="absolute bottom-8 left-8 hidden md:block" />
+            <Etiquette fond="#FBF5E9" className="mb-6">un projet, une question ?</Etiquette>
+            <h2 className="font-display font-black leading-[0.95] mb-6 text-[#2A1506]" style={{ fontSize: 'clamp(3rem, 8vw, 6rem)' }}>
+              On travaille<br /><span className="italic text-[#FBF5E9]">ensemble ?</span>
             </h2>
-            <p className="font-body text-[#2A1506]/60 text-lg mb-10 max-w-md mx-auto">
+            <p className="font-body text-[#2A1506]/80 text-xl mb-10 max-w-md mx-auto">
               Commande sur mesure, initiation, ou juste une question, je réponds à tout.
             </p>
-            <Link to="/contact" className={`${btn.orange} !text-base !px-10 !py-4`}>
-              Me contacter
+            <Link to="/contact" className={`${btn.dark} !text-base !px-10 !py-4 shadow-[4px_4px_0_#FBF5E9]`}>
+              Me contacter →
             </Link>
           </div>
         </Reveal>

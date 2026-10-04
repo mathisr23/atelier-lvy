@@ -4,16 +4,18 @@ import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 
 const L = 800
 const H = 520
+// Cadre du dessin : marge autour des anses (qui sortent du panier) et de l'ombre, pour qu'elles ne soient pas coupées
+const CADRE = { x: -24, y: 0, l: L + 48, h: H + 12 }
 const BORD = { x1: 70, y1: 60, x2: 730, y2: 460 } // intérieur du rebord
 const FOND = { x1: 160, y1: 130, x2: 640, y2: 390 } // fond du panier
 const TRAIT = '#2A1506'
 
 // Zone du fond en % du dessin, pour placer les pièces
 const ZONE_FOND = {
-  gauche: (FOND.x1 / L) * 100,
-  droite: (FOND.x2 / L) * 100,
-  haut: (FOND.y1 / H) * 100,
-  bas: (FOND.y2 / H) * 100,
+  gauche: ((FOND.x1 - CADRE.x) / CADRE.l) * 100,
+  droite: ((FOND.x2 - CADRE.x) / CADRE.l) * 100,
+  haut: ((FOND.y1 - CADRE.y) / CADRE.h) * 100,
+  bas: ((FOND.y2 - CADRE.y) / CADRE.h) * 100,
 }
 
 const lerp = (a, b, t) => a + (b - a) * t
@@ -84,7 +86,7 @@ export function DessinPanier() {
   const paroi = (pts, fill) => <polygon points={pts.map((p) => p.join(',')).join(' ')} fill={fill} />
   const { x1, y1, x2, y2 } = BORD
   return (
-    <svg viewBox={`0 0 ${L} ${H}`} className="block w-full h-auto" aria-hidden="true">
+    <svg viewBox={`${CADRE.x} ${CADRE.y} ${CADRE.l} ${CADRE.h}`} className="block w-full h-auto" aria-hidden="true">
       <defs>
         <radialGradient id="panier-ombre-fond" cx="50%" cy="50%" r="65%">
           <stop offset="60%" stopColor={TRAIT} stopOpacity="0" />

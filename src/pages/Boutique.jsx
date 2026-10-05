@@ -8,6 +8,8 @@ import { useCatalogue } from '../context/CatalogueContext'
 import { VENTE_OUVERTE } from '../lib/vente'
 import { btn } from '../lib/boutique'
 import ProduitCarte from '../components/ProduitCarte'
+import photoBoutique1 from '../assets/boutique/boutique1.jpg'
+import photoBoutique2 from '../assets/boutique/boutique2-petit.jpg'
 
 
 const BANDEAU_HAUT = [
@@ -63,11 +65,8 @@ export default function Boutique() {
     return () => clearTimeout(t)
   }, [location.key, location.state])
 
-  // Photos du haut de page : de vraies pièces du catalogue (disponibles de préférence)
-  const photosHero = [...produits.filter(p => p.stock > 0), ...produits]
-    .filter(p => p.images?.[0])
-    .slice(0, 2)
-    .map(p => p.images[0])
+  // Photos du haut de page : choisies par Léa (src/assets/boutique)
+  const photosHero = [photoBoutique1, photoBoutique2]
 
   return (
     <div className="bg-[#FBF5E9] pt-[65px] md:pt-[113px] overflow-x-hidden">
@@ -109,8 +108,8 @@ export default function Boutique() {
           {/* Photos découpées façon fleur / nuage */}
           <Reveal direction="left" delay={0.15} className="order-1 lg:order-2">
             <div className="relative mx-auto w-full max-w-[30rem] aspect-square">
-              <PhotoForme forme="nuage" src={photosHero[0]?.full} alt="Pièce en céramique de l'atelier" fond="#9BBF90" ombre="#9BBF90" className="absolute right-0 top-0 w-[80%] aspect-square" />
-              <PhotoForme forme="fleur" src={photosHero[1]?.thumb} alt="" fond="#F3D07A" ombre="#F3D07A" className="absolute left-0 bottom-0 w-[44%] aspect-square" />
+              <PhotoForme forme="nuage" src={photosHero[0]} alt="Pièce en céramique de l'atelier" fond="#9BBF90" ombre="#9BBF90" className="absolute right-0 top-0 w-[80%] aspect-square" />
+              <PhotoForme forme="fleur" src={photosHero[1]} alt="" fond="#F3D07A" ombre="#F3D07A" className="absolute left-0 bottom-0 w-[44%] aspect-square" />
               <Tampon taille={112} fond="#F3D07A" className="absolute left-[4%] top-[6%]" />
               <Soleil taille={54} couleur="#E87040" className="absolute right-[2%] bottom-[8%] animate-[spin_22s_linear_infinite]" />
             </div>

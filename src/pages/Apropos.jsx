@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import useSEO from '../hooks/useSEO'
 import { supabase } from '../lib/supabase'
@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Asterisk, Squiggle, patterns } from '../components/Deco'
 import Reveal from '../components/Reveal'
 import PeleMele from '../components/PeleMele'
+import GalerieFlottante from '../components/GalerieFlottante'
 import { PhotoForme, Tampon, Festons } from '../components/Graphique'
 import imgEtagere from '../assets/etagere-petite.png'
 import { Etoile, Coeur, Nuage, Tasse, Spirale, Fleurette, FriseStickers, Etiquette, TexteArc } from '../components/Stickers'
@@ -79,7 +80,6 @@ export default function Apropos() {
   })
 
   const [openProject, setOpenProject] = useState(null)
-  const [lightboxIndex, setLightboxIndex] = useState(null)
   const [commentaires, setCommentaires] = useState(null)
   const [commentForm, setCommentForm] = useState({ nom: '', texte: '', type: 'initiation' })
   const [commentStatus, setCommentStatus] = useState(null)
@@ -112,16 +112,7 @@ export default function Apropos() {
     }
   }
 
-  useEffect(() => {
-    const handler = (e) => {
-      if (e.key === 'Escape') {
-        if (lightboxIndex !== null) setLightboxIndex(null)
-        else setOpenProject(null)
-      }
-    }
-    window.addEventListener('keydown', handler)
-    return () => window.removeEventListener('keydown', handler)
-  }, [lightboxIndex])
+  const fermerProjet = useCallback(() => setOpenProject(null), [])
 
   useEffect(() => {
     document.body.style.overflow = openProject ? 'hidden' : ''
@@ -469,114 +460,9 @@ export default function Apropos() {
         </Reveal>
       </section>
 
-      {/* ─── MODAL PROJET ─── */}
+      {/* ─── GALERIE D'UN PROJET : photos flottantes ─── */}
       <AnimatePresence>
-        {openProject && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4"
-            onClick={() => { setLightboxIndex(null); setOpenProject(null) }}
-          >
-            <motion.div
-              initial={{ opacity: 0, y: 24, scale: 0.96 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 24, scale: 0.96 }}
-              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-              className="bg-[#FBF5E9] rounded-3xl p-6 md:p-8 max-w-3xl w-full max-h-[90vh] overflow-y-auto"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="flex items-center justify-between mb-6">
-                <div>
-                  <h3 className="font-display font-bold text-3xl">{openProject.name}</h3>
-                  {openProject.description && (
-                    <p className="font-ui text-sm font-semibold mt-1" style={{ color: openProject.color }}>{openProject.description}</p>
-                  )}
-                  {openProject.subtitle && (
-                    <p className="font-ui text-xs text-[#2A1506]/50 mt-0.5">{openProject.subtitle}</p>
-                  )}
-                </div>
-                <button
-                  onClick={() => setOpenProject(null)}
-                  className="w-10 h-10 rounded-full bg-[#2A1506]/10 hover:bg-[#2A1506]/20 flex items-center justify-center transition-colors"
-                >
-                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                    <path d="M1 1l12 12M13 1L1 13" stroke="#2A1506" strokeWidth="2" strokeLinecap="round" />
-                  </svg>
-                </button>
-              </div>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                {openProject.images.map((img, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setLightboxIndex(i)}
-                    className="aspect-square overflow-hidden rounded-xl group"
-                  >
-                    <img
-                      src={img}
-                      alt={`${openProject.name} — ${i + 1}`}
-                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                    />
-                  </button>
-                ))}
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* ─── LIGHTBOX ─── */}
-      <AnimatePresence>
-        {lightboxIndex !== null && openProject && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[60] bg-black/95 flex items-center justify-center p-4"
-            onClick={() => setLightboxIndex(null)}
-          >
-            <button
-              onClick={(e) => { e.stopPropagation(); setLightboxIndex(i => Math.max(0, i - 1)) }}
-              className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
-            >
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                <path d="M12 4l-6 6 6 6" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </button>
-
-            <motion.img
-              key={lightboxIndex}
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.2 }}
-              src={openProject.images[lightboxIndex]}
-              alt={`${openProject.name} — ${lightboxIndex + 1}`}
-              className="max-h-[85vh] max-w-full object-contain rounded-xl"
-              onClick={(e) => e.stopPropagation()}
-            />
-
-            <button
-              onClick={(e) => { e.stopPropagation(); setLightboxIndex(i => Math.min(openProject.images.length - 1, i + 1)) }}
-              className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
-            >
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                <path d="M8 4l6 6-6 6" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </button>
-
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-              {openProject.images.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={(e) => { e.stopPropagation(); setLightboxIndex(i) }}
-                  className={`w-2 h-2 rounded-full transition-all ${i === lightboxIndex ? 'bg-white scale-125' : 'bg-white/40'}`}
-                />
-              ))}
-            </div>
-          </motion.div>
-        )}
+        {openProject && <GalerieFlottante key={openProject.id} projet={openProject} onFermer={fermerProjet} />}
       </AnimatePresence>
 
     </div>

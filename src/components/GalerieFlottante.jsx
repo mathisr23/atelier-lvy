@@ -136,12 +136,15 @@ export default function GalerieFlottante({ projet, onFermer }) {
           </>
         ) : (
           <>
-            {/* La photo choisie, au centre */}
+            {/* La photo choisie, au centre : elle « vole » depuis le nuage de photos, puis change en fondu */}
             <div className="absolute inset-0 flex items-center justify-center px-16 pt-16 pb-36 md:pb-40 pointer-events-none">
               <motion.div
+                key={focus}
                 layoutId={`photo-${focus}`}
-                className="pointer-events-auto bg-[#FBF5E9] p-3 pb-10 rounded-sm shadow-[6px_12px_30px_rgba(42,21,6,0.4)] max-h-full"
-                transition={{ type: 'spring', stiffness: 200, damping: 24 }}
+                initial={{ opacity: 0, scale: 0.92, rotate: -2 }}
+                animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                transition={{ type: 'spring', stiffness: 220, damping: 26 }}
+                className="relative pointer-events-auto bg-[#FBF5E9] p-3 pb-10 rounded-sm shadow-[6px_12px_30px_rgba(42,21,6,0.4)] max-h-full"
               >
                 <img src={projet.images[focus]} alt={`${projet.name} — photo ${focus + 1}`} className="max-h-[calc(100vh-15rem)] max-w-[80vw] object-contain" />
                 <p className="absolute bottom-2 inset-x-0 text-center font-main font-bold text-xl">{focus + 1} / {n}</p>
@@ -149,22 +152,21 @@ export default function GalerieFlottante({ projet, onFermer }) {
             </div>
             {n > 1 && fleche(-1)}
             {n > 1 && fleche(1)}
-            {/* Les autres, en rangée en bas */}
-            <div className="absolute bottom-4 inset-x-0 z-30 flex justify-center gap-2 md:gap-3 px-4 overflow-x-auto">
-              {projet.images.map((src, i) => (i === focus ? (
-                <span key={i} className="shrink-0 w-14 md:w-20 aspect-[4/5]" aria-hidden="true" />
-              ) : (
-                <motion.button
+            {/* Toutes les photos en rangée en bas (simples boutons : pas d'animation partagée ici) */}
+            <div className="absolute bottom-4 inset-x-0 z-30 flex flex-wrap justify-center gap-2 md:gap-3 px-4">
+              {projet.images.map((src, i) => (
+                <button
                   key={i}
-                  layoutId={`photo-${i}`}
                   onClick={() => setFocus(i)}
-                  whileHover={{ y: -6, rotate: i % 2 ? 4 : -4 }}
-                  className="shrink-0 w-14 md:w-20 bg-[#FBF5E9] p-1 pb-3 rounded-sm shadow-[3px_5px_10px_rgba(42,21,6,0.3)]"
                   aria-label={`Voir la photo ${i + 1}`}
+                  aria-current={i === focus}
+                  className="group shrink-0 w-14 md:w-20"
                 >
-                  <img src={src} alt="" className="w-full aspect-[4/5] object-cover" />
-                </motion.button>
-              )))}
+                  <span className={`block bg-[#FBF5E9] p-1 pb-3 rounded-sm shadow-[3px_5px_10px_rgba(42,21,6,0.3)] transition-transform duration-200 ${i === focus ? '-translate-y-2 ring-2 ring-[#2A1506]' : 'opacity-75 group-hover:opacity-100 group-hover:-translate-y-1.5 ' + (i % 2 ? 'group-hover:rotate-3' : 'group-hover:-rotate-3')}`}>
+                    <img src={src} alt="" className="w-full aspect-[4/5] object-cover" />
+                  </span>
+                </button>
+              ))}
             </div>
             <button onClick={() => setFocus(null)} className="absolute top-5 left-4 md:top-7 md:left-6 z-50 font-main font-bold text-xl px-4 py-1.5 rounded-full bg-[#FBF5E9] border-2 border-[#2A1506] shadow-[3px_3px_0_#2A1506] -rotate-2">
               ← toutes les photos

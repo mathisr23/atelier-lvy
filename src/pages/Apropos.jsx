@@ -7,6 +7,7 @@ import { Asterisk, Squiggle, patterns } from '../components/Deco'
 import Reveal from '../components/Reveal'
 import PeleMele from '../components/PeleMele'
 import { PhotoForme, Tampon, Festons } from '../components/Graphique'
+import imgEtagere from '../assets/etagere-petite.png'
 import { Etoile, Coeur, Nuage, Tasse, Spirale, Fleurette, FriseStickers, Etiquette, TexteArc } from '../components/Stickers'
 import imgLea1 from '../assets/lea1.JPG'
 import imgLea2 from '../assets/lea2.JPG'
@@ -220,10 +221,10 @@ export default function Apropos() {
               <div className="absolute bottom-0 right-0 w-64 h-80 bg-[#FBF5E9] p-2.5 pb-10 shadow-2xl rotate-[3deg] z-10">
                 <img src={imgLea2} alt="Léa à l'atelier" className="w-full h-full object-cover object-center" />
               </div>
-              <div className="absolute -bottom-8 left-2 w-36 h-36 z-20 flex flex-col items-center justify-center text-[#2A1506] -rotate-6">
-                <Fleurette taille={144} couleur="#F3D07A" coeur="#F3D07A" className="absolute inset-0" />
-                <p className="relative font-display font-black text-3xl leading-none">5 ans</p>
-                <p className="relative font-main font-bold text-lg leading-none">d'expérience</p>
+              <div className="absolute -bottom-10 left-0 w-40 h-40 z-30 rounded-full bg-[#F3D07A] border-[3px] border-[#2A1506] shadow-[5px_5px_0_#E87040] flex flex-col items-center justify-center text-[#2A1506] -rotate-6">
+                <Fleurette taille={46} couleur="#F2A0A8" coeur="#FBF5E9" className="absolute -top-4 -right-2 rotate-12" />
+                <p className="font-display font-black text-5xl leading-none">5 ans</p>
+                <p className="font-main font-bold text-2xl leading-none mt-1">d'expérience</p>
               </div>
               <span className="absolute top-2 right-6 z-20"><Etiquette fond="#F2A0A8" rotation={6}>c'est moi !</Etiquette></span>
               <span className="absolute -top-2 left-20 z-20 w-20 h-6 bg-[#FBF5E9]/70 -rotate-12" aria-hidden="true" />
@@ -281,10 +282,18 @@ export default function Apropos() {
       {/* ─── CE QUE JE VEUX FAIRE ─── */}
       <section className="px-6 md:px-16 lg:px-24 py-24 relative overflow-hidden" style={{ backgroundColor: 'rgba(242,160,168,0.15)', ...patterns.dots('rgba(217,112,128,0.1)') }}>
         <div className="max-w-7xl mx-auto relative z-10">
-          <Reveal><p className="font-ui text-xs uppercase tracking-[0.3em] text-[#D97080] mb-4">La suite</p></Reveal>
-          <Reveal delay={0.1}><h2 className="font-display font-black text-4xl md:text-6xl mb-16 max-w-xl leading-tight">Ce que je veux <span className="italic text-[#E87040]">créer</span></h2></Reveal>
+          <div className="flex items-end justify-between gap-8">
+            <div>
+              <Reveal><p className="font-ui text-xs uppercase tracking-[0.3em] text-[#D97080] mb-4">La suite</p></Reveal>
+              <Reveal delay={0.1}><h2 className="font-display font-black text-4xl md:text-6xl mb-16 max-w-xl leading-tight">Ce que je veux <span className="italic text-[#E87040]">créer</span></h2></Reveal>
+            </div>
+            {/* Étagère dessinée par Léa, posée derrière les cartes */}
+            <Reveal direction="left" delay={0.15}>
+              <img src={imgEtagere} alt="Étagère de céramiques dessinée par Léa" loading="lazy" className="hidden md:block w-52 lg:w-60 -mb-10 mr-4 lg:mr-12 rotate-2 mix-blend-multiply pointer-events-none" />
+            </Reveal>
+          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
               { color: '#E87040', title: 'Un lieu de partage et de rencontre', text: 'De nos jours, il est difficile de faire de nouvelles rencontres. C’est pourquoi, à travers ces initiations, je souhaite créer un espace d’échange, permettant de rencontrer d’autres personnes partageant les mêmes passions.', tag: 'Ateliers' },
               { color: '#9BBF90', title: 'Cours enfants', text: 'Des séances adaptées aux petits, pour leur faire découvrir le plaisir de l\'argile entre leurs mains. Laisser parler leur imagination pour stimuler leur confiance en eux et leur créativité !', tag: 'Sur demande' },

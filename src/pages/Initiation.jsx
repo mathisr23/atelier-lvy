@@ -113,7 +113,6 @@ export default function Initiation() {
           </div>
           <Reveal direction="left" delay={0.15}>
             <div className="relative hidden lg:flex items-center justify-end -mr-8">
-              <Fleurette taille={340} couleur="#FBF5E9" coeur="#FBF5E9" className="absolute inset-0 m-auto opacity-80" />
               <img src={imgTablier2} alt="Tablier de céramiste" className="relative w-[26rem] h-auto object-contain mix-blend-multiply contrast-[1.1] pointer-events-none" style={{ imageRendering: '-webkit-optimize-contrast' }} />
               <Tasse taille={64} couleur="#F2A0A8" className="absolute bottom-6 left-4 -rotate-12" />
             </div>

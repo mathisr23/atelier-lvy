@@ -10,6 +10,9 @@ import { btn } from '../lib/boutique'
 import ProduitCarte from '../components/ProduitCarte'
 import photoBoutique1 from '../assets/boutique/boutique1.jpg'
 import photoBoutique2 from '../assets/boutique/boutique2-petit.jpg'
+import photoVisage from '../assets/boutique/collection-visage.jpg'
+import photoCorail from '../assets/boutique/collection-corail.jpg'
+import photoFleurs from '../assets/boutique/collection-fleurs.jpg'
 
 
 const BANDEAU_HAUT = [
@@ -21,6 +24,8 @@ const BANDEAU_HAUT = [
 ]
 const RUBAN = ['Grès', 'Émaillé à la main', 'Modelé à la main', 'Pièces uniques', 'Fait avec amour']
 const FORMES_COLLECTIONS = ['fleur', 'nuage']
+// Photos des collections choisies par Léa (par slug) ; sinon, la photo de la première pièce
+const PHOTOS_COLLECTIONS = { visage: photoVisage, corail: photoCorail, fleurs: photoFleurs }
 
 const steps = [
   { num: '01', title: 'Contacte moi', text: "Raconte-moi ton idée et tes envies, tu peux aussi me faire un croquis et m’envoyer des inspirations. Ensuite je te recontacte pour qu’on puisse échanger ensemble et bien cerner ce que tu souhaites.", color: '#E87040' },
@@ -142,7 +147,7 @@ export default function Boutique() {
                       className="group flex flex-col items-center gap-4 w-40 md:w-56"
                     >
                       <div className="relative w-full aspect-square transition-transform duration-500 group-hover:-rotate-6 group-hover:scale-105">
-                        <PhotoForme forme={FORMES_COLLECTIONS[i % FORMES_COLLECTIONS.length]} src={pieces[0]?.images?.[0]?.thumb} alt={`Collection ${c.label}`} fond={c.couleur} ombre={c.couleur} className="w-full h-full" />
+                        <PhotoForme forme={FORMES_COLLECTIONS[i % FORMES_COLLECTIONS.length]} src={PHOTOS_COLLECTIONS[c.slug] ?? pieces[0]?.images?.[0]?.thumb} alt={`Collection ${c.label}`} fond={c.couleur} ombre={c.couleur} className="w-full h-full" />
                         {active && <Soleil taille={40} couleur={c.couleur} className="absolute -top-2 -right-2 animate-[spin_12s_linear_infinite]" />}
                       </div>
                       <span className="font-display font-bold text-2xl md:text-3xl leading-none underline decoration-[3px] underline-offset-[6px]" style={{ textDecorationColor: c.couleur }}>

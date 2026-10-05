@@ -655,7 +655,7 @@ function CommentaireCard({ c, onAction, onDelete }) {
         </div>
         <span className={`font-ui text-xs font-bold px-3 py-1 rounded-lg whitespace-nowrap ${statColor}`}>{statLabel}</span>
       </div>
-      <p className="font-body text-sm text-[#2A1506]/70 italic leading-relaxed border-l-2 border-[#E87040]/30 pl-3">{c.texte}</p>
+      <p className="flex-1 font-body text-sm text-[#2A1506]/70 italic leading-relaxed border-l-2 border-[#E87040]/30 pl-3">{c.texte}</p>
       <p className="font-ui text-xs text-[#2A1506]/25">{date}</p>
       {c.statut === 'pending' && (
         <div className="flex gap-2">

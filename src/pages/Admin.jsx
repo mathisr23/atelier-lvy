@@ -615,7 +615,7 @@ function AddSessionForm({ onAdd }) {
 }
 
 /* ─── COMMENTAIRE CARD ─── */
-function CommentaireCard({ c, onAction }) {
+function CommentaireCard({ c, onAction, onDelete }) {
   const [loading, setLoading] = useState(null)
 
   const handleAction = async (action) => {
@@ -624,6 +624,20 @@ function CommentaireCard({ c, onAction }) {
     await supabase.from('commentaires').update({ statut: newStatut }).eq('id', c.id)
     onAction(c.id, newStatut)
     setLoading(null)
+  }
+
+  // Suppression définitive (ex. commentaire de test), quel que soit son statut
+  const handleDelete = async () => {
+    if (!confirm(`Supprimer définitivement le commentaire de ${c.nom} ?`)) return
+    setLoading('supprimer')
+    const { data, error } = await supabase.from('commentaires').delete().eq('id', c.id).select('id')
+    setLoading(null)
+    // Sans droit de suppression, Supabase ne renvoie pas d'erreur mais ne supprime rien
+    if (error || !data?.length) {
+      alert("La suppression a été refusée par la base de données. En attendant, tu peux le masquer du site.")
+      return
+    }
+    onDelete(c.id)
   }
 
   const statColor = c.statut === 'pending' ? 'bg-[#F3D07A] text-[#2A1506]' : c.statut === 'approuve' ? 'bg-[#9BBF90] text-[#2A1506]' : 'bg-[#F2A0A8] text-[#2A1506]'
@@ -652,6 +666,18 @@ function CommentaireCard({ c, onAction }) {
           <button onClick={() => handleAction('refuser')} disabled={!!loading}
             className="flex-1 font-ui font-bold text-sm py-2.5 rounded-xl bg-[#F2A0A8] text-[#2A1506] hover:bg-[#d97080] hover:text-white transition-colors disabled:opacity-50">
             {loading === 'refuser' ? '…' : '✕ Refuser'}
+          </button>
+        </div>
+      )}
+      {c.statut !== 'pending' && (
+        <div className="flex gap-2">
+          <button onClick={() => handleAction(c.statut === 'approuve' ? 'refuser' : 'approuver')} disabled={!!loading}
+            className="flex-1 font-ui font-semibold text-xs py-2 rounded-xl border-2 border-[#2A1506]/15 text-[#2A1506]/70 hover:border-[#2A1506]/40 transition-colors disabled:opacity-50">
+            {loading === 'approuver' || loading === 'refuser' ? '…' : c.statut === 'approuve' ? 'Masquer du site' : 'Remettre en ligne'}
+          </button>
+          <button onClick={handleDelete} disabled={!!loading}
+            className="flex-1 font-ui font-semibold text-xs py-2 rounded-xl border-2 border-[#F2A0A8] text-[#D97080] hover:bg-[#F2A0A8] hover:text-[#2A1506] transition-colors disabled:opacity-50">
+            {loading === 'supprimer' ? '…' : 'Supprimer'}
           </button>
         </div>
       )}
@@ -698,6 +724,7 @@ export default function Admin() {
   const handleCommentaireAction = (id, newStatut) => {
     setCommentaires(prev => prev.map(c => c.id === id ? { ...c, statut: newStatut } : c))
   }
+  const handleCommentaireDelete = (id) => setCommentaires(prev => prev.filter(c => c.id !== id))
   const handleSessionAdd = (nouvelles) => setSessions(prev => [...prev, ...nouvelles].sort((a, b) => a.annee - b.annee || a.mois - b.mois || a.day - b.day))
   const handleSessionDelete = (id) => setSessions(prev => prev.filter(s => s.id !== id))
   const handleSessionEdit = (updated) => setSessions(prev => prev.map(s => s.id === updated.id ? updated : s))
@@ -964,7 +991,7 @@ export default function Admin() {
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {commentaires.map(c => <CommentaireCard key={c.id} c={c} onAction={handleCommentaireAction} />)}
+                {commentaires.map(c => <CommentaireCard key={c.id} c={c} onAction={handleCommentaireAction} onDelete={handleCommentaireDelete} />)}
               </div>
             )}
           </>

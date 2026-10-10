@@ -60,11 +60,19 @@ async function envoyerEmail(template_id, template_params) {
   if (!res.ok) console.error(`Erreur EmailJS (${template_id}):`, res.status, await res.text())
 }
 
+// Libellé de livraison : ajoute le point relais saisi au paiement (Mondial Relay), s'il y en a un
+function libelleLivraison(session) {
+  const brut = session.shipping_cost?.shipping_rate?.display_name ?? null
+  const pointRelais = session.custom_fields?.find((f) => f.key === 'point_relais')?.text?.value
+  if (!brut || !pointRelais) return brut
+  return `${brut.replace(/ — offerte$/, '')} — ${pointRelais}`
+}
+
 async function envoyerMailsCommande(session) {
   const client = session.customer_details
   const nom = client?.name ?? ''
   const adresse = session.shipping_details?.address
-  const livraison = session.shipping_cost?.shipping_rate?.display_name ?? 'Livraison'
+  const livraison = libelleLivraison(session) ?? 'Livraison'
   const retrait = /retrait/i.test(livraison)
   const adresseHtml = adresse
     ? [session.shipping_details?.name, adresse.line1, adresse.line2, `${adresse.postal_code ?? ''} ${adresse.city ?? ''}`]
@@ -157,7 +165,7 @@ Deno.serve(async (req) => {
           email: session.customer_details?.email ?? null,
           telephone: session.customer_details?.phone ?? null,
           total: (session.amount_total ?? 0) / 100,
-          livraison: session.shipping_cost?.shipping_rate?.display_name ?? null,
+          livraison: libelleLivraison(session),
           adresse: session.shipping_details?.address ?? null,
           articles,
         },

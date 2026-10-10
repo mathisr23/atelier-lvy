@@ -7,7 +7,7 @@ import { Soleil, Fleur } from '../components/Graphique'
 import { useCart } from '../context/CartContext'
 import { useCatalogue } from '../context/CatalogueContext'
 import { supabase } from '../lib/supabase'
-import { FRAIS_LIVRAISON, SEUIL_LIVRAISON_OFFERTE } from '../data/livraison'
+import { SEUIL_LIVRAISON_OFFERTE, optionsLivraison, poidsPiecesPanier } from '../data/livraison'
 
 const formatEuros = (n) => `${Number(n).toLocaleString('fr-FR', { minimumFractionDigits: Number.isInteger(n) ? 0 : 2, maximumFractionDigits: 2 })} €`
 const MAX_DANS_LE_PANIER = 12 // au-delà, le dessin devient illisible : la liste reste complète
@@ -22,13 +22,16 @@ export default function Panier() {
   const total = items.reduce((sum, i) => sum + (Number(produitsParSlug[i.slug]?.prix) || 0) * i.qte, 0)
   const nbPieces = items.reduce((n, i) => n + i.qte, 0)
   const livraisonOfferte = total >= SEUIL_LIVRAISON_OFFERTE
-  const fraisLivraison = livraisonOfferte ? 0 : FRAIS_LIVRAISON
   const resteAvantOfferte = SEUIL_LIVRAISON_OFFERTE - total
   const estIndisponible = (i) => {
     const p = produitsParSlug[i.slug]
     return !p || p.prix == null || p.stock < i.qte
   }
   const indisponibles = items.filter(estIndisponible)
+  // Seules les pièces encore disponibles comptent dans le poids du colis
+  const itemsDispo = items.filter((i) => !estIndisponible(i))
+  // Options d'envoi selon le poids réel du panier (même grille que le serveur) ; vide = trop lourd pour l'envoi en ligne
+  const optionsEnvoi = optionsLivraison(poidsPiecesPanier(itemsDispo, produitsParSlug))
 
   // Une pièce dessinée par exemplaire : deux tasses identiques = deux tasses dans le panier
   const piecesDessinees = items
@@ -139,11 +142,20 @@ export default function Panier() {
                     <span>Sous-total</span>
                     <span>{formatEuros(total)}</span>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <span>Livraison Colissimo</span>
-                    <span>{livraisonOfferte ? <span className="text-[#6E9A62] font-semibold">Offerte</span> : formatEuros(FRAIS_LIVRAISON)}</span>
-                  </div>
-                  <p className="text-xs text-[#2A1506]/40">ou retrait gratuit à l'atelier, au choix lors du paiement</p>
+                  {itemsDispo.length > 0 && (
+                    <>
+                      {optionsEnvoi.map((option) => (
+                        <div key={option.cle} className="flex items-center justify-between gap-3">
+                          <span>{option.label}</span>
+                          <span className="shrink-0">{livraisonOfferte ? <span className="text-[#6E9A62] font-semibold">Offerte</span> : formatEuros(option.prix)}</span>
+                        </div>
+                      ))}
+                      <p className="text-xs text-[#2A1506]/40">ou retrait gratuit à l'atelier, au choix lors du paiement</p>
+                      {optionsEnvoi.length === 0 && (
+                        <p className="text-xs text-[#D97080]">Ce colis est trop lourd pour l'envoi en ligne : retrait à l'atelier, ou écris-moi pour un envoi sur mesure.</p>
+                      )}
+                    </>
+                  )}
                 </div>
                 {!livraisonOfferte && (
                   <div className="mb-4">
@@ -156,8 +168,8 @@ export default function Panier() {
                   </div>
                 )}
                 <div className="flex items-center justify-between mb-4">
-                  <span className="font-ui text-sm text-[#2A1506]/60">Total</span>
-                  <span className="font-display font-bold text-3xl">{formatEuros(total + fraisLivraison)}</span>
+                  <span className="font-ui text-sm text-[#2A1506]/60">Total hors livraison</span>
+                  <span className="font-display font-bold text-3xl">{formatEuros(total)}</span>
                 </div>
                 {error && <p className="font-ui text-xs text-[#D97080] mb-3">{error}</p>}
                 <button

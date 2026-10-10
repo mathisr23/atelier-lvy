@@ -10,8 +10,33 @@ const supabase = createClient(
 )
 
 // Livraison — garder synchronisé avec src/data/livraison.js (affichage dans le panier)
-const FRAIS_LIVRAISON = 690 // centimes
+const EMBALLAGE_MIN_G = 100
+const EMBALLAGE_MAX_G = 800
+const emballageG = (poidsPiecesG) => Math.min(EMBALLAGE_MAX_G, Math.round(EMBALLAGE_MIN_G + poidsPiecesG * 0.7))
+const POIDS_PAR_DEFAUT_G = 500
 const SEUIL_LIVRAISON_OFFERTE = 6000 // centimes
+const PALIERS_G = [250, 500, 1000, 2000, 3000, 5000]
+const TARIFS_LIVRAISON = {
+  mondial_relay: { label: 'Mondial Relay — point relais', prix: [450, 550, 650, 750, null, null] }, // centimes
+  colissimo: { label: 'Colissimo — livraison à domicile', prix: [600, 860, 1060, 1220, 1430, 1840] },
+}
+// Petit envoi (bijoux) : jusqu'à 50 g de pièces, enveloppe à bulles comprise sous 100 g
+const LETTRE_SUIVIE = { label: 'La Poste — lettre suivie (petit envoi)', poidsPiecesMaxG: 50, prix: 400 }
+
+// Options d'envoi pour un poids de pièces (sans emballage), de la moins chère à la plus chère.
+// Tableau vide = envoi en ligne impossible.
+function optionsLivraison(poidsPiecesG) {
+  const options = []
+  if (poidsPiecesG <= LETTRE_SUIVIE.poidsPiecesMaxG) options.push({ label: LETTRE_SUIVIE.label, prix: LETTRE_SUIVIE.prix })
+  const poids = poidsPiecesG + emballageG(poidsPiecesG)
+  const palier = PALIERS_G.findIndex((max) => poids <= max)
+  if (palier !== -1) {
+    for (const t of Object.values(TARIFS_LIVRAISON)) {
+      if (t.prix[palier] != null) options.push({ label: t.label, prix: t.prix[palier] })
+    }
+  }
+  return options.sort((a, b) => a.prix - b.prix)
+}
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -50,7 +75,7 @@ Deno.serve(async (req) => {
 
     const { data: rows, error } = await supabase
       .from('produits')
-      .select('slug, nom, prix, stock, visible, images')
+      .select('slug, nom, prix, stock, visible, images, poids_g')
       .in('slug', [...quantites.keys()])
     if (error) throw error
 
@@ -67,6 +92,7 @@ Deno.serve(async (req) => {
     }
     const indisponibles = []
     const line_items = []
+    let poidsPiecesG = 0
 
     for (const [slug, qte] of quantites) {
       const row = bySlug.get(slug)
@@ -74,6 +100,7 @@ Deno.serve(async (req) => {
         indisponibles.push(row?.nom ?? slug)
         continue
       }
+      poidsPiecesG += (row.poids_g ?? POIDS_PAR_DEFAUT_G) * qte
       const photo = row.images?.[0]?.thumb
       line_items.push({
         price_data: {
@@ -96,6 +123,22 @@ Deno.serve(async (req) => {
     const sousTotal = line_items.reduce((s, li) => s + li.price_data.unit_amount * li.quantity, 0)
     const livraisonOfferte = sousTotal >= SEUIL_LIVRAISON_OFFERTE
 
+    // Options d'envoi selon le poids réel du panier ; au-delà du dernier palier, retrait à l'atelier seulement
+    const shipping_options = optionsLivraison(poidsPiecesG).map((option) => ({
+      shipping_rate_data: {
+        type: 'fixed_amount',
+        display_name: livraisonOfferte ? `${option.label} — offerte` : option.label,
+        fixed_amount: { amount: livraisonOfferte ? 0 : option.prix, currency: 'eur' }, // déjà en centimes
+      },
+    }))
+    shipping_options.push({
+      shipping_rate_data: {
+        type: 'fixed_amount',
+        display_name: "Retrait à l'atelier (gratuit)",
+        fixed_amount: { amount: 0, currency: 'eur' },
+      },
+    })
+
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
       locale: 'fr',
@@ -104,20 +147,15 @@ Deno.serve(async (req) => {
       cancel_url: `${siteUrl}/boutique`,
       shipping_address_collection: { allowed_countries: ['FR'] },
       phone_number_collection: { enabled: true },
-      shipping_options: [
+      shipping_options,
+      // Mondial Relay : le client indique son point relais directement au paiement
+      custom_fields: [
         {
-          shipping_rate_data: {
-            type: 'fixed_amount',
-            display_name: livraisonOfferte ? 'Livraison Colissimo — offerte' : 'Livraison Colissimo',
-            fixed_amount: { amount: livraisonOfferte ? 0 : FRAIS_LIVRAISON, currency: 'eur' },
-          },
-        },
-        {
-          shipping_rate_data: {
-            type: 'fixed_amount',
-            display_name: "Retrait à l'atelier (gratuit)",
-            fixed_amount: { amount: 0, currency: 'eur' },
-          },
+          key: 'point_relais',
+          label: { type: 'custom', custom: 'Point relais Mondial Relay (si choisi)' },
+          type: 'text',
+          text: { maximum_length: 120 },
+          optional: true,
         },
       ],
     })

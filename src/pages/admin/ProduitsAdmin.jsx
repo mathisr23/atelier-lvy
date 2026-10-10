@@ -145,14 +145,14 @@ function ProduitEditeur({ produit, produits, categories, collections, onFermer, 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-start md:items-center justify-center p-0 md:p-6 overflow-y-auto"
+      className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-start justify-center p-0 md:p-6 overflow-y-auto"
     >
       <motion.div
         initial={{ y: 24, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: 24, opacity: 0 }}
         transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-        className="bg-white w-full max-w-4xl md:rounded-3xl p-5 md:p-8 min-h-screen md:min-h-0"
+        className="bg-white w-full max-w-4xl md:rounded-3xl p-5 md:p-8 min-h-screen md:min-h-0 md:my-auto"
       >
         <div className="flex items-center justify-between mb-6">
           <h2 className="font-display font-bold text-2xl text-[#2A1506]">{nouveau ? 'Nouvelle pièce' : 'Modifier la pièce'}</h2>
@@ -221,7 +221,7 @@ function ProduitEditeur({ produit, produits, categories, collections, onFermer, 
               <div>
                 <label className={labelClass} htmlFor="p-poids">Poids</label>
                 <div className="relative">
-                  <input id="p-poids" type="number" min="0" step="10" className={`${inputClass} pr-7`} value={form.poids_g} onChange={set('poids_g')} placeholder="—" />
+                  <input id="p-poids" type="number" min="0" step="1" className={`${inputClass} pr-7`} value={form.poids_g} onChange={set('poids_g')} placeholder="—" />
                   <span className="absolute right-3 top-1/2 -translate-y-1/2 font-ui text-xs text-[#2A1506]/40 pointer-events-none">g</span>
                 </div>
               </div>
@@ -556,7 +556,7 @@ export function CommandesAdmin() {
                   ))}
                 </ul>
                 <p className="font-ui text-xs mb-1">
-                  <span className={`font-bold uppercase tracking-wider px-2 py-0.5 rounded-md ${retrait ? 'bg-[#F3D07A]/50' : 'bg-[#9BBF90]/30'}`}>{retrait ? 'Retrait atelier' : 'Colissimo'}</span>
+                  <span className={`font-bold uppercase tracking-wider px-2 py-0.5 rounded-md ${retrait ? 'bg-[#F3D07A]/50' : 'bg-[#9BBF90]/30'}`}>{retrait ? 'Retrait atelier' : /mondial/i.test(c.livraison ?? '') ? 'Mondial Relay' : /lettre/i.test(c.livraison ?? '') ? 'Lettre suivie' : 'Colissimo'}</span>
                 </p>
                 {!retrait && a && (
                   <p className="font-ui text-xs text-[#2A1506]/60 mt-2">{[a.line1, a.line2, `${a.postal_code ?? ''} ${a.city ?? ''}`].filter(Boolean).join(', ')}</p>

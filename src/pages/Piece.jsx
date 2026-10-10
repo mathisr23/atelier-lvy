@@ -10,7 +10,7 @@ import { useCatalogue, lienBoutique } from '../context/CatalogueContext'
 import { useCart } from '../context/CartContext'
 import { VENTE_OUVERTE } from '../lib/vente'
 import { btn, defaultDescription, formatPrix } from '../lib/boutique'
-import { FRAIS_LIVRAISON, SEUIL_LIVRAISON_OFFERTE } from '../data/livraison'
+import { SEUIL_LIVRAISON_OFFERTE } from '../data/livraison'
 
 const ONGLETS = [
   { cle: 'details', label: 'La pièce' },
@@ -249,7 +249,7 @@ export default function Piece() {
                     <p>Lavage à la main conseillé pour préserver l'émail le plus longtemps possible. Évite les chocs thermiques brusques (passer du très froid au très chaud). Les pièces décoratives se dépoussièrent simplement avec un chiffon doux.</p>
                   )}
                   {onglet === 'livraison' && (
-                    <p>Envoi en Colissimo ({formatPrix(FRAIS_LIVRAISON)}, offert dès {formatPrix(SEUIL_LIVRAISON_OFFERTE)} d'achat), soigneusement emballé. Tu peux aussi choisir le retrait gratuit à l'atelier au moment du paiement.</p>
+                    <p>Envoi soigneusement emballé, en point relais Mondial Relay, à domicile en Colissimo, ou en lettre suivie pour les petits bijoux, selon le poids du colis. Livraison offerte dès {formatPrix(SEUIL_LIVRAISON_OFFERTE)} d'achat. Tu peux aussi choisir le retrait gratuit à l'atelier au moment du paiement.</p>
                   )}
                 </div>
               </div>

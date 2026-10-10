@@ -18,6 +18,8 @@ import Panier from './pages/Panier'
 import Piece from './pages/Piece'
 import Admin from './pages/Admin'
 import NotFound from './pages/NotFound'
+import MentionsLegales from './pages/MentionsLegales'
+import CGV from './pages/CGV'
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -51,6 +53,8 @@ function AnimatedRoutes() {
         <Route path="/contact" element={<PageWrapper><Contact /></PageWrapper>} />
         {VENTE_OUVERTE && <Route path="/panier" element={<PageWrapper><Panier /></PageWrapper>} />}
         <Route path="/commande/succes" element={<PageWrapper><CommandeSucces /></PageWrapper>} />
+        <Route path="/mentions-legales" element={<PageWrapper><MentionsLegales /></PageWrapper>} />
+        <Route path="/cgv" element={<PageWrapper><CGV /></PageWrapper>} />
         <Route path="*" element={<PageWrapper><NotFound /></PageWrapper>} />
       </Routes>
     </AnimatePresence>

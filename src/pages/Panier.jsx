@@ -179,7 +179,10 @@ export default function Panier() {
                 >
                   {loading ? 'Redirection…' : 'Passer commande →'}
                 </button>
-                <p className="font-ui text-[0.65rem] text-[#2A1506]/35 text-center mt-3">Paiement sécurisé par Stripe</p>
+                <p className="font-ui text-[0.65rem] text-[#2A1506]/35 text-center mt-3">
+                  Paiement sécurisé par Stripe · En commandant, tu acceptes les{' '}
+                  <Link to="/cgv" className="underline hover:text-[#E87040]">conditions générales de vente</Link>
+                </p>
                 <Link to="/boutique" className="block text-center font-ui text-xs font-semibold text-[#2A1506]/60 hover:text-[#E87040] mt-4">
                   ← Continuer mes achats
                 </Link>

@@ -53,7 +53,13 @@ export default function Footer() {
       </div>
 
       <div className="border-t border-[#FBF5E9]/10 px-6 py-4 max-w-7xl mx-auto">
-        <p className="text-[#FBF5E9]/30 text-xs text-center">© {new Date().getFullYear()} Léa — Tous droits réservés</p>
+        <p className="text-[#FBF5E9]/30 text-xs text-center">
+          © {new Date().getFullYear()} Léa — Tous droits réservés
+          <span className="mx-2">·</span>
+          <Link to="/mentions-legales" className="hover:text-[#F3D07A] transition-colors">Mentions légales</Link>
+          <span className="mx-2">·</span>
+          <Link to="/cgv" className="hover:text-[#F3D07A] transition-colors">CGV</Link>
+        </p>
       </div>
     </footer>
   )

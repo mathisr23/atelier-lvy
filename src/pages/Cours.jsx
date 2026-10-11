@@ -6,8 +6,8 @@ import Reveal from '../components/Reveal'
 import Faq from '../components/Faq'
 import { Etiquette, Etoile, Nuage, Coeur, Spirale, Vase, FriseStickers } from '../components/Stickers'
 import { supabase } from '../lib/supabase'
-import imgPince from '../assets/pince_marron.png'
-import imgTablier from '../assets/tablier.png'
+import imgPince from '../assets/pince_marron.webp'
+import imgTablier from '../assets/tablier.webp'
 
 const btn = {
   dark: 'inline-block font-ui font-semibold text-sm px-8 py-3.5 bg-[#2A1506] text-[#FBF5E9] border-2 border-[#E87040] rounded-xl hover:bg-[#E87040] hover:text-[#2A1506] hover:border-[#E87040] transition-all duration-200 whitespace-nowrap',

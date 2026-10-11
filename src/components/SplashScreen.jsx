@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { useState, useEffect } from 'react'
 import { Asterisk } from './Deco'
-import logo1 from '../assets/logo2.png'
+import logo1 from '../assets/logo2.webp'
 
 export default function SplashScreen({ onDone }) {
   const [visible, setVisible] = useState(true)

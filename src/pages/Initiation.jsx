@@ -5,11 +5,11 @@ import { Cake, Wine, Gem, Building2, Palette, Sparkles, Mail } from 'lucide-reac
 import Reveal from '../components/Reveal'
 import Faq from '../components/Faq'
 import { Etiquette, Etoile, Nuage, Coeur, Fleurette, Tasse, FriseStickers } from '../components/Stickers'
-import imgOutils from '../assets/outils_marron.png'
-import imgTablier2 from '../assets/tablier_2_marron.png'
-import imgRessort from '../assets/ressort_marron.png'
-import imgOutils3 from '../assets/outils_marron_3.png'
-import imgPinceau from '../assets/pinceau_marron.png'
+import imgOutils from '../assets/outils_marron.webp'
+import imgTablier2 from '../assets/tablier_2_marron.webp'
+import imgRessort from '../assets/ressort_marron.webp'
+import imgOutils3 from '../assets/outils_marron_3.webp'
+import imgPinceau from '../assets/pinceau_marron.webp'
 import { supabase } from '../lib/supabase'
 
 const btn = {

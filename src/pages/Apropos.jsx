@@ -10,26 +10,25 @@ import GalerieFlottante from '../components/GalerieFlottante'
 import { Tampon, Festons } from '../components/Graphique'
 import imgEtagere from '../assets/etagere-petite.png'
 import { Etoile, Coeur, Nuage, Tasse, Spirale, Fleurette, FriseStickers, Etiquette, TexteArc } from '../components/Stickers'
-import imgLea1 from '../assets/lea1.JPG'
-import imgLea2 from '../assets/lea2.JPG'
-import imgLea3 from '../assets/lea3.JPG'
-import logo1 from '../assets/logo1.png'
+import imgLea1 from '../assets/lea1.webp'
+import imgLea2 from '../assets/lea2.webp'
+import logo1 from '../assets/logo1.webp'
 import bookPdf from '../assets/book.pdf'
-import img3 from '../assets/3.jpg'
-import img4 from '../assets/4.jpg'
-import imgFSR22 from '../assets/FullSizeRender-22.jpg'
-import imgFSR48 from '../assets/FullSizeRender-48.jpg'
-import imgFSR52 from '../assets/FullSizeRender-52.jpg'
-import imgIMG4854 from '../assets/IMG_4854.JPG'
-import imgIMG4862 from '../assets/IMG_4862.JPG'
-import imgIMG4863 from '../assets/IMG_4863.JPG'
-import imgIMG4869 from '../assets/IMG_4869.JPG'
-import imgIMG4948 from '../assets/IMG_4948.JPG'
-import imgIMG4959 from '../assets/IMG_4959.JPG'
-import imgIMG5065 from '../assets/IMG_5065.JPG'
-import imgIMG4982 from '../assets/IMG_4982.JPG'
-import imgIMG4984 from '../assets/IMG_4984.JPG'
-import imgIMG5006 from '../assets/IMG_5006.JPG'
+import img3 from '../assets/3.webp'
+import img4 from '../assets/4.webp'
+import imgFSR22 from '../assets/FullSizeRender-22.webp'
+import imgFSR48 from '../assets/FullSizeRender-48.webp'
+import imgFSR52 from '../assets/FullSizeRender-52.webp'
+import imgIMG4854 from '../assets/IMG_4854.webp'
+import imgIMG4862 from '../assets/IMG_4862.webp'
+import imgIMG4863 from '../assets/IMG_4863.webp'
+import imgIMG4869 from '../assets/IMG_4869.webp'
+import imgIMG4948 from '../assets/IMG_4948.webp'
+import imgIMG4959 from '../assets/IMG_4959.webp'
+import imgIMG5065 from '../assets/IMG_5065.webp'
+import imgIMG4982 from '../assets/IMG_4982.webp'
+import imgIMG4984 from '../assets/IMG_4984.webp'
+import imgIMG5006 from '../assets/IMG_5006.webp'
 
 // Classes boutons partagées
 const btn = {
@@ -209,11 +208,11 @@ export default function Apropos() {
             <div className="relative h-[520px]">
               {/* Photo 1 — haut gauche */}
               <div className="absolute top-0 left-0 w-64 h-80 bg-[#FBF5E9] p-2.5 pb-10 shadow-xl rotate-[-3deg]">
-                <img src={imgLea1} alt="Léa céramiste" className="w-full h-full object-cover object-top" />
+                <img src={imgLea1} alt="Léa céramiste" loading="lazy" className="w-full h-full object-cover object-top" />
               </div>
               {/* Photo 2 — bas droite */}
               <div className="absolute bottom-0 right-0 w-64 h-80 bg-[#FBF5E9] p-2.5 pb-10 shadow-2xl rotate-[3deg] z-10">
-                <img src={imgLea2} alt="Léa à l'atelier" className="w-full h-full object-cover object-center" />
+                <img src={imgLea2} alt="Léa à l'atelier" loading="lazy" className="w-full h-full object-cover object-center" />
               </div>
               <div className="absolute -bottom-10 left-0 w-40 h-40 z-30 rounded-full bg-[#F3D07A] border-[3px] border-[#2A1506] shadow-[5px_5px_0_#E87040] flex flex-col items-center justify-center text-[#2A1506] -rotate-6">
                 <Fleurette taille={46} couleur="#F2A0A8" coeur="#FBF5E9" className="absolute -top-4 -right-2 rotate-12" />

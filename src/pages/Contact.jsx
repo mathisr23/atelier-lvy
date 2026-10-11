@@ -6,7 +6,7 @@ import Reveal from '../components/Reveal'
 import { Etiquette, Etoile, Nuage, Coeur, Tasse, FriseStickers } from '../components/Stickers'
 import { supabase } from '../lib/supabase'
 import { EMAILJS, envoyerEmail, mailHtml, carte, ligne, citation } from '../lib/emails'
-import imgCouteaux from '../assets/couteaux_marrons.png'
+import imgCouteaux from '../assets/couteaux_marrons.webp'
 
 const EDGE_FUNCTION_URL = import.meta.env.VITE_ADMIN_EDGE_FUNCTION_URL
 

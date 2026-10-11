@@ -1,7 +1,7 @@
 import { NavLink, Link } from 'react-router-dom'
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import logo1 from '../assets/logo1.png'
+import logo1 from '../assets/logo1.webp'
 import { useCart } from '../context/CartContext'
 import { useCatalogue, lienBoutique } from '../context/CatalogueContext'
 import { VENTE_OUVERTE } from '../lib/vente'

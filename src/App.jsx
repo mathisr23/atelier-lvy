@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
+import { Analytics } from '@vercel/analytics/react'
 import { AnimatePresence, motion } from 'framer-motion'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
@@ -78,6 +79,8 @@ function MainApp() {
           {VENTE_OUVERTE && <AjoutPanier />}
         </>
       )}
+      {/* Mesure d'audience Vercel (sans cookie) : uniquement sur le site public, pas sur l'admin */}
+      <Analytics />
     </CartProvider>
     </CatalogueProvider>
   )

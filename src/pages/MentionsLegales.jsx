@@ -63,9 +63,14 @@ export default function MentionsLegales() {
 
       <Section titre="Cookies et stockage">
         <p>
-          Le site n'utilise ni cookie publicitaire ni outil de mesure d'audience. Le contenu de votre panier est enregistré dans votre navigateur
+          Le site n'utilise aucun cookie publicitaire ni de suivi. Le contenu de votre panier est enregistré dans votre navigateur
           (stockage local), uniquement pour le retrouver lors de votre prochaine visite. Le fil Instagram affiché sur le site est fourni par le
           service Behold.
+        </p>
+        <p>
+          Pour savoir quelles pages sont consultées, le site utilise Vercel Web Analytics, une mesure d'audience sans cookie : elle ne dépose
+          rien sur votre appareil, ne vous suit pas d'un site à l'autre et ne produit que des statistiques globales et anonymes (pages vues,
+          provenance, type d'appareil).
         </p>
       </Section>
 

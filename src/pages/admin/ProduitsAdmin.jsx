@@ -558,6 +558,11 @@ export function CommandesAdmin() {
                 <p className="font-ui text-xs mb-1">
                   <span className={`font-bold uppercase tracking-wider px-2 py-0.5 rounded-md ${retrait ? 'bg-[#F3D07A]/50' : 'bg-[#9BBF90]/30'}`}>{retrait ? 'Retrait atelier' : /mondial/i.test(c.livraison ?? '') ? 'Mondial Relay' : /lettre/i.test(c.livraison ?? '') ? 'Lettre suivie' : 'Colissimo'}</span>
                 </p>
+                {/mondial/i.test(c.livraison ?? '') && (
+                  <p className="font-ui text-xs text-[#2A1506] mt-2">
+                    <strong>Point relais :</strong> {c.livraison.split(' — ').slice(2).filter((p) => p !== 'offerte').join(' — ') || 'non précisé (le plus proche de l’adresse)'}
+                  </p>
+                )}
                 {!retrait && a && (
                   <p className="font-ui text-xs text-[#2A1506]/60 mt-2">{[a.line1, a.line2, `${a.postal_code ?? ''} ${a.city ?? ''}`].filter(Boolean).join(', ')}</p>
                 )}

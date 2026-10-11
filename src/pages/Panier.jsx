@@ -145,9 +145,21 @@ export default function Panier() {
                   {itemsDispo.length > 0 && (
                     <>
                       {optionsEnvoi.map((option) => (
-                        <div key={option.cle} className="flex items-center justify-between gap-3">
-                          <span>{option.label}</span>
-                          <span className="shrink-0">{livraisonOfferte ? <span className="text-[#6E9A62] font-semibold">Offerte</span> : formatEuros(option.prix)}</span>
+                        <div key={option.cle}>
+                          <div className="flex items-center justify-between gap-3">
+                            <span>{option.label}</span>
+                            <span className="shrink-0">{livraisonOfferte ? <span className="text-[#6E9A62] font-semibold">Offerte</span> : formatEuros(option.prix)}</span>
+                          </div>
+                          {option.cle === 'mondial_relay' && (
+                            <a
+                              href="https://www.mondialrelay.fr/trouver-le-point-relais-le-plus-proche-de-chez-moi/"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-xs text-[#E87040] hover:underline"
+                            >
+                              Trouver mon point relais ↗
+                            </a>
+                          )}
                         </div>
                       ))}
                       <p className="text-xs text-[#2A1506]/40">ou retrait gratuit à l'atelier, au choix lors du paiement</p>

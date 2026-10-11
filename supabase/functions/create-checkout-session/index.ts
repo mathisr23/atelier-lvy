@@ -149,6 +149,12 @@ Deno.serve(async (req) => {
       phone_number_collection: { enabled: true },
       shipping_options,
       // Mondial Relay : le client indique son point relais directement au paiement
+      custom_text: {
+        shipping_address: {
+          message:
+            "Mondial Relay : indique le nom et l'adresse de ton point relais dans le champ prévu (recherche sur mondialrelay.fr), ou laisse vide : Léa choisira le plus proche de ton adresse.",
+        },
+      },
       custom_fields: [
         {
           key: 'point_relais',

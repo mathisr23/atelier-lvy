@@ -60,13 +60,20 @@ async function envoyerEmail(template_id, template_params) {
   if (!res.ok) console.error(`Erreur EmailJS (${template_id}):`, res.status, await res.text())
 }
 
+// Point relais saisi au paiement (champ Stripe), s'il y en a un
+const pointRelaisSaisi = (session) => session.custom_fields?.find((f) => f.key === 'point_relais')?.text?.value ?? null
+
 // Libellé de livraison : ajoute le point relais saisi au paiement (Mondial Relay), s'il y en a un
 function libelleLivraison(session) {
   const brut = session.shipping_cost?.shipping_rate?.display_name ?? null
-  const pointRelais = session.custom_fields?.find((f) => f.key === 'point_relais')?.text?.value
+  const pointRelais = pointRelaisSaisi(session)
   if (!brut || !pointRelais) return brut
   return `${brut.replace(/ — offerte$/, '')} — ${pointRelais}`
 }
+
+// Mode d'envoi en toutes lettres, pour les phrases des mails
+const modeEnvoi = (livraison) =>
+  /mondial/i.test(livraison) ? 'en point relais Mondial Relay' : /lettre/i.test(livraison) ? 'en lettre suivie' : 'en Colissimo'
 
 async function envoyerMailsCommande(session) {
   const client = session.customer_details
@@ -86,9 +93,13 @@ async function envoyerMailsCommande(session) {
     ligne(livraison.replace(/ — offerte$/, ''), session.shipping_cost?.amount_total ? euros(session.shipping_cost.amount_total) : 'Offerte'),
     ligne('Total payé', euros(session.amount_total), { fort: true }),
   ]
+  const mode = modeEnvoi(livraison)
   const carteLivraison = retrait
     ? carte('Retrait', [ligne('Mode', "Retrait à l'atelier")])
-    : carte('Livraison', [ligne('Adresse', adresseHtml, { html: true })])
+    : carte('Livraison', [
+        /mondial/i.test(livraison) ? ligne('Point relais', pointRelaisSaisi(session) ?? "Non précisé : le plus proche de l'adresse ci-dessous") : '',
+        ligne('Adresse', adresseHtml, { html: true }),
+      ])
 
   // 1. Notification pour Léa
   await envoyerEmail(EMAILJS.templateLea, {
@@ -100,7 +111,7 @@ async function envoyerMailsCommande(session) {
       paragraphes: [
         retrait
           ? "Le client a choisi le retrait à l'atelier : réponds-lui pour convenir d'un moment."
-          : 'Paiement reçu : la pièce est à emballer et à expédier en Colissimo.',
+          : `Paiement reçu : la pièce est à emballer et à expédier ${mode}.`,
       ],
       blocs: [
         carte('Commande', lignesCommande),
@@ -122,7 +133,7 @@ async function envoyerMailsCommande(session) {
           'Ton paiement a bien été reçu, ta commande est confirmée.',
           retrait
             ? "Je te recontacte très vite pour convenir d'un moment où venir récupérer ta pièce à l'atelier."
-            : "J'emballe ta pièce avec soin et je te préviens dès qu'elle part en Colissimo.",
+            : `J'emballe ta pièce avec soin et je te préviens dès qu'elle part ${mode}.`,
           'Une question ? Réponds simplement à ce mail.',
         ],
         blocs: [carte('Ta commande', lignesCommande), carteLivraison],

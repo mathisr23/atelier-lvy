@@ -30,6 +30,7 @@ function ProduitEditeur({ produit, produits, categories, collections, onFermer, 
     categorie_id: produit?.categorie_id ?? categories[0]?.id ?? '',
     collection_id: produit?.collection_id ?? '',
     description: produit?.description ?? '',
+    dimensions: produit?.dimensions ?? '',
     visible: produit?.visible ?? true,
   }))
   const [images, setImages] = useState(produit?.images ?? [])
@@ -99,6 +100,7 @@ function ProduitEditeur({ produit, produits, categories, collections, onFermer, 
       categorie_id: form.categorie_id || null,
       collection_id: form.collection_id || null,
       description: form.description.trim() || null,
+      dimensions: form.dimensions.trim() || null,
       visible: form.visible,
       images,
       updated_at: new Date().toISOString(),
@@ -244,8 +246,12 @@ function ProduitEditeur({ produit, produits, categories, collections, onFermer, 
               </div>
             </div>
             <div>
+              <label className={labelClass} htmlFor="p-dim">Dimensions</label>
+              <input id="p-dim" className={inputClass} value={form.dimensions} onChange={set('dimensions')} placeholder="Ex. 14x7 (en cm : hauteur x largeur)" />
+            </div>
+            <div>
               <label className={labelClass} htmlFor="p-desc">Description</label>
-              <textarea id="p-desc" rows={5} className={`${inputClass} resize-none`} value={form.description} onChange={set('description')} placeholder="La terre, l'émail, la cuisson, les dimensions…" />
+              <textarea id="p-desc" rows={5} className={`${inputClass} resize-none`} value={form.description} onChange={set('description')} placeholder="L'histoire de la pièce, la terre, l'émail… Laisse vide pour le texte par défaut de son type." />
             </div>
             <label className="flex items-center gap-3 cursor-pointer select-none">
               <input type="checkbox" checked={form.visible} onChange={set('visible')} className="w-5 h-5 accent-[#E87040]" />

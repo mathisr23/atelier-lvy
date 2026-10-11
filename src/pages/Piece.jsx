@@ -9,7 +9,7 @@ import { Festons, Tampon, Soleil, Fleur, Bandeau } from '../components/Graphique
 import { useCatalogue, lienBoutique } from '../context/CatalogueContext'
 import { useCart } from '../context/CartContext'
 import { VENTE_OUVERTE } from '../lib/vente'
-import { btn, defaultDescription, formatPrix } from '../lib/boutique'
+import { btn, defaultDescription, formatDimensions, formatPrix } from '../lib/boutique'
 import { SEUIL_LIVRAISON_OFFERTE } from '../data/livraison'
 
 const ONGLETS = [
@@ -150,6 +150,7 @@ export default function Piece() {
 
   const dansLePanier = qteDansPanier(p.slug)
   const description = p.description || defaultDescription(categorie?.slug)
+  const dimensions = formatDimensions(p.dimensions)
 
   return (
     <div className="bg-[#FBF5E9] pt-[65px] md:pt-[113px] overflow-x-hidden">
@@ -242,6 +243,12 @@ export default function Piece() {
                   ))}
                 </div>
                 <div className="font-body text-lg leading-relaxed text-[#2A1506]/75 pt-3" role="tabpanel">
+                  {onglet === 'details' && dimensions && (
+                    <p className="mb-3">
+                      <span className="font-ui text-xs font-bold uppercase tracking-widest text-[#2A1506] mr-2">Dimensions</span>
+                      {dimensions}
+                    </p>
+                  )}
                   {onglet === 'details' && (
                     <p>Chaque pièce est modelée à la main dans mon atelier, en grès, puis cuite deux fois : une première cuisson (le biscuit), puis l'émaillage. Les petites variations de forme et de couleur font tout son charme : aucune n'est exactement identique.</p>
                   )}

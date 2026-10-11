@@ -7,7 +7,7 @@ import { Asterisk, Squiggle, patterns } from '../components/Deco'
 import Reveal from '../components/Reveal'
 import PeleMele from '../components/PeleMele'
 import GalerieFlottante from '../components/GalerieFlottante'
-import { PhotoForme, Tampon, Festons } from '../components/Graphique'
+import { Tampon, Festons } from '../components/Graphique'
 import imgEtagere from '../assets/etagere-petite.png'
 import { Etoile, Coeur, Nuage, Tasse, Spirale, Fleurette, FriseStickers, Etiquette, TexteArc } from '../components/Stickers'
 import imgLea1 from '../assets/lea1.JPG'
@@ -161,17 +161,20 @@ export default function Apropos() {
             </motion.ul>
           </div>
 
-          {/* Collage : ses pièces dans des formes douces + stickers */}
-          <div className="relative mx-auto w-full max-w-[26rem] lg:max-w-[34rem] aspect-square">
-            <motion.div initial={{ opacity: 0, scale: 0.9, rotate: -6 }} animate={{ opacity: 1, scale: 1, rotate: 0 }} transition={{ delay: 0.3, duration: 0.7, ease: [0.16, 1, 0.3, 1] }} className="absolute right-0 top-0 w-[78%] aspect-square">
-              <PhotoForme forme="nuage" src={imgIMG4854} alt="Vase Corail, modelé à la main" fond="#E87040" ombre="#E87040" className="w-full h-full" />
-            </motion.div>
-            <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.5, duration: 0.6 }} className="absolute left-0 bottom-0 w-[46%] aspect-square">
-              <PhotoForme forme="fleur" src={imgIMG4948} alt="Bol Océan" fond="#9BBF90" ombre="#9BBF90" className="w-full h-full" />
-            </motion.div>
-            <Tampon taille={104} fond="#F3D07A" className="absolute left-[2%] top-[4%]" />
-            <Tasse taille={58} couleur="#C9B8E8" className="absolute right-[6%] bottom-[6%] rotate-12" />
-            <Etoile taille={44} couleur="#F2A0A8" branches={8} creux={0.55} className="absolute left-[44%] bottom-[30%]" />
+          {/* L'étagère dessinée par Léa, entourée de quelques stickers */}
+          <div className="relative mx-auto w-full max-w-[17rem] md:max-w-[20rem] lg:max-w-[24rem]">
+            <motion.img
+              src={imgEtagere}
+              alt="Étagère de céramiques dessinée par Léa"
+              fetchPriority="high"
+              initial={{ opacity: 0, y: 24, rotate: -4 }}
+              animate={{ opacity: 1, y: 0, rotate: 2 }}
+              transition={{ delay: 0.3, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+              className="relative w-full h-auto mix-blend-multiply"
+            />
+            <Tampon taille={96} fond="#F3D07A" className="absolute -left-12 md:-left-20 top-[6%]" />
+            <Tasse taille={58} couleur="#C9B8E8" className="absolute -right-6 md:-right-12 bottom-[16%] rotate-12" />
+            <Etoile taille={44} couleur="#F2A0A8" branches={8} creux={0.55} className="absolute -right-4 md:-right-8 top-[2%]" />
           </div>
         </div>
       </section>
@@ -273,15 +276,9 @@ export default function Apropos() {
       {/* ─── CE QUE JE VEUX FAIRE ─── */}
       <section className="px-6 md:px-16 lg:px-24 py-24 relative overflow-hidden" style={{ backgroundColor: 'rgba(242,160,168,0.15)', ...patterns.dots('rgba(217,112,128,0.1)') }}>
         <div className="max-w-7xl mx-auto relative z-10">
-          <div className="flex items-end justify-between gap-8">
-            <div>
-              <Reveal><p className="font-ui text-xs uppercase tracking-[0.3em] text-[#D97080] mb-4">La suite</p></Reveal>
-              <Reveal delay={0.1}><h2 className="font-display font-black text-4xl md:text-6xl mb-16 max-w-xl leading-tight">Ce que je veux <span className="italic text-[#E87040]">créer</span></h2></Reveal>
-            </div>
-            {/* Étagère dessinée par Léa, posée derrière les cartes */}
-            <Reveal direction="left" delay={0.15}>
-              <img src={imgEtagere} alt="Étagère de céramiques dessinée par Léa" loading="lazy" className="hidden md:block w-52 lg:w-60 -mb-10 mr-4 lg:mr-12 rotate-2 mix-blend-multiply pointer-events-none" />
-            </Reveal>
+          <div>
+            <Reveal><p className="font-ui text-xs uppercase tracking-[0.3em] text-[#D97080] mb-4">La suite</p></Reveal>
+            <Reveal delay={0.1}><h2 className="font-display font-black text-4xl md:text-6xl mb-16 max-w-xl leading-tight">Ce que je veux <span className="italic text-[#E87040]">créer</span></h2></Reveal>
           </div>
 
           <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-6">

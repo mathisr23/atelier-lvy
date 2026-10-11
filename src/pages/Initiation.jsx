@@ -390,7 +390,7 @@ export default function Initiation() {
           <p className="font-ui text-xs text-[#2A1506]/60">participants</p>
         </div>
 
-        <div className="max-w-7xl mx-auto relative z-10">
+        <div className="max-w-7xl mx-auto relative z-10 lg:grid lg:grid-cols-[minmax(0,36rem)_1fr] lg:gap-12 lg:items-center">
           <div className="max-w-xl">
             <Reveal><p className="font-ui text-xs uppercase tracking-[0.3em] text-[#2A1506]/50 mb-4">Format ②</p></Reveal>
             <Reveal delay={0.1}>
@@ -426,6 +426,21 @@ export default function Initiation() {
               <Link to="/contact?type=initiation" className={btn.dark}>Faire une demande →</Link>
             </Reveal>
           </div>
+
+          {/* Écrans moyens (où les grandes illustrations sont masquées) : pinceaux et estèques de Léa pour habiller la droite */}
+          <Reveal direction="left" delay={0.2} className="hidden lg:block [@media(min-width:1590px)]:hidden">
+            <div className="relative mx-auto w-full max-w-[26rem] aspect-[4/5]" aria-hidden="true">
+              {/* Pinceaux en haut à droite, estèques en bas à gauche : chacun sa zone, sans se chevaucher */}
+              <img src={imgPinceau} alt="" className="absolute right-0 top-0 w-[56%] object-contain mix-blend-multiply contrast-[1.1] pointer-events-none" style={{ imageRendering: '-webkit-optimize-contrast' }} />
+              <img src={imgOutils3} alt="" className="absolute left-0 bottom-0 w-[48%] object-contain mix-blend-multiply contrast-[1.1] pointer-events-none" style={{ imageRendering: '-webkit-optimize-contrast' }} />
+              <div className="absolute right-2 bottom-8 bg-[#FBF5E9] border-2 border-[#2A1506] rounded-2xl px-5 py-3 shadow-[4px_4px_0_#2A1506] rotate-3">
+                <p className="font-display font-bold text-3xl text-[#2A1506] leading-none">2 – 10</p>
+                <p className="font-ui text-xs text-[#2A1506]/60 mt-1">participants</p>
+              </div>
+              <Etoile taille={46} couleur="#E87040" className="absolute left-[8%] top-[10%]" />
+              <Coeur taille={38} couleur="#F2A0A8" className="absolute right-[30%] top-[68%] -rotate-12" />
+            </div>
+          </Reveal>
         </div>
       </section>
 

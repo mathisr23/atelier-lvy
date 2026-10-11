@@ -3,8 +3,8 @@
 import { useState } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { Fleur } from './Graphique'
-import photoBol from '../assets/IMG_4948.JPG'
-import photoVase from '../assets/IMG_5006.JPG'
+import photoInitiation1 from '../assets/initiation1.webp'
+import photoInitiation2 from '../assets/initiation2.webp'
 
 const BRUN = '#2A1506'
 const TYPES = { initiation: 'Initiation', cours: 'Cours', autre: 'Autre', creation: 'Création' }
@@ -151,8 +151,8 @@ export default function PeleMele({ commentaires }) {
     <div>
       {/* le mur crème */}
       <div className="relative rounded-3xl bg-[#FBF5E9] p-4 sm:p-6 md:p-10">
-        <Polaroid src={photoBol} legende="océan" className="-left-12 top-[42%] -rotate-6" />
-        <Polaroid src={photoVase} legende="sable" className="-right-5 bottom-16 rotate-[5deg]" />
+        <Polaroid src={photoInitiation1} legende="à l'atelier" className="-left-12 top-[42%] -rotate-6" />
+        <Polaroid src={photoInitiation2} legende="initiation" className="-right-5 bottom-16 rotate-[5deg]" />
         <Fleur taille={46} couleur="#F2A0A8" className="absolute z-10 -top-4 right-[18%]" />
         <span className="absolute z-0 hidden md:block -bottom-5 left-[12%] w-36 h-20 rounded-[50%_50%_45%_55%/60%_60%_40%_40%] [background:repeating-linear-gradient(0deg,#B9C8EE99_0_6px,transparent_6px_12px),repeating-linear-gradient(90deg,#B9C8EE99_0_6px,transparent_6px_12px),#fff]" aria-hidden="true" />
         {/* la grille et son cadre en fil */}

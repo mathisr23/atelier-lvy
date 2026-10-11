@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import useSEO from '../hooks/useSEO'
-import PageLegale, { Section, ACompleter } from '../components/PageLegale'
+import PageLegale, { Section } from '../components/PageLegale'
 
 const EMAIL = 'contact.atelierlvy@gmail.com'
 
@@ -11,17 +11,17 @@ export default function MentionsLegales() {
     <PageLegale surtitre="Informations légales" titre="Mentions légales" miseAJour="octobre 2026">
       <Section titre="Éditrice du site">
         <p>
-          Le site est édité par <ACompleter>prénom et nom de Léa</ACompleter>, entrepreneuse individuelle sous le régime de la micro-entreprise
+          Le site est édité par Léa Lévy, entrepreneuse individuelle sous le régime de la micro-entreprise
           (Atelier LVY).
         </p>
         <ul className="list-disc pl-5 flex flex-col gap-1">
-          <li>SIRET : <ACompleter>numéro SIRET</ACompleter></li>
-          <li>Adresse : <ACompleter>adresse de l'atelier ou de domiciliation</ACompleter></li>
+          <li>SIRET : 928 230 408 00017</li>
+          <li>Adresse : 2 rue du Château, 78660 Boinville-le-Gaillard, France</li>
           <li>E-mail : <a href={`mailto:${EMAIL}`} className="underline hover:text-[#E87040]">{EMAIL}</a></li>
-          <li>Téléphone : <ACompleter>numéro de téléphone</ACompleter></li>
+          <li>Téléphone : 06 64 08 73 94</li>
           <li>TVA non applicable, article 293 B du Code général des impôts.</li>
         </ul>
-        <p>Directrice de la publication : <ACompleter>prénom et nom de Léa</ACompleter>.</p>
+        <p>Directrice de la publication : Léa Lévy.</p>
       </Section>
 
       <Section titre="Hébergement">

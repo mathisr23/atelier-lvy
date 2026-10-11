@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import useSEO from '../hooks/useSEO'
-import PageLegale, { Section, ACompleter } from '../components/PageLegale'
+import PageLegale, { Section } from '../components/PageLegale'
 import { SEUIL_LIVRAISON_OFFERTE } from '../data/livraison'
 
 const EMAIL = 'contact.atelierlvy@gmail.com'
@@ -14,7 +14,7 @@ export default function CGV() {
       <Section titre="1. Objet">
         <p>
           Les présentes conditions régissent la vente des pièces en céramique proposées sur la boutique en ligne par{' '}
-          <ACompleter>prénom et nom de Léa</ACompleter>, micro-entrepreneuse (SIRET <ACompleter>numéro SIRET</ACompleter>), ci-après « l'atelier »,
+          Léa Lévy, micro-entrepreneuse (SIRET 928 230 408 00017), ci-après « l'atelier »,
           à des clients particuliers. Toute commande implique leur acceptation. Les coordonnées complètes de l'atelier figurent dans les{' '}
           <Link to="/mentions-legales" className="underline hover:text-[#E87040]">mentions légales</Link>.
         </p>
@@ -52,7 +52,7 @@ export default function CGV() {
         </ul>
         <p>
           Les frais dépendent du poids du colis et du mode choisi. La livraison est offerte dès {SEUIL_LIVRAISON_OFFERTE} € d'achat. Les pièces
-          sont expédiées sous <ACompleter>délai d'expédition, ex. 5 jours ouvrés</ACompleter> après le paiement ; un numéro de suivi vous est
+          sont expédiées sous 5 jours ouvrés après le paiement ; un numéro de suivi vous est
           communiqué par e-mail.
         </p>
         <p>
@@ -87,10 +87,26 @@ export default function CGV() {
       </Section>
 
       <Section titre="8. Réclamations et médiation">
+        <p>Pour toute réclamation, écrivez d'abord à <Mail /> : l'atelier vous répond au plus vite.</p>
         <p>
-          Pour toute réclamation, écrivez d'abord à <Mail /> : l'atelier vous répond au plus vite. Si aucune solution amiable n'est trouvée, vous
-          pouvez recourir gratuitement au médiateur de la consommation : <ACompleter>nom et site du médiateur choisi</ACompleter>.
+          Conformément aux dispositions du Code de la consommation concernant « le processus de médiation des litiges de la consommation »,
+          après avoir sollicité l'atelier et à défaut de réponse satisfaisante, vous avez la possibilité de recourir gratuitement à une
+          procédure de médiation de la consommation auprès de :
         </p>
+        <ul className="list-none flex flex-col gap-1 pl-0">
+          <li className="font-semibold">CM2C</li>
+          <li>49 rue de Ponthieu, 75008 Paris</li>
+          <li>Téléphone : 01 89 47 00 14</li>
+          <li>
+            Site internet :{' '}
+            <a href="https://www.cm2c.net/declarer-un-litige.php" target="_blank" rel="noopener noreferrer" className="underline hover:text-[#E87040]">
+              www.cm2c.net/declarer-un-litige.php
+            </a>
+          </li>
+          <li>
+            E-mail : <a href="mailto:litiges@cm2c.net" className="underline hover:text-[#E87040]">litiges@cm2c.net</a>
+          </li>
+        </ul>
       </Section>
 
       <Section titre="9. Droit applicable">
@@ -100,7 +116,7 @@ export default function CGV() {
       <Section titre="Formulaire de rétractation">
         <div className="bg-white rounded-2xl border-2 border-[#2A1506]/10 p-5 md:p-6 flex flex-col gap-2 text-sm">
           <p className="italic text-[#2A1506]/60">À compléter et renvoyer uniquement si vous souhaitez vous rétracter de la commande.</p>
-          <p>À l'attention de <ACompleter>prénom et nom de Léa, adresse</ACompleter>, {EMAIL} :</p>
+          <p>À l'attention de Léa Lévy, 2 rue du Château, 78660 Boinville-le-Gaillard, France, {EMAIL} :</p>
           <p>Je vous notifie par la présente ma rétractation du contrat portant sur la vente du bien ci-dessous :</p>
           <p>— Pièce(s) concernée(s) :</p>
           <p>— Commandée(s) le / reçue(s) le :</p>

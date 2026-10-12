@@ -36,7 +36,9 @@
 
   body {
     margin: 0;
-    overflow-x: hidden;
+    /* « clip » et pas « hidden » : hidden fait du body une zone de défilement à part, et dans les
+       navigateurs intégrés (Instagram, Facebook…) la navbar fixe se décrochait au milieu de l'écran */
+    overflow-x: clip;
     font-family: var(--font-body);
     font-size: 1.05rem;
     background-color: var(--color-cream);

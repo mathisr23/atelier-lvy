@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link, useParams, useNavigate } from 'react-router-dom'
+import { Link, useParams, useNavigate, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Hand, Package, Store } from 'lucide-react'
 import useSEO from '../hooks/useSEO'
@@ -112,6 +112,8 @@ function Lightbox({ images, index, setIndex, nom }) {
 export default function Piece() {
   const { slug } = useParams()
   const naviguer = useNavigate()
+  // Arrivée depuis la boutique : « ← Boutique » revient en arrière dans l'historique (même endroit de la grille)
+  const retourBoutique = useLocation().state?.retourBoutique
   const { produitsParSlug, produits, categoriesParId, collectionsParId, loading } = useCatalogue()
   const { addItem, qteDansPanier } = useCart()
   const [onglet, setOnglet] = useState('details')
@@ -161,7 +163,7 @@ export default function Piece() {
 
         {/* fil d'Ariane */}
         <nav className="flex flex-wrap items-center gap-2 font-ui text-xs font-semibold mb-6 md:mb-8" aria-label="Fil d'Ariane">
-          <Link to="/boutique" className="px-3 py-1 rounded-full border-2 border-[#2A1506]/15 hover:border-[#2A1506] transition-colors">← Boutique</Link>
+          <Link to="/boutique" onClick={(e) => { if (retourBoutique) { e.preventDefault(); naviguer(-retourBoutique) } }} className="px-3 py-1 rounded-full border-2 border-[#2A1506]/15 hover:border-[#2A1506] transition-colors">← Boutique</Link>
           {collection && <Link to={lienBoutique({ collection: collection.slug })} className="px-3 py-1 rounded-full border-2 border-[#2A1506]/15 hover:border-[#2A1506] transition-colors">{collection.label}</Link>}
           {categorie && <Link to={lienBoutique({ type: categorie.slug })} className="px-3 py-1 rounded-full border-2 border-[#2A1506]/15 hover:border-[#2A1506] transition-colors">{categorie.label}</Link>}
         </nav>
@@ -276,7 +278,7 @@ export default function Piece() {
                 Elles vont <span className="italic">bien ensemble</span>
               </h2>
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-                {suggestions.map((s) => <ProduitCarte key={s.id} produit={s} categorie={categoriesParId[s.categorie_id]} />)}
+                {suggestions.map((s) => <ProduitCarte key={s.id} produit={s} categorie={categoriesParId[s.categorie_id]} retourBoutique={retourBoutique && retourBoutique + 1} />)}
               </div>
             </div>
           </section>

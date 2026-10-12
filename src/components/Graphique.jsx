@@ -62,7 +62,8 @@ export function RubanOndule({ items, fond = '#2A1506', couleur = '#F3D07A', fond
   const unite = items.map((t) => `${t}  ${separateur}  `).join('')
 
   return (
-    <div ref={ref} className="w-full" style={{ background: `linear-gradient(${fondHaut} 50%, ${fondBas} 50%)` }} aria-label={items.join(', ')} role="img">
+    // hauteur réservée dès le départ : sans elle, la page sautait de ~70 px une fois la largeur mesurée
+    <div ref={ref} className="w-full" style={{ height: hauteur, background: `linear-gradient(${fondHaut} 50%, ${fondBas} 50%)` }} aria-label={items.join(', ')} role="img">
       {largeur > 0 && (
         <svg width={largeur} height={hauteur} viewBox={`0 0 ${largeur} ${hauteur}`} className="block" aria-hidden="true">
           <rect width={largeur} height={milieu} fill={fondHaut} />

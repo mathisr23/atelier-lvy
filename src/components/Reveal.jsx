@@ -16,9 +16,11 @@ export default function Reveal({
   direction = 'up',
   className = '',
   as = 'div',
+  marge = '-60px', // zone de déclenchement (négatif = l'élément doit déjà être un peu entré à l'écran)
+  duree = 0.6,
 }) {
   const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: '-60px' })
+  const isInView = useInView(ref, { once: true, margin: marge })
 
   const MotionTag = motion[as] || motion.div
 
@@ -28,7 +30,7 @@ export default function Reveal({
       variants={variants[direction]}
       initial="hidden"
       animate={isInView ? 'visible' : 'hidden'}
-      transition={{ duration: 0.6, delay, ease: [0.25, 0.1, 0.25, 1] }}
+      transition={{ duration: duree, delay, ease: [0.25, 0.1, 0.25, 1] }}
       className={className}
     >
       {children}

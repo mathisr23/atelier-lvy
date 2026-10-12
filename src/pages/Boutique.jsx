@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useSearchParams, useLocation } from 'react-router-dom'
+import { useSearchParams, useLocation, useNavigationType } from 'react-router-dom'
 import useSEO from '../hooks/useSEO'
 import { Bandeau, RubanOndule, Festons, BandeRayee, BandeDamier, PhotoForme, Tampon, Soleil, Fleur, rayures } from '../components/Graphique'
 import { SEUIL_LIVRAISON_OFFERTE } from '../data/livraison'
@@ -42,6 +42,7 @@ export default function Boutique() {
   // Filtres dans l'URL (/boutique?collection=corail&type=cuilleres) : partageables et utilisés par le menu
   const [params, setParams] = useSearchParams()
   const location = useLocation()
+  const typeNavigation = useNavigationType()
   const typeActif = params.get('type')
   const collectionActive = params.get('collection')
   const { produits, categoriesActives, collectionsActives, categoriesParId, collectionsParId, loading } = useCatalogue()
@@ -64,11 +65,12 @@ export default function Boutique() {
   const allerAuxPieces = () => document.getElementById('mes-pieces')?.scrollIntoView({ behavior: 'smooth' })
 
   // Arrivée depuis le menu (Collections / Objets) : on descend directement sur les pièces
+  // (sauf au retour arrière depuis une pièce : on reste là où on était)
   useEffect(() => {
-    if (!location.state?.versPieces) return
+    if (!location.state?.versPieces || typeNavigation === 'POP') return
     const t = setTimeout(allerAuxPieces, 400) // après la transition de page
     return () => clearTimeout(t)
-  }, [location.key, location.state])
+  }, [location.key, location.state]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Photos du haut de page : choisies par Léa (src/assets/boutique)
   const photosHero = [photoBoutique1, photoBoutique2]
@@ -244,9 +246,10 @@ export default function Boutique() {
                 <button onClick={toutVoir} className={btn.outline}>Voir toutes les pièces</button>
               </div>
             )}
+            {/* Apparition dès l'entrée à l'écran, petit décalage par colonne seulement (sinon les cartes mettent ~1 s à se montrer) */}
             {filtered.map((p, i) => (
-              <Reveal key={p.slug} delay={Math.min(i * 0.04, 0.3)} direction="up">
-                <ProduitCarte produit={p} categorie={categorieDe(p)} />
+              <Reveal key={p.slug} delay={(i % 2) * 0.05} duree={0.4} marge="0px" direction="up">
+                <ProduitCarte produit={p} categorie={categorieDe(p)} retourBoutique={1} />
               </Reveal>
             ))}
           </div>

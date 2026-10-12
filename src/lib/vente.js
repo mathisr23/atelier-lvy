@@ -2,7 +2,7 @@
 // Pour l'ouvrir : variable VITE_VENTE_OUVERTE=true dans Vercel (environnement Production), puis redéployer.
 // En local et sur les aperçus Vercel, elle reste ouverte pour pouvoir tester avec les cartes de test
 // (VITE_VENTE_OUVERTE=false, ou ?vente=fermee dans l'URL, pour y voir la version « bientôt »).
-const HOTES_PRODUCTION = ['atelier-lvy.vercel.app']
+const HOTES_PRODUCTION = ['atelier-lvy.vercel.app', 'atelier-lvy.com', 'www.atelier-lvy.com']
 
 const forceFermee =
   import.meta.env.VITE_VENTE_OUVERTE === 'false' || new URLSearchParams(window.location.search).get('vente') === 'fermee'

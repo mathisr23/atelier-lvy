@@ -16,7 +16,7 @@ export default function ProduitCarte({ produit: p, categorie, className = '', re
       ref={ref}
       to={lienPiece(p.slug)}
       state={retourBoutique ? { retourBoutique } : undefined}
-      className={`group block text-left w-full border-2 border-[#2A1506] rounded-[2rem] p-2.5 md:p-3.5 transition-all duration-300 hover:-translate-y-1.5 hover:-rotate-1 hover:shadow-[6px_6px_0_#2A1506] ${className}`}
+      className={`group flex flex-col h-full text-left w-full border-2 border-[#2A1506] rounded-[2rem] p-2.5 md:p-3.5 transition-all duration-300 hover:-translate-y-1.5 hover:-rotate-1 hover:shadow-[6px_6px_0_#2A1506] ${className}`}
       style={{ background: `linear-gradient(${couleur}55, ${couleur}55), #FBF5E9` }}
     >
       <div className="relative aspect-[4/5] rounded-t-full rounded-b-2xl overflow-hidden mb-3 md:mb-4 border-2 border-[#2A1506] bg-[#FBF5E9]">
@@ -37,13 +37,14 @@ export default function ProduitCarte({ produit: p, categorie, className = '', re
           </span>
         )}
       </div>
-      <div className="px-1.5 md:px-2 pb-1">
+      {/* flex-1 : cartes d'une même rangée à la même hauteur, prix calé en bas même si le nom tient sur 2 lignes */}
+      <div className="flex-1 flex flex-col px-1.5 md:px-2 pb-1">
         {categorie && (
           <span className="inline-block font-ui text-[0.55rem] md:text-[0.6rem] font-bold uppercase tracking-[0.18em] px-2 py-0.5 rounded-full bg-[#FBF5E9] border border-[#2A1506]/20 mb-1.5">
             {categorie.label}
           </span>
         )}
-        <div className="flex flex-col items-start gap-1.5 md:flex-row md:items-end md:justify-between md:gap-2">
+        <div className="flex-1 flex flex-col items-start justify-between gap-1.5 md:flex-row md:items-end md:gap-2">
           <p className="font-display font-bold text-sm md:text-lg leading-snug">{p.nom}</p>
           {vendu ? (
             <span className="font-ui text-xs font-bold shrink-0 text-[#2A1506]/40">Vendu</span>

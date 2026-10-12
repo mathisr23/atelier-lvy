@@ -52,6 +52,7 @@ function urlDuSite(req) {
   const origin = req.headers.get('origin') ?? ''
   const autorise =
     origin === siteUrl ||
+    /^https:\/\/(www\.)?atelier-lvy\.com$/.test(origin) || // domaine public
     /^http:\/\/localhost:\d+$/.test(origin) ||
     /^https:\/\/atelier-lvy(-[a-z0-9-]+)?\.vercel\.app$/.test(origin)
   return autorise ? origin : siteUrl || 'https://atelier-lvy.vercel.app'

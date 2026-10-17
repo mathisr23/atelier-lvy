@@ -14,7 +14,7 @@ const EMBALLAGE_MIN_G = 100
 const EMBALLAGE_MAX_G = 800
 const emballageG = (poidsPiecesG) => Math.min(EMBALLAGE_MAX_G, Math.round(EMBALLAGE_MIN_G + poidsPiecesG * 0.7))
 const POIDS_PAR_DEFAUT_G = 500
-const SEUIL_LIVRAISON_OFFERTE = 6000 // centimes
+const SEUIL_LIVRAISON_OFFERTE = 8000 // centimes
 const PALIERS_G = [250, 500, 1000, 2000, 3000, 5000]
 const TARIFS_LIVRAISON = {
   mondial_relay: { label: 'Mondial Relay — point relais', prix: [450, 550, 650, 750, null, null] }, // centimes

@@ -9,7 +9,7 @@ const emballageG = (poidsPiecesG) => Math.min(EMBALLAGE_MAX_G, Math.round(EMBALL
 
 // Poids retenu pour une pièce dont le poids n'est pas renseigné dans l'admin
 export const POIDS_PAR_DEFAUT_G = 500
-export const SEUIL_LIVRAISON_OFFERTE = 60
+export const SEUIL_LIVRAISON_OFFERTE = 80
 
 // Paliers de poids (emballage compris), bornes hautes en grammes
 export const PALIERS_G = [250, 500, 1000, 2000, 3000, 5000]

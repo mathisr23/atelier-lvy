@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
-import { cleCreneau, creneauxMemeDate, entreeCorrespond } from '../lib/creneaux'
+import { cleCreneau, creneauxMemeDate, entreeCorrespond, placesRestantesCours } from '../lib/creneaux'
 import ProduitsAdmin, { CommandesAdmin } from './admin/ProduitsAdmin'
 
 const EDGE_FUNCTION_URL = import.meta.env.VITE_ADMIN_EDGE_FUNCTION_URL
@@ -727,6 +727,19 @@ export default function Admin() {
     })
   }, [session])
 
+  // Les visiteurs ne peuvent pas lire les réservations : on écrit les places restantes des cours
+  // dans la table sessions dès qu'elles changent, pour que la page Cours affiche le bon chiffre.
+  useEffect(() => {
+    if (!session || loading) return
+    sessions.filter(s => s.type === 'cours').forEach(s => {
+      const restantes = placesRestantesCours(s, sessions, reservations)
+      if (restantes === s.places_restantes) return
+      supabase.from('sessions').update({ places_restantes: restantes }).eq('id', s.id).then(({ error }) => {
+        if (!error) setSessions(prev => prev.map(x => x.id === s.id ? { ...x, places_restantes: restantes } : x))
+      })
+    })
+  }, [session, loading, sessions, reservations])
+
   const handleReservationAction = (id, newStatus) => {
     setReservations(prev => prev.map(r => r.id === id ? { ...r, status: newStatus } : r))
   }
@@ -747,43 +760,9 @@ export default function Admin() {
     .filter(r => filter === 'all' || r.status === filter)
     .filter(r => filterType === 'all' || r.type === filterType)
 
-  const enhancedSessions = sessions.map(s => {
-    if (s.type === 'cours') {
-      let reserved = 0
-      const dayPrefix = s.jour
-      const memeDate = creneauxMemeDate(s, sessions.filter(x => x.type === 'cours'))
-      const sTypeSessions = sessions.filter(x => x.type === 'cours' && x.jour.toLowerCase() === dayPrefix.toLowerCase())
-      const currentIndex = sTypeSessions.findIndex(x => x.id === s.id)
-
-      reservations.forEach(r => {
-        if (r.type === 'cours' && r.status === 'accepted') {
-          if (!r.date_session) return
-          // Nouveau format : JSON array ["Mardi 25 mars", ...]
-          try {
-            const dates = JSON.parse(r.date_session)
-            if (Array.isArray(dates)) {
-              if (dates.some(d => typeof d === 'string' && entreeCorrespond(d, s.jour, s, memeDate))) reserved += r.nb_places || 1
-              return
-            }
-          } catch {
-            // Ancien format : "Mardi 25 mars" avec séances consécutives
-          }
-          if (r.date_session.toLowerCase().startsWith(dayPrefix.toLowerCase())) {
-            const startDate = r.date_session.replace(new RegExp(`^${dayPrefix} `, 'i'), '')
-            const startIndex = sTypeSessions.findIndex(x => x.date === startDate)
-            if (startIndex !== -1) {
-              const nbSns = r.nb_seances || 5
-              if (currentIndex >= startIndex && currentIndex < startIndex + nbSns) {
-                reserved += r.nb_places || 1
-              }
-            }
-          }
-        }
-      })
-      return { ...s, places_restantes: Math.max(0, s.places_total - reserved) }
-    }
-    return s
-  })
+  const enhancedSessions = sessions.map(s =>
+    s.type === 'cours' ? { ...s, places_restantes: placesRestantesCours(s, sessions, reservations) } : s
+  )
 
   const today = new Date()
   today.setHours(0, 0, 0, 0)

@@ -6,7 +6,7 @@ import Reveal from '../components/Reveal'
 import Faq from '../components/Faq'
 import { Etiquette, Etoile, Nuage, Coeur, Spirale, Vase, FriseStickers } from '../components/Stickers'
 import { supabase } from '../lib/supabase'
-import { cleCreneau, creneauxMemeDate, entreeCorrespond } from '../lib/creneaux'
+import { cleCreneau } from '../lib/creneaux'
 import imgPince from '../assets/pince_marron.webp'
 import imgTablier from '../assets/tablier.webp'
 
@@ -56,16 +56,8 @@ export default function Cours() {
   const [nbPlaces, setNbPlaces] = useState(1)
 
   const [dbByJour, setDbByJour] = useState({})
-  const [reservations, setReservations] = useState([])
 
   useEffect(() => {
-    supabase
-      .from('reservations')
-      .select('date_session, nb_places, nb_seances')
-      .eq('type', 'cours')
-      .eq('status', 'accepted')
-      .then(({ data }) => setReservations(data || []))
-
     supabase
       .from('sessions')
       .select('*')
@@ -92,45 +84,12 @@ export default function Cours() {
     }
   }, [nbSeances])
 
-  const computePlaces = (baseArray, jourLabel) => {
-    return baseArray.map((c) => {
-      let reserved = 0
-      reservations.forEach(r => {
-        if (!r.date_session) return
-        let dates = []
-        try {
-          const parsed = JSON.parse(r.date_session)
-          if (Array.isArray(parsed)) {
-            dates = parsed
-          }
-        } catch {
-          // Ancien format : "Mardi 25 mars" avec nb_seances consécutives (rétrocompatibilité)
-          if (r.date_session.toLowerCase().startsWith(jourLabel.toLowerCase())) {
-            const startDate = r.date_session.replace(new RegExp(`^${jourLabel} `, 'i'), '')
-            const startIndex = baseArray.findIndex(x => x.date === startDate)
-            if (startIndex !== -1) {
-              const idx = baseArray.findIndex(x => x.date === c.date)
-              if (idx >= startIndex && idx < startIndex + (r.nb_seances || 5)) {
-                reserved += r.nb_places || 1
-              }
-            }
-          }
-          return
-        }
-        if (dates.some(d => typeof d === 'string' && entreeCorrespond(d, jourLabel, c, creneauxMemeDate(c, baseArray)))) {
-          reserved += r.nb_places || 1
-        }
-      })
-      const places_restantes = Math.max(0, c.places_total - reserved)
-      return { ...c, places: places_restantes, dispo: places_restantes > 0 }
-    })
-  }
-
   const JOURS_ORDER = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche']
 
   const coursByJour = {}
   Object.entries(dbByJour).forEach(([jour, arr]) => {
-    coursByJour[jour] = computePlaces(arr, jour)
+    // places_restantes est tenu à jour par l'admin (les visiteurs ne peuvent pas lire les réservations)
+    coursByJour[jour] = arr.map(c => ({ ...c, places: c.places_restantes, dispo: c.places_restantes > 0 }))
   })
 
   const toggleSession = (jour, session) => {

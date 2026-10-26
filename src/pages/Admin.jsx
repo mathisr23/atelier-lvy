@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
+import { cleCreneau, creneauxMemeDate, entreeCorrespond } from '../lib/creneaux'
 import ProduitsAdmin, { CommandesAdmin } from './admin/ProduitsAdmin'
 
 const EDGE_FUNCTION_URL = import.meta.env.VITE_ADMIN_EDGE_FUNCTION_URL
@@ -196,7 +197,7 @@ function ReservationCard({ r, sessions, onAction }) {
 }
 
 /* ─── SESSION CARD ─── */
-function SessionCard({ s, onDelete, onEdit, onReservationAdd, onReservationDelete, onArchiveToggle }) {
+function SessionCard({ s, memeDate = [], onDelete, onEdit, onReservationAdd, onReservationDelete, onArchiveToggle }) {
   const [deleting, setDeleting] = useState(false)
   const [editing, setEditing] = useState(false)
   const [saving, setSaving] = useState(false)
@@ -258,7 +259,15 @@ function SessionCard({ s, onDelete, onEdit, onReservationAdd, onReservationDelet
     } else {
       const dateKey = `${s.jour} ${s.date}`
       const { data } = await supabase.from('reservations').select('*').eq('type', 'cours').ilike('date_session', `%${dateKey}%`).order('created_at')
-      setDetailsReservations(data || [])
+      // Le filtre SQL ramène aussi les autres créneaux du même jour : on ne garde que celui-ci
+      setDetailsReservations((data || []).filter(r => {
+        try {
+          const dates = JSON.parse(r.date_session)
+          return !Array.isArray(dates) || dates.some(d => typeof d === 'string' && entreeCorrespond(d, s.jour, s, memeDate))
+        } catch {
+          return true
+        }
+      }))
     }
     setLoadingDetails(false)
   }
@@ -295,7 +304,7 @@ function SessionCard({ s, onDelete, onEdit, onReservationAdd, onReservationDelet
       type: isInitiation ? 'initiation' : 'cours',
       status: 'accepted',
       session_id: isInitiation ? s.id : null,
-      date_session: isInitiation ? dateKey : JSON.stringify([dateKey]),
+      date_session: isInitiation ? dateKey : JSON.stringify([cleCreneau(s.jour, s)]),
       jour: s.jour.toLowerCase(),
       email: '',
     }
@@ -742,7 +751,7 @@ export default function Admin() {
     if (s.type === 'cours') {
       let reserved = 0
       const dayPrefix = s.jour
-      const dateKey = `${s.jour} ${s.date}`
+      const memeDate = creneauxMemeDate(s, sessions.filter(x => x.type === 'cours'))
       const sTypeSessions = sessions.filter(x => x.type === 'cours' && x.jour.toLowerCase() === dayPrefix.toLowerCase())
       const currentIndex = sTypeSessions.findIndex(x => x.id === s.id)
 
@@ -753,7 +762,7 @@ export default function Admin() {
           try {
             const dates = JSON.parse(r.date_session)
             if (Array.isArray(dates)) {
-              if (dates.includes(dateKey)) reserved += r.nb_places || 1
+              if (dates.some(d => typeof d === 'string' && entreeCorrespond(d, s.jour, s, memeDate))) reserved += r.nb_places || 1
               return
             }
           } catch {
@@ -918,7 +927,7 @@ export default function Admin() {
               <p className="font-ui text-[#2A1506]/30 text-sm text-center py-12 italic">Aucun créneau pour l'instant.</p>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {filteredSessions.map(s => <SessionCard key={s.id} s={s} onDelete={handleSessionDelete} onEdit={handleSessionEdit} onReservationAdd={handleReservationAddFromSession} onReservationDelete={handleReservationDeleteFromSession} onArchiveToggle={handleSessionArchiveToggle} />)}
+                {filteredSessions.map(s => <SessionCard key={s.id} s={s} memeDate={creneauxMemeDate(s, sessions.filter(x => x.type === 'cours'))} onDelete={handleSessionDelete} onEdit={handleSessionEdit} onReservationAdd={handleReservationAddFromSession} onReservationDelete={handleReservationDeleteFromSession} onArchiveToggle={handleSessionArchiveToggle} />)}
               </div>
             )}
           </>
@@ -947,7 +956,7 @@ export default function Admin() {
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {filteredArchives.map(s => <SessionCard key={s.id} s={s} onDelete={handleSessionDelete} onEdit={handleSessionEdit} onReservationAdd={handleReservationAddFromSession} onReservationDelete={handleReservationDeleteFromSession} onArchiveToggle={handleSessionArchiveToggle} />)}
+                {filteredArchives.map(s => <SessionCard key={s.id} s={s} memeDate={creneauxMemeDate(s, sessions.filter(x => x.type === 'cours'))} onDelete={handleSessionDelete} onEdit={handleSessionEdit} onReservationAdd={handleReservationAddFromSession} onReservationDelete={handleReservationDeleteFromSession} onArchiveToggle={handleSessionArchiveToggle} />)}
               </div>
             )}
           </>
@@ -975,7 +984,7 @@ export default function Admin() {
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {filteredHistorique.map(s => <SessionCard key={s.id} s={s} onDelete={handleSessionDelete} onEdit={handleSessionEdit} onReservationAdd={handleReservationAddFromSession} onReservationDelete={handleReservationDeleteFromSession} onArchiveToggle={handleSessionArchiveToggle} />)}
+                {filteredHistorique.map(s => <SessionCard key={s.id} s={s} memeDate={creneauxMemeDate(s, sessions.filter(x => x.type === 'cours'))} onDelete={handleSessionDelete} onEdit={handleSessionEdit} onReservationAdd={handleReservationAddFromSession} onReservationDelete={handleReservationDeleteFromSession} onArchiveToggle={handleSessionArchiveToggle} />)}
               </div>
             )}
           </>

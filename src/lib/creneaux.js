@@ -20,3 +20,33 @@ export function entreeCorrespond(entree, jour, s, memeDate) {
   const exacte = memeDate.some(x => e === cleCreneau(jour, x).toLowerCase())
   return !exacte && memeDate[0]?.id === s.id
 }
+
+// Places restantes d'un créneau de cours, d'après les réservations acceptées.
+// Calculé dans l'admin (seul à pouvoir lire les réservations) puis écrit dans sessions.places_restantes.
+export function placesRestantesCours(s, sessions, reservations) {
+  const coursDuJour = sessions.filter(x => x.type === 'cours' && x.jour?.toLowerCase() === s.jour?.toLowerCase())
+  const memeDate = creneauxMemeDate(s, coursDuJour)
+  const currentIndex = coursDuJour.findIndex(x => x.id === s.id)
+  let reserved = 0
+  reservations.forEach(r => {
+    if (r.type !== 'cours' || r.status !== 'accepted' || !r.date_session) return
+    // Format actuel : tableau JSON ["Mardi 25 mars · 18h30 – 21h", ...]
+    try {
+      const dates = JSON.parse(r.date_session)
+      if (Array.isArray(dates)) {
+        if (dates.some(d => typeof d === 'string' && entreeCorrespond(d, s.jour, s, memeDate))) reserved += r.nb_places || 1
+        return
+      }
+    } catch {
+      // Ancien format : "Mardi 25 mars" avec séances consécutives
+    }
+    if (r.date_session.toLowerCase().startsWith(s.jour.toLowerCase())) {
+      const startDate = r.date_session.replace(new RegExp(`^${s.jour} `, 'i'), '')
+      const startIndex = coursDuJour.findIndex(x => x.date === startDate)
+      if (startIndex !== -1 && currentIndex >= startIndex && currentIndex < startIndex + (r.nb_seances || 5)) {
+        reserved += r.nb_places || 1
+      }
+    }
+  })
+  return Math.max(0, s.places_total - reserved)
+}

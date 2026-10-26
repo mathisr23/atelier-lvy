@@ -4,6 +4,7 @@ import useSEO from '../hooks/useSEO'
 import { Baby } from 'lucide-react'
 import Reveal from '../components/Reveal'
 import { supabase } from '../lib/supabase'
+import { cleCreneau, creneauxMemeDate, entreeCorrespond } from '../lib/creneaux'
 import imgPince from '../assets/pince_marron.png'
 import imgTablier from '../assets/tablier.png'
 
@@ -79,7 +80,7 @@ export default function Cours() {
     description: "Cours réguliers de céramique proposés en packs. Progressez semaine après semaine dans un petit groupe chaleureux.",
   })
 
-  // [{key: 'Mardi 25 mars', jour: 'Mardi', date: '25 mars', heure: '18h30 – 21h'}]
+  // [{key: 'Mardi 25 mars · 18h30 – 21h', id, jour: 'Mardi', date: '25 mars', heure: '18h30 – 21h'}]
   const [selectedSessions, setSelectedSessions] = useState([])
   const [nbSeances, setNbSeances] = useState(5)
   const [nbPlaces, setNbPlaces] = useState(1)
@@ -146,7 +147,7 @@ export default function Cours() {
           }
           return
         }
-        if (dates.includes(`${jourLabel} ${c.date}`)) {
+        if (dates.some(d => typeof d === 'string' && entreeCorrespond(d, jourLabel, c, creneauxMemeDate(c, baseArray)))) {
           reserved += r.nb_places || 1
         }
       })
@@ -163,23 +164,23 @@ export default function Cours() {
   })
 
   const toggleSession = (jour, session) => {
-    const key = `${jour} ${session.date}`
+    const key = cleCreneau(jour, session)
     const exists = selectedSessions.find(s => s.key === key)
     if (exists) {
       setSelectedSessions(prev => prev.filter(s => s.key !== key))
     } else if (selectedSessions.length < nbSeances) {
-      setSelectedSessions(prev => [...prev, { key, jour, date: session.date, heure: session.heure }])
+      setSelectedSessions(prev => [...prev, { key, id: session.id, jour, date: session.date, heure: session.heure }])
     }
   }
 
   const maxReached = selectedSessions.length >= nbSeances
-  const isSelected = (jour, date) => selectedSessions.some(s => s.key === `${jour} ${date}`)
+  const isSelected = (jour, session) => selectedSessions.some(s => s.key === cleCreneau(jour, session))
 
   // Places max = minimum disponible parmi les séances sélectionnées
   const minAvailablePlaces = selectedSessions.length > 0
     ? Math.min(...selectedSessions.map(s => {
         const arr = coursByJour[s.jour] || []
-        return arr.find(c => c.date === s.date)?.places || 1
+        return arr.find(c => c.id === s.id)?.places || 1
       }))
     : 1
 
@@ -398,7 +399,7 @@ export default function Cours() {
                   <SessionCard
                     key={c.id || i}
                     c={c}
-                    selected={isSelected(jour, c.date)}
+                    selected={isSelected(jour, c)}
                     onClick={() => toggleSession(jour, c)}
                     maxReached={maxReached}
                   />
@@ -437,7 +438,7 @@ export default function Cours() {
                     {selectedSessions.map((s, i) => (
                       <li key={s.key} className="flex items-center gap-3">
                         <span className="font-display font-bold text-[#9BBF90] text-sm w-5 text-right">{i + 1}.</span>
-                        <span className="font-ui text-[#FBF5E9] text-sm">{s.key}</span>
+                        <span className="font-ui text-[#FBF5E9] text-sm">{s.jour} {s.date}</span>
                         <span className="font-ui text-[#FBF5E9]/40 text-xs ml-auto">{s.heure}</span>
                       </li>
                     ))}

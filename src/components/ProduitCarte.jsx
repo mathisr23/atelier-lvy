@@ -5,7 +5,8 @@ import { formatPrix, lienPiece } from '../lib/boutique'
 
 // Carte d'une pièce : fond pastel de sa catégorie, photo en arche, étiquette et prix façon sticker.
 // retourBoutique : nombre de pas d'historique pour revenir à la boutique (le « ← Boutique » de la pièce fait alors un vrai retour).
-export default function ProduitCarte({ produit: p, categorie, className = '', retourBoutique }) {
+// fond : remplace le pastel de la catégorie (ex. cartes unies de la section Halloween).
+export default function ProduitCarte({ produit: p, categorie, className = '', retourBoutique, fond }) {
   const vendu = p.stock === 0
   const couleur = categorie?.couleur ?? '#F3D07A'
   // La photo se charge ~1,5 écran avant d'arriver (le loading="lazy" de Safari attend le dernier moment)
@@ -17,7 +18,7 @@ export default function ProduitCarte({ produit: p, categorie, className = '', re
       to={lienPiece(p.slug)}
       state={retourBoutique ? { retourBoutique } : undefined}
       className={`group flex flex-col h-full text-left w-full border-2 border-[#2A1506] rounded-[2rem] p-2.5 md:p-3.5 transition-all duration-300 hover:-translate-y-1.5 hover:-rotate-1 hover:shadow-[6px_6px_0_#2A1506] ${className}`}
-      style={{ background: `linear-gradient(${couleur}55, ${couleur}55), #FBF5E9` }}
+      style={{ background: fond ?? `linear-gradient(${couleur}55, ${couleur}55), #FBF5E9` }}
     >
       <div className="relative aspect-[4/5] rounded-t-full rounded-b-2xl overflow-hidden mb-3 md:mb-4 border-2 border-[#2A1506] bg-[#FBF5E9]">
         {proche && <img

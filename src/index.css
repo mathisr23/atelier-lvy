@@ -75,3 +75,8 @@
 @media (prefers-reduced-motion: reduce) {
   .animate-defilement, .animate-\[spin_18s_linear_infinite\] { animation: none; }
 }
+/* Chauves-souris de la section Halloween : battement d'ailes en vol, ailes repliées une fois suspendues */
+.aile-battement, .aile-repliee { transform-box: fill-box; transform-origin: 0% 64%; transition: transform 0.3s; }
+.aile-battement { animation: battement 0.18s ease-in-out infinite alternate; }
+.aile-repliee { transform: rotate(-18deg); }
+@keyframes battement { from { transform: scaleY(1); } to { transform: scaleY(-0.35); } }

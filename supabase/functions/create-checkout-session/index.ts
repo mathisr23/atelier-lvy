@@ -149,6 +149,9 @@ Deno.serve(async (req) => {
       shipping_address_collection: { allowed_countries: ['FR'] },
       phone_number_collection: { enabled: true },
       shipping_options,
+      // Champ « code promo » sur la page de paiement : les codes se créent dans le tableau de bord Stripe.
+      // La livraison offerte reste calculée sur le sous-total avant réduction.
+      allow_promotion_codes: true,
       // Mondial Relay : le client indique son point relais directement au paiement
       custom_text: {
         shipping_address: {

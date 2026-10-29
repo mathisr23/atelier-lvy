@@ -8,6 +8,7 @@ import { useCatalogue } from '../context/CatalogueContext'
 import { VENTE_OUVERTE } from '../lib/vente'
 import { btn } from '../lib/boutique'
 import ProduitCarte from '../components/ProduitCarte'
+import SectionHalloween from '../components/SectionHalloween'
 import photoBoutique1 from '../assets/boutique/boutique1.jpg'
 import photoBoutique2 from '../assets/boutique/boutique2-petit.jpg'
 import photoVisage from '../assets/boutique/collection-visage.jpg'
@@ -78,6 +79,13 @@ export default function Boutique() {
   return (
     <div className="bg-[#FBF5E9] pt-[65px] md:pt-[113px] overflow-x-hidden">
       <Bandeau items={BANDEAU_HAUT} fond="#F2A0A8" couleur="#2A1506" />
+
+      {/* HALLOWEEN : visible jusqu'au 2 novembre, si Léa a rempli la collection « halloween » */}
+      {VENTE_OUVERTE && (
+        <SectionHalloween
+          onToutVoir={() => { setParams({ collection: 'halloween' }, { replace: true, preventScrollReset: true }); allerAuxPieces() }}
+        />
+      )}
 
       {/* HERO */}
       <section className="relative bg-[#FCE4E1]">

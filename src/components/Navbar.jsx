@@ -5,6 +5,8 @@ import logo1 from '../assets/logo1.webp'
 import { useCart } from '../context/CartContext'
 import { useCatalogue, lienBoutique } from '../context/CatalogueContext'
 import { VENTE_OUVERTE } from '../lib/vente'
+import useHalloween from '../hooks/useHalloween'
+import { ChauveSouris } from './SectionHalloween'
 
 function CartButton() {
   const { items } = useCart()
@@ -120,6 +122,22 @@ function BoutiqueMenuDesktop() {
   )
 }
 
+// Lien temporaire vers la section Halloween (en haut de la boutique), affiché seulement pendant la période
+function LienHalloween({ mobile = false, onClick }) {
+  const halloween = useHalloween()
+  if (!VENTE_OUVERTE || !halloween) return null
+  return (
+    <Link
+      to="/boutique"
+      onClick={onClick}
+      className={`group inline-flex items-center gap-2 font-ui font-semibold text-[#E87040] hover:text-[#2A1506] transition-colors ${mobile ? 'text-base' : 'text-sm tracking-wide'}`}
+    >
+      <span className="transition-transform duration-300 group-hover:-rotate-12"><ChauveSouris taille={mobile ? 30 : 26} /></span>
+      Halloween
+    </Link>
+  )
+}
+
 const links = [
   { to: '/', label: 'À propos' },
   { to: '/boutique', label: 'Boutique' },
@@ -156,6 +174,7 @@ export default function Navbar() {
               <span className="absolute -bottom-0.5 left-0 h-px bg-[#E87040] transition-all duration-300 w-0 group-hover:w-full" />
             </NavLink>
           ))}
+          <LienHalloween />
           <CartButton />
         </nav>
 
@@ -177,6 +196,7 @@ export default function Navbar() {
       {/* Mobile menu */}
       <div className={`md:hidden overflow-y-auto transition-all duration-300 ${open ? 'max-h-[80vh]' : 'max-h-0'}`}>
         <nav className="flex flex-col px-6 pb-6 gap-4 border-t border-[#2A1506]/10 pt-4">
+          <LienHalloween mobile onClick={() => setOpen(false)} />
           {links.map(({ to, label }) => (
             <div key={to} className="flex flex-col gap-3">
               <NavLink

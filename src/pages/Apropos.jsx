@@ -5,6 +5,8 @@ import { supabase } from '../lib/supabase'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Asterisk, Squiggle, patterns } from '../components/Deco'
 import Reveal from '../components/Reveal'
+import { BandeauHalloween } from '../components/SectionHalloween'
+import { VENTE_OUVERTE } from '../lib/vente'
 import PeleMele from '../components/PeleMele'
 import GalerieFlottante from '../components/GalerieFlottante'
 import { Tampon, Festons } from '../components/Graphique'
@@ -120,6 +122,9 @@ export default function Apropos() {
 
   return (
     <div className="bg-[#FBF5E9] pt-20">
+      {/* Halloween : bandeau temporaire vers la boutique (disparaît seul après le 2 novembre) */}
+      {/* la page a un pt-20 alors que la navbar fait 65px (mobile) / 113px (desktop) : on colle le bandeau juste dessous */}
+      {VENTE_OUVERTE && <BandeauHalloween className="-mt-[15px] md:mt-[33px]" />}
 
       {/* ─── HERO ─── */}
       <section className="relative overflow-hidden bg-[#FCE4E1]" style={{ backgroundImage: 'radial-gradient(circle, rgba(217,112,128,0.16) 2px, transparent 2px)', backgroundSize: '26px 26px' }}>

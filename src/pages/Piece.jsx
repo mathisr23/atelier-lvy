@@ -6,6 +6,7 @@ import useSEO from '../hooks/useSEO'
 import Reveal from '../components/Reveal'
 import ProduitCarte from '../components/ProduitCarte'
 import { Festons, Tampon, Soleil, Fleur, Bandeau } from '../components/Graphique'
+import { SLUG_HALLOWEEN, COULEUR_HALLOWEEN } from '../hooks/useHalloween'
 import { useCatalogue, lienBoutique } from '../context/CatalogueContext'
 import { useCart } from '../context/CartContext'
 import { VENTE_OUVERTE } from '../lib/vente'
@@ -122,7 +123,8 @@ export default function Piece() {
   const p = produitsParSlug[slug]
   const categorie = p && categoriesParId[p.categorie_id]
   const collection = p && collectionsParId[p.collection_id]
-  const couleur = categorie?.couleur ?? '#F3D07A'
+  // Pièces Halloween : l'orange de la section plutôt que la couleur de leur catégorie
+  const couleur = collection?.slug === SLUG_HALLOWEEN ? COULEUR_HALLOWEEN : categorie?.couleur ?? '#F3D07A'
 
   useSEO({
     title: p ? `${p.nom} — Léa Artiste céramiste` : 'Pièce — Léa Artiste céramiste',

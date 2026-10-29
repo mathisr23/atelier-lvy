@@ -3,7 +3,9 @@ import { useCatalogue } from '../context/CatalogueContext'
 // Mise en avant Halloween : la collection « halloween » créée par Léa dans l'admin.
 // Active tant qu'elle contient des pièces visibles et jusqu'à FIN_HALLOWEEN ; après, les pièces
 // restent en vente comme une collection ordinaire, seules les mises en avant disparaissent.
-const SLUG_HALLOWEEN = 'halloween'
+export const SLUG_HALLOWEEN = 'halloween'
+// Orange citrouille de la section : repris sur la page des pièces de la collection
+export const COULEUR_HALLOWEEN = '#E87040'
 const FIN_HALLOWEEN = new Date('2026-11-03T00:00:00+01:00')
 // Évaluée au chargement du site (une visite ouverte avant minuit garde la section jusqu'au rechargement)
 const PERIODE_EN_COURS = Date.now() < FIN_HALLOWEEN.getTime()

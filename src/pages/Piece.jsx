@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useParams, useNavigate, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Hand, Package, Store } from 'lucide-react'
@@ -22,11 +22,33 @@ const ONGLETS = [
 
 const BANDEAU = ['Modelé à la main', 'Grès émaillé', 'Cuit deux fois', 'Pièce de l’atelier']
 
+/* ─── Glisser le doigt à gauche / à droite pour changer de photo (téléphone) ─── */
+// Un geste plutôt vertical est ignoré : on laisse la page défiler normalement.
+function useSwipe(onSuivante, onPrecedente, seuil = 40) {
+  const depart = useRef(null)
+  return {
+    onTouchStart: (e) => { depart.current = { x: e.touches[0].clientX, y: e.touches[0].clientY } },
+    onTouchEnd: (e) => {
+      if (!depart.current) return
+      const dx = e.changedTouches[0].clientX - depart.current.x
+      const dy = e.changedTouches[0].clientY - depart.current.y
+      depart.current = null
+      if (Math.abs(dx) < seuil || Math.abs(dx) < Math.abs(dy)) return
+      if (dx < 0) onSuivante()
+      else onPrecedente()
+    },
+  }
+}
+
 /* ─── Galerie : grande photo + miniatures sur le côté ─── */
 function Galerie({ produit, couleur, nuit, onAgrandir }) {
   const [active, setActive] = useState(0)
   const images = produit.images
   const image = images[active] ?? images[0]
+  const swipe = useSwipe(
+    () => setActive((i) => Math.min(images.length - 1, i + 1)),
+    () => setActive((i) => Math.max(0, i - 1)),
+  )
 
   return (
     <div className={`relative max-w-xl mx-auto lg:max-w-none rounded-[2.5rem] border-2 border-[#2A1506] p-3 md:p-5 ${nuit ? 'shadow-[6px_6px_0_#FBF5E9]' : 'shadow-[6px_6px_0_#2A1506]'}`}
@@ -57,7 +79,7 @@ function Galerie({ produit, couleur, nuit, onAgrandir }) {
           </div>
         )}
         {/* grande photo en arche */}
-        <button onClick={() => onAgrandir(active)} className="relative flex-1 aspect-[4/5] rounded-t-full rounded-b-[2rem] overflow-hidden border-2 border-[#2A1506] bg-[#FBF5E9] cursor-zoom-in group" aria-label="Agrandir la photo">
+        <button onClick={() => onAgrandir(active)} {...swipe} className="relative flex-1 aspect-[4/5] rounded-t-full rounded-b-[2rem] overflow-hidden border-2 border-[#2A1506] bg-[#FBF5E9] cursor-zoom-in group touch-pan-y" aria-label="Agrandir la photo">
           <AnimatePresence mode="wait">
             <motion.img
               key={active}
@@ -92,6 +114,11 @@ function Lightbox({ images, index, setIndex, nom }) {
     return () => window.removeEventListener('keydown', touche)
   }, [index, images.length, setIndex])
 
+  const swipe = useSwipe(
+    () => setIndex((i) => Math.min(images.length - 1, i + 1)),
+    () => setIndex((i) => Math.max(0, i - 1)),
+  )
+
   const fleche = (sens) => (
     <button
       onClick={(e) => { e.stopPropagation(); setIndex((i) => Math.min(images.length - 1, Math.max(0, i + sens))) }}
@@ -106,12 +133,18 @@ function Lightbox({ images, index, setIndex, nom }) {
     <AnimatePresence>
       {index !== null && (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[90] bg-black/95 flex items-center justify-center p-4" onClick={() => setIndex(null)}>
+          className="fixed inset-0 z-[90] bg-black/95 flex items-center justify-center p-4 touch-pan-y" onClick={() => setIndex(null)} {...swipe}>
           {images.length > 1 && fleche(-1)}
           <motion.img key={index} initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.2 }}
             src={images[index].full ?? images[index].thumb} alt={`${nom} — ${index + 1}`}
             className="max-h-[88vh] max-w-full object-contain rounded-xl" onClick={(e) => e.stopPropagation()} />
           {images.length > 1 && fleche(1)}
+          {/* repère de position, utile sur téléphone où l'on glisse d'une photo à l'autre */}
+          {images.length > 1 && (
+            <span className="absolute bottom-6 left-1/2 -translate-x-1/2 font-ui text-xs font-bold tracking-[0.2em] text-white/70">
+              {index + 1} / {images.length}
+            </span>
+          )}
         </motion.div>
       )}
     </AnimatePresence>

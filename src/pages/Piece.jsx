@@ -6,6 +6,7 @@ import useSEO from '../hooks/useSEO'
 import Reveal from '../components/Reveal'
 import ProduitCarte from '../components/ProduitCarte'
 import { Festons, Tampon, Soleil, Fleur, Bandeau } from '../components/Graphique'
+import { ChapeauSorciere, Fantome, Citrouille } from '../components/Stickers'
 import { SLUG_HALLOWEEN, COULEUR_HALLOWEEN } from '../hooks/useHalloween'
 import { useCatalogue, lienBoutique } from '../context/CatalogueContext'
 import { useCart } from '../context/CartContext'
@@ -22,15 +23,22 @@ const ONGLETS = [
 const BANDEAU = ['Modelé à la main', 'Grès émaillé', 'Cuit deux fois', 'Pièce de l’atelier']
 
 /* ─── Galerie : grande photo + miniatures sur le côté ─── */
-function Galerie({ produit, couleur, onAgrandir }) {
+function Galerie({ produit, couleur, nuit, onAgrandir }) {
   const [active, setActive] = useState(0)
   const images = produit.images
   const image = images[active] ?? images[0]
 
   return (
-    <div className="relative max-w-xl mx-auto lg:max-w-none rounded-[2.5rem] border-2 border-[#2A1506] p-3 md:p-5 shadow-[6px_6px_0_#2A1506]"
+    <div className={`relative max-w-xl mx-auto lg:max-w-none rounded-[2.5rem] border-2 border-[#2A1506] p-3 md:p-5 ${nuit ? 'shadow-[6px_6px_0_#FBF5E9]' : 'shadow-[6px_6px_0_#2A1506]'}`}
       style={{ backgroundColor: couleur, backgroundImage: 'radial-gradient(circle, rgba(42,21,6,0.09) 1.5px, transparent 1.5px)', backgroundSize: '20px 20px' }}>
-      <Soleil taille={52} couleur="#F3D07A" className="absolute -top-5 -left-4 z-10 animate-[spin_24s_linear_infinite]" />
+      {nuit ? (
+        <>
+          <ChapeauSorciere taille={84} contour="#FBF5E9" className="absolute -top-11 -left-6 z-10 -rotate-12" />
+          <Citrouille taille={70} contour="#FBF5E9" couleur="#F3D07A" className="absolute -bottom-7 -right-5 z-10 rotate-6" />
+        </>
+      ) : (
+        <Soleil taille={52} couleur="#F3D07A" className="absolute -top-5 -left-4 z-10 animate-[spin_24s_linear_infinite]" />
+      )}
       <div className="flex flex-col-reverse md:flex-row gap-3 md:gap-4">
         {/* miniatures : en colonne sur ordinateur, en ligne sur mobile */}
         {images.length > 1 && (
@@ -124,7 +132,13 @@ export default function Piece() {
   const categorie = p && categoriesParId[p.categorie_id]
   const collection = p && collectionsParId[p.collection_id]
   // Pièces Halloween : l'orange de la section plutôt que la couleur de leur catégorie
-  const couleur = collection?.slug === SLUG_HALLOWEEN ? COULEUR_HALLOWEEN : categorie?.couleur ?? '#F3D07A'
+  // Pièces Halloween : page « de nuit » (fond brun-noir, textes crème, stickers d'Halloween)
+  // et l'orange de la section plutôt que la couleur de leur catégorie
+  const nuit = collection?.slug === SLUG_HALLOWEEN
+  const couleur = nuit ? COULEUR_HALLOWEEN : categorie?.couleur ?? '#F3D07A'
+  const t = nuit
+    ? { fond: 'bg-[#2A1506] text-[#FBF5E9]', texte: 'text-[#FBF5E9]', doux: 'text-[#FBF5E9]/75', pale: 'text-[#FBF5E9]/45', survol: 'hover:text-[#FBF5E9]', ligne: 'border-[#FBF5E9]', pastille: 'border-[#FBF5E9]/25 hover:border-[#FBF5E9]', ombre: 'shadow-[4px_4px_0_#FBF5E9] hover:shadow-[2px_2px_0_#FBF5E9]', promesse: 'bg-[#FBF5E9]/[0.06] border-[#FBF5E9]/15' }
+    : { fond: 'bg-[#FBF5E9]', texte: 'text-[#2A1506]', doux: 'text-[#2A1506]/75', pale: 'text-[#2A1506]/40', survol: 'hover:text-[#2A1506]', ligne: 'border-[#2A1506]', pastille: 'border-[#2A1506]/15 hover:border-[#2A1506]', ombre: 'shadow-[4px_4px_0_#2A1506] hover:shadow-[2px_2px_0_#2A1506]', promesse: 'bg-white/70 border-[#2A1506]/10' }
 
   useSEO({
     title: p ? `${p.nom} — Léa Artiste céramiste` : 'Pièce — Léa Artiste céramiste',
@@ -157,39 +171,41 @@ export default function Piece() {
   const dimensions = formatDimensions(p.dimensions)
 
   return (
-    <div className="bg-[#FBF5E9] pt-[65px] md:pt-[113px] overflow-x-hidden">
+    <div className={`${t.fond} pt-[65px] md:pt-[113px] overflow-x-hidden`}>
       <Bandeau items={BANDEAU} fond={couleur} couleur="#2A1506" />
 
       <section className="relative max-w-7xl mx-auto px-5 md:px-12 lg:px-20 pt-8 md:pt-12 pb-20">
-        <Fleur taille={36} couleur="#C9B8E8" coeur="#FBF5E9" className="absolute top-10 right-6 hidden md:block" />
+        {nuit
+          ? <Fantome taille={64} contour="#FBF5E9" className="absolute top-6 right-6 hidden md:block rotate-6" />
+          : <Fleur taille={36} couleur="#C9B8E8" coeur="#FBF5E9" className="absolute top-10 right-6 hidden md:block" />}
 
         {/* fil d'Ariane */}
-        <nav className="flex flex-wrap items-center gap-2 font-ui text-xs font-semibold mb-6 md:mb-8" aria-label="Fil d'Ariane">
-          <Link to="/boutique" onClick={(e) => { if (retourBoutique) { e.preventDefault(); naviguer(-retourBoutique) } }} className="px-3 py-1 rounded-full border-2 border-[#2A1506]/15 hover:border-[#2A1506] transition-colors">← Boutique</Link>
-          {collection && <Link to={lienBoutique({ collection: collection.slug })} className="px-3 py-1 rounded-full border-2 border-[#2A1506]/15 hover:border-[#2A1506] transition-colors">{collection.label}</Link>}
-          {categorie && <Link to={lienBoutique({ type: categorie.slug })} className="px-3 py-1 rounded-full border-2 border-[#2A1506]/15 hover:border-[#2A1506] transition-colors">{categorie.label}</Link>}
+        <nav className={`flex flex-wrap items-center gap-2 font-ui text-xs font-semibold ${nuit ? 'mb-12 md:mb-14' : 'mb-6 md:mb-8'}`} aria-label="Fil d'Ariane">
+          <Link to="/boutique" onClick={(e) => { if (retourBoutique) { e.preventDefault(); naviguer(-retourBoutique) } }} className={`px-3 py-1 rounded-full border-2 ${t.pastille} transition-colors`}>← Boutique</Link>
+          {collection && <Link to={lienBoutique({ collection: collection.slug })} className={`px-3 py-1 rounded-full border-2 ${t.pastille} transition-colors`}>{collection.label}</Link>}
+          {categorie && <Link to={lienBoutique({ type: categorie.slug })} className={`px-3 py-1 rounded-full border-2 ${t.pastille} transition-colors`}>{categorie.label}</Link>}
         </nav>
 
         <div className="grid grid-cols-1 lg:grid-cols-[1.15fr_1fr] gap-10 lg:gap-14 items-start">
           <Reveal direction="left">
-            <Galerie key={p.id} produit={p} couleur={couleur} onAgrandir={setAgrandie} />
+            <Galerie key={p.id} produit={p} couleur={couleur} nuit={nuit} onAgrandir={setAgrandie} />
           </Reveal>
 
           <Reveal delay={0.1}>
             <div className="lg:sticky lg:top-32">
               <div className="flex flex-wrap gap-2 mb-4">
                 {categorie && <span className="font-ui text-[0.65rem] font-bold uppercase tracking-[0.2em] px-3 py-1 rounded-full border-2 border-[#2A1506]" style={{ backgroundColor: couleur }}>{categorie.label}</span>}
-                {collection && <span className="font-ui text-[0.65rem] font-bold uppercase tracking-[0.2em] px-3 py-1 rounded-full border-2 border-[#2A1506] bg-[#FBF5E9]">Collection {collection.label}</span>}
+                {collection && <span className="font-ui text-[0.65rem] font-bold uppercase tracking-[0.2em] px-3 py-1 rounded-full border-2 border-[#2A1506] bg-[#FBF5E9] text-[#2A1506]">Collection {collection.label}</span>}
               </div>
 
               <h1 className="font-display font-black leading-[0.95] mb-5" style={{ fontSize: 'clamp(2.4rem, 5vw, 4rem)' }}>{p.nom}</h1>
 
               <div className="flex items-center gap-4 mb-6">
                 {p.stock === 0 ? (
-                  <span className="font-ui font-bold text-sm uppercase tracking-widest text-[#2A1506]/50">Pièce vendue</span>
+                  <span className={`font-ui font-bold text-sm uppercase tracking-widest ${t.pale}`}>Pièce vendue</span>
                 ) : (
                   <>
-                    <span className="font-display font-black text-3xl px-5 py-2 rounded-full bg-[#F3D07A] border-2 border-[#2A1506] -rotate-2 shadow-[3px_3px_0_#2A1506]">
+                    <span className={`font-display font-black text-3xl px-5 py-2 rounded-full bg-[#F3D07A] text-[#2A1506] border-2 border-[#2A1506] -rotate-2 ${nuit ? 'shadow-[3px_3px_0_#FBF5E9]' : 'shadow-[3px_3px_0_#2A1506]'}`}>
                       {p.prix != null ? formatPrix(p.prix) : 'Prix à venir'}
                     </span>
                     <span className="font-main font-bold text-2xl text-[#D97080] -rotate-3">
@@ -199,7 +215,7 @@ export default function Piece() {
                 )}
               </div>
 
-              <p className="font-body text-xl leading-relaxed text-[#2A1506]/75 mb-8">{description}</p>
+              <p className={`font-body text-xl leading-relaxed ${t.doux} mb-8`}>{description}</p>
 
               {/* Achat */}
               <div className="mb-8">
@@ -216,7 +232,7 @@ export default function Piece() {
                   </button>
                 ) : (
                   <button onClick={() => addItem({ slug: p.slug, nom: p.nom, image: p.images[0]?.thumb })}
-                    className="w-full font-ui font-semibold text-base px-8 py-4 bg-[#E87040] text-[#2A1506] border-2 border-[#2A1506] rounded-xl shadow-[4px_4px_0_#2A1506] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0_#2A1506] transition-all duration-150">
+                    className={`w-full font-ui font-semibold text-base px-8 py-4 bg-[#E87040] text-[#2A1506] border-2 border-[#2A1506] rounded-xl ${t.ombre} hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-150`}>
                     {dansLePanier > 0 ? `Ajouter un autre exemplaire (${dansLePanier} dans le panier)` : 'Ajouter au panier →'}
                   </button>
                 )}
@@ -229,27 +245,27 @@ export default function Piece() {
                   { Icone: Package, texte: 'Emballé avec soin' },
                   { Icone: Store, texte: 'Retrait gratuit possible' },
                 ].map(({ Icone, texte }) => (
-                  <li key={texte} className="flex flex-col items-center text-center gap-1 rounded-2xl bg-white/70 border border-[#2A1506]/10 px-2 py-3">
+                  <li key={texte} className={`flex flex-col items-center text-center gap-1 rounded-2xl border ${t.promesse} px-2 py-3`}>
                     <Icone size={20} strokeWidth={1.8} className="text-[#E87040]" aria-hidden="true" />
-                    <span className="font-ui text-[0.65rem] font-semibold leading-tight text-[#2A1506]/70">{texte}</span>
+                    <span className={`font-ui text-[0.65rem] font-semibold leading-tight ${t.doux}`}>{texte}</span>
                   </li>
                 ))}
               </ul>
 
               {/* onglets */}
-              <div className="border-t-2 border-[#2A1506]">
+              <div className={`border-t-2 ${t.ligne}`}>
                 <div className="flex gap-1 -mt-px" role="tablist">
                   {ONGLETS.map(({ cle, label }) => (
                     <button key={cle} role="tab" aria-selected={onglet === cle} onClick={() => setOnglet(cle)}
-                      className={`font-ui text-xs font-bold uppercase tracking-widest px-3 py-3 border-t-[3px] transition-colors ${onglet === cle ? 'border-[#E87040] text-[#2A1506]' : 'border-transparent text-[#2A1506]/40 hover:text-[#2A1506]'}`}>
+                      className={`font-ui text-xs font-bold uppercase tracking-widest px-3 py-3 border-t-[3px] transition-colors ${onglet === cle ? `border-[#E87040] ${t.texte}` : `border-transparent ${t.pale} ${t.survol}`}`}>
                       {label}
                     </button>
                   ))}
                 </div>
-                <div className="font-body text-lg leading-relaxed text-[#2A1506]/75 pt-3" role="tabpanel">
+                <div className={`font-body text-lg leading-relaxed ${t.doux} pt-3`} role="tabpanel">
                   {onglet === 'details' && dimensions && (
                     <p className="mb-3">
-                      <span className="font-ui text-xs font-bold uppercase tracking-widest text-[#2A1506] mr-2">Dimensions</span>
+                      <span className={`font-ui text-xs font-bold uppercase tracking-widest ${t.texte} mr-2`}>Dimensions</span>
                       {dimensions}
                     </p>
                   )}
@@ -273,14 +289,14 @@ export default function Piece() {
       {suggestions.length > 0 && (
         <>
           <Festons couleur={couleur} />
-          <section className="relative px-5 md:px-12 lg:px-20 py-14 md:py-20" style={{ backgroundColor: couleur }}>
+          <section className="relative px-5 md:px-12 lg:px-20 py-14 md:py-20 text-[#2A1506]" style={{ backgroundColor: couleur }}>
             <Tampon taille={96} fond="#FBF5E9" texte="fait main ✺ atelier LVY ✺ " className="absolute -top-14 right-6 md:right-20 hidden sm:block" />
             <div className="max-w-7xl mx-auto">
               <h2 className="font-display font-black text-4xl md:text-5xl mb-10">
                 Elles vont <span className="italic">bien ensemble</span>
               </h2>
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-                {suggestions.map((s) => <ProduitCarte key={s.id} produit={s} categorie={categoriesParId[s.categorie_id]} retourBoutique={retourBoutique && retourBoutique + 1} />)}
+                {suggestions.map((s) => <ProduitCarte key={s.id} produit={s} categorie={categoriesParId[s.categorie_id]} retourBoutique={retourBoutique && retourBoutique + 1} fond={nuit ? '#FBF5E9' : undefined} />)}
               </div>
             </div>
           </section>

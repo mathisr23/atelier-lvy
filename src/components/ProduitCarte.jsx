@@ -17,7 +17,7 @@ export default function ProduitCarte({ produit: p, categorie, className = '', re
       ref={ref}
       to={lienPiece(p.slug)}
       state={retourBoutique ? { retourBoutique } : undefined}
-      className={`group flex flex-col h-full text-left w-full border-2 border-[#2A1506] rounded-[2rem] p-2.5 md:p-3.5 transition-all duration-300 hover:-translate-y-1.5 hover:-rotate-1 hover:shadow-[6px_6px_0_#2A1506] ${className}`}
+      className={`group flex flex-col h-full text-left text-[#2A1506] w-full border-2 border-[#2A1506] rounded-[2rem] p-2.5 md:p-3.5 transition-all duration-300 hover:-translate-y-1.5 hover:-rotate-1 hover:shadow-[6px_6px_0_#2A1506] ${className}`}
       style={{ background: fond ?? `linear-gradient(${couleur}55, ${couleur}55), #FBF5E9` }}
     >
       <div className="relative aspect-[4/5] rounded-t-full rounded-b-2xl overflow-hidden mb-3 md:mb-4 border-2 border-[#2A1506] bg-[#FBF5E9]">

@@ -124,3 +124,41 @@ export function TexteArc({ texte, largeur = 400, courbure = 90, couleur = BRUN, 
     </svg>
   )
 }
+
+/* ─── Stickers d'Halloween (page des pièces de la collection) : contour réglable pour les fonds sombres ─── */
+const traitDe = (contour) => ({ ...trait, stroke: contour })
+
+export function ChapeauSorciere({ taille = 64, couleur = '#C9B8E8', ruban = '#E87040', contour = BRUN, className = '' }) {
+  return (
+    <svg viewBox="0 0 100 100" width={taille} height={taille} className={className} aria-hidden="true">
+      <path d="M8 78 C 30 70, 70 70, 92 78 C 76 88, 24 88, 8 78 Z" fill={couleur} {...traitDe(contour)} />
+      <path d="M26 74 C 34 56, 40 40, 44 22 C 46 14, 56 6, 70 10 C 60 14, 58 22, 60 32 C 62 46, 68 60, 74 74 C 58 78, 42 78, 26 74 Z" fill={couleur} {...traitDe(contour)} />
+      <path d="M30 66 C 44 70, 60 70, 71 66 L 74 74 C 58 78, 42 78, 27 74 Z" fill={ruban} {...traitDe(contour)} />
+      <rect x="44" y="65" width="12" height="11" rx="2" fill="#F3D07A" {...traitDe(contour)} strokeWidth="3" />
+    </svg>
+  )
+}
+
+export function Fantome({ taille = 56, couleur = '#FBF5E9', contour = BRUN, className = '' }) {
+  return (
+    <svg viewBox="0 0 100 100" width={taille} height={taille} className={className} aria-hidden="true">
+      <path d="M20 88 C 20 60, 18 14, 50 12 C 82 14, 80 60, 80 88 C 74 82, 70 92, 64 86 C 58 80, 56 92, 50 86 C 44 80, 42 92, 36 86 C 30 80, 26 92, 20 88 Z" fill={couleur} {...traitDe(contour)} />
+      <ellipse cx="40" cy="42" rx="5" ry="7" fill={BRUN} />
+      <ellipse cx="60" cy="42" rx="5" ry="7" fill={BRUN} />
+      <ellipse cx="50" cy="58" rx="5" ry="4" fill={BRUN} />
+      <circle cx="30" cy="54" r="4" fill="#F2A0A8" /><circle cx="70" cy="54" r="4" fill="#F2A0A8" />
+    </svg>
+  )
+}
+
+export function Citrouille({ taille = 56, couleur = '#E87040', tige = '#9BBF90', contour = BRUN, className = '' }) {
+  return (
+    <svg viewBox="0 0 100 100" width={taille} height={taille} className={className} aria-hidden="true">
+      <path d="M50 26 C 48 18, 52 10, 60 8" fill="none" {...traitDe(contour)} strokeWidth="7" />
+      <path d="M50 26 C 48 18, 52 10, 60 8" fill="none" stroke={tige} strokeWidth="3" strokeLinecap="round" />
+      <path d="M50 28 C 30 20, 8 32, 8 56 C 8 80, 28 90, 50 84 C 72 90, 92 80, 92 56 C 92 32, 70 20, 50 28 Z" fill={couleur} {...traitDe(contour)} />
+      <path d="M50 30 C 38 40, 38 74, 50 84 M50 30 C 62 40, 62 74, 50 84" fill="none" {...traitDe(contour)} strokeWidth="3" />
+      <path d="M30 34 C 20 46, 22 72, 34 82 M70 34 C 80 46, 78 72, 66 82" fill="none" {...traitDe(contour)} strokeWidth="3" />
+    </svg>
+  )
+}

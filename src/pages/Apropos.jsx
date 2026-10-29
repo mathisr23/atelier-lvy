@@ -1,8 +1,8 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import useSEO from '../hooks/useSEO'
 import { supabase } from '../lib/supabase'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useInView } from 'framer-motion'
 import { Asterisk, Squiggle, patterns } from '../components/Deco'
 import Reveal from '../components/Reveal'
 import { BandeauHalloween } from '../components/SectionHalloween'
@@ -73,6 +73,26 @@ const projects = [
     images: [imgIMG4982, imgIMG4984, imgIMG5006],
   },
 ]
+
+// Flux Instagram : le script Behold n'est chargé qu'à l'approche de la section (il venait avant sur toutes
+// les pages, y compris la boutique, et Safari le bloque parfois avec sa protection avancée de la confidentialité)
+function FluxInstagram() {
+  const ref = useRef(null)
+  const proche = useInView(ref, { once: true, margin: '800px 0px' })
+  useEffect(() => {
+    if (!proche || document.querySelector('script[data-behold]')) return
+    const script = document.createElement('script')
+    script.type = 'module'
+    script.src = 'https://w.behold.so/widget.js'
+    script.dataset.behold = ''
+    document.body.appendChild(script)
+  }, [proche])
+  return (
+    <div ref={ref}>
+      <behold-widget feed-id="kMu6VSYj0oujYewf9wCI"></behold-widget>
+    </div>
+  )
+}
 
 export default function Apropos() {
   useSEO({
@@ -431,9 +451,9 @@ export default function Apropos() {
               </a>
             </div>
           </Reveal>
-          {/* 🔑 Widget Behold.so — remplacer FEED_ID_ICI après config sur behold.so */}
+          {/* Widget Behold.so (flux Instagram) */}
           <Reveal delay={0.1}>
-            <behold-widget feed-id="kMu6VSYj0oujYewf9wCI"></behold-widget>
+            <FluxInstagram />
           </Reveal>
         </div>
       </section>

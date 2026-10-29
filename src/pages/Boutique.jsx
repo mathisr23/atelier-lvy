@@ -254,11 +254,10 @@ export default function Boutique() {
                 <button onClick={toutVoir} className={btn.outline}>Voir toutes les pièces</button>
               </div>
             )}
-            {/* Apparition dès l'entrée à l'écran, petit décalage par colonne seulement (sinon les cartes mettent ~1 s à se montrer) */}
-            {filtered.map((p, i) => (
-              <Reveal key={p.slug} delay={(i % 2) * 0.05} duree={0.4} marge="0px" direction="up" className="h-full">
-                <ProduitCarte produit={p} categorie={categorieDe(p)} retourBoutique={1} />
-              </Reveal>
+            {/* Cartes affichées tout de suite, sans animation d'apparition : sur iPhone, l'attente du « visible à l'écran »
+                laissait des cases vides pendant le défilement */}
+            {filtered.map((p) => (
+              <ProduitCarte key={p.slug} produit={p} categorie={categorieDe(p)} retourBoutique={1} />
             ))}
           </div>
         </div>

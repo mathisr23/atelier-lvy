@@ -9,9 +9,10 @@ import { formatPrix, lienPiece } from '../lib/boutique'
 export default function ProduitCarte({ produit: p, categorie, className = '', retourBoutique, fond }) {
   const vendu = p.stock === 0
   const couleur = categorie?.couleur ?? '#F3D07A'
-  // La photo se charge ~1,5 écran avant d'arriver (le loading="lazy" de Safari attend le dernier moment)
+  // La photo est toujours dans la page en loading="lazy" (le navigateur s'en charge même si le JS est occupé),
+  // et passe en chargement immédiat ~3 écrans avant d'arriver (le lazy de Safari attend le dernier moment)
   const ref = useRef(null)
-  const proche = useInView(ref, { once: true, margin: '1200px 0px' })
+  const proche = useInView(ref, { once: true, margin: '2400px 0px' })
   return (
     <Link
       ref={ref}
@@ -21,12 +22,13 @@ export default function ProduitCarte({ produit: p, categorie, className = '', re
       style={{ background: fond ?? `linear-gradient(${couleur}55, ${couleur}55), #FBF5E9` }}
     >
       <div className="relative aspect-[4/5] rounded-t-full rounded-b-2xl overflow-hidden mb-3 md:mb-4 border-2 border-[#2A1506] bg-[#FBF5E9]">
-        {proche && <img
+        <img
           src={p.images[0]?.thumb}
           alt={p.nom}
           className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${vendu ? 'grayscale opacity-70' : ''}`}
+          loading={proche ? 'eager' : 'lazy'}
           decoding="async"
-        />}
+        />
         {vendu && (
           <span className="absolute bottom-3 right-3 w-16 h-16 md:w-20 md:h-20 rounded-full bg-[#F2A0A8] border-2 border-[#2A1506] flex items-center justify-center rotate-12 font-ui text-[0.6rem] md:text-xs font-bold uppercase tracking-widest text-[#2A1506]">
             Vendu

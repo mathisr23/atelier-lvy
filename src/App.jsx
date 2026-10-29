@@ -1,4 +1,4 @@
-import { useState, useEffect, useLayoutEffect, useRef } from 'react'
+import { useState, useEffect, useLayoutEffect, useRef, lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, useLocation, useNavigationType } from 'react-router-dom'
 import { Analytics } from '@vercel/analytics/react'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -17,10 +17,12 @@ import Contact from './pages/Contact'
 import CommandeSucces from './pages/CommandeSucces'
 import Panier from './pages/Panier'
 import Piece from './pages/Piece'
-import Admin from './pages/Admin'
 import NotFound from './pages/NotFound'
 import MentionsLegales from './pages/MentionsLegales'
 import CGV from './pages/CGV'
+
+// L'admin n'est téléchargée que par Léa : elle sort du fichier JS principal des visiteurs
+const Admin = lazy(() => import('./pages/Admin'))
 
 /* ─── Position de défilement ───
    Nouvelle page → en haut. Retour arrière (bouton du téléphone, geste, navigate(-1)) → on revient
@@ -140,7 +142,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/k4w9-lvy-m2r6x" element={<Admin />} />
+        <Route path="/k4w9-lvy-m2r6x" element={<Suspense fallback={null}><Admin /></Suspense>} />
         <Route path="*" element={<MainApp />} />
       </Routes>
     </BrowserRouter>
